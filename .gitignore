@@ -1,0 +1,9 @@
+
+\.vs/
+\bin/
+\obj/
+\packages/
+
+*.user
+
+*.exe
