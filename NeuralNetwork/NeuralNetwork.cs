@@ -13,7 +13,7 @@ namespace Algorithms
         private float[][][] weights;//weights
 
         //Genetic
-        public float fitness = 0;//fitness
+        public float Fitness = 0;//fitness
 
         //Backprop
         public float learningRate = 0.01f;//learning rate
@@ -22,15 +22,20 @@ namespace Algorithms
         //Other
         private Random random;
         private NeuralNetworkConfig configuration;
+        private int randomSeed = 0;
 
         public NeuralNetwork(NeuralNetworkConfig configuration, float learningRate, int randomSeed = 0)
         {
             if (randomSeed == 0)
             {
-                randomSeed = (int)(DateTime.Now.Ticks & 0x0000FFFF);
+                this.randomSeed = (int)(DateTime.Now.Ticks & 0x0000FFFF);
             }
+            else
+            {
+                this.randomSeed = randomSeed;
 
-            random = new Random(randomSeed);
+            }
+            random = new Random(this.randomSeed);
 
             this.configuration = configuration;
             this.learningRate = learningRate;
@@ -286,15 +291,13 @@ namespace Algorithms
         /// <summary>
         /// Used as a simple mutation function for any genetic implementations.
         /// </summary>
-        /// <param name="high"></param>
-        /// <param name="val"></param>
-        public void Mutate(int high, float val)
+        public void Mutate(double mutationProbability, float mutationSeverity)
         {
             for (int i = 0; i < biases.Length; i++)
             {
                 for (int j = 0; j < biases[i].Length; j++)
                 {
-                    biases[i][j] = (NextFloat(0f, high) <= 2) ? biases[i][j] += NextFloat(-val, val) : biases[i][j];
+                    biases[i][j] = FlipCoin(mutationProbability) ? biases[i][j] += NextFloat(-mutationSeverity, mutationSeverity) : biases[i][j];
                 }
             }
 
@@ -304,7 +307,7 @@ namespace Algorithms
                 {
                     for (int k = 0; k < weights[i][j].Length; k++)
                     {
-                        weights[i][j][k] = (NextFloat(0f, high) <= 2) ? weights[i][j][k] += NextFloat(-val, val) : weights[i][j][k];
+                        weights[i][j][k] = FlipCoin(mutationProbability) ? weights[i][j][k] += NextFloat(-mutationSeverity, mutationSeverity) : weights[i][j][k];
                     }
                 }
             }
@@ -319,21 +322,25 @@ namespace Algorithms
         {
             if (other == null) return 1;
 
-            if (fitness > other.fitness)
+            if (Fitness > other.Fitness)
                 return 1;
-            else if (fitness < other.fitness)
+            else if (Fitness < other.Fitness)
                 return -1;
             else
                 return 0;
         }
 
         /// <summary>
-        /// For creatinga deep copy, to ensure arrays are serialzed.
+        /// For creating a deep copy, to ensure arrays are serialzed.
         /// </summary>
         /// <param name="nn"></param>
         /// <returns></returns>
-        public NeuralNetwork Copy(NeuralNetwork nn)
+        public NeuralNetwork Clone()
         {
+            var nn = new NeuralNetwork(this.configuration, this.learningRate, this.randomSeed);
+
+            nn.Fitness = this.Fitness;
+
             for (int i = 0; i < biases.Length; i++)
             {
                 for (int j = 0; j < biases[i].Length; j++)
@@ -432,9 +439,28 @@ namespace Algorithms
 
         #region Random implementation.
 
+        /// <summary>
+        /// Flips a coin with a probability between 0.0 - 1.0.
+        /// </summary>
+        /// <param name="probability"></param>
+        /// <returns></returns>
+        private bool FlipCoin(double probability)
+        {
+            double d = random.Next(0, 1000);
+
+            bool result = (d / 1000 >= probability);
+
+            return result;
+        }
+
+        private bool FlipCoin()
+        {
+            return random.Next(0, 100) >= 50;
+        }
+
         private float GetRandomBias()
         {
-            if (random.Next(0, 100) >= 50)
+            if (FlipCoin())
             {
                 return (float)(random.NextDouble() / 0.5);
             }
@@ -447,7 +473,7 @@ namespace Algorithms
             {
                 minimum = Math.Abs(minimum);
 
-                if (random.Next(0, 100) >= 50)
+                if (FlipCoin())
                 {
                     return (random.NextDouble() * (maximum - minimum) + minimum) * -1;
                 }
@@ -457,7 +483,6 @@ namespace Algorithms
 
         private float NextFloat(float minimum, float maximum)
         {
-
             return (float)NextDouble(minimum, maximum);
         }
 

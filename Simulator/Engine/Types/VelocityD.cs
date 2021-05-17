@@ -4,6 +4,7 @@
     {
         public AngleD Angle { get; set; } = new AngleD();
         public double MaxSpeed { get; set; }
+        public double MaxRotationSpeed { get; set; }
 
         public double _throttlePercentage;
         public double ThrottlePercentage

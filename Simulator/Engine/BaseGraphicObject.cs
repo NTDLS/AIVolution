@@ -37,9 +37,12 @@ namespace Simulator.Engine
             }
             set
             {
-                Invalidate();
-                _location = value;
-                Invalidate();
+                if (_location != value)
+                {
+                    Invalidate();
+                    _location = value;
+                    Invalidate();
+                }
             }
         }
 
@@ -51,10 +54,13 @@ namespace Simulator.Engine
             }
             set
             {
-                Invalidate();
-                _location.X = value;
-                OnPositionChanged?.Invoke(this);
-                Invalidate();
+                if (_location.X != value)
+                {
+                    Invalidate();
+                    _location.X = value;
+                    OnPositionChanged?.Invoke(this);
+                    Invalidate();
+                }
             }
         }
 
@@ -66,10 +72,13 @@ namespace Simulator.Engine
             }
             set
             {
-                Invalidate();
-                _location.Y = value;
-                OnPositionChanged?.Invoke(this);
-                Invalidate();
+                if (_location.Y != value)
+                {
+                    Invalidate();
+                    _location.Y = value;
+                    OnPositionChanged?.Invoke(this);
+                    Invalidate();
+                }
             }
         }
 
@@ -124,16 +133,19 @@ namespace Simulator.Engine
             }
             set
             {
-                _isVisible = value;
+                if (_isVisible != value)
+                {
+                    _isVisible = value;
 
-                var invalidRect = new Rectangle(
-                    (int)(_location.X - (_size.Width / 2.0)),
-                    (int)(_location.Y - (_size.Height / 2.0)),
-                    _size.Width, _size.Height);
+                    var invalidRect = new Rectangle(
+                        (int)(_location.X - (_size.Width / 2.0)),
+                        (int)(_location.Y - (_size.Height / 2.0)),
+                        _size.Width, _size.Height);
 
-                Core.DrawingSurface.Invalidate(invalidRect);
+                    Core.DrawingSurface.Invalidate(invalidRect);
 
-                OnVisibilityChange?.Invoke(this);
+                    OnVisibilityChange?.Invoke(this);
+                }
             }
         }
 
@@ -141,14 +153,22 @@ namespace Simulator.Engine
         {
             Core = core;
             RotationMode = RotationMode.Upsize;
+            Velocity.MaxSpeed = Constants.Limits.MaxPlayerSpeed;
+            Velocity.MaxRotationSpeed = Constants.Limits.MaxPlayerSpeed;
+            Velocity.ThrottlePercentage = 0;
         }
 
         public bool IsOnScreen
         {
             get
             {
-                return Core.EngineDisplay.VisibleBounds.IntersectsWith(Bounds);
+                return Core.Display.VisibleBounds.IntersectsWith(Bounds);
             }
+        }
+
+        public virtual void ApplyIntelligence()
+        {
+            //Dumb as a rock...
         }
 
         public void Invalidate()
@@ -266,7 +286,7 @@ namespace Simulator.Engine
 
             foreach (var intersection in Core.Actors.Collection)
             {
-                if (intersection != this && intersection.Visable)
+                if (intersection != this && intersection.Visable && intersection is not ActorTextBlock)
                 {
                     if (this.Intersects(intersection))
                     {
@@ -280,9 +300,12 @@ namespace Simulator.Engine
 
         public void Rotate(double degrees)
         {
-            Velocity.Angle.Degrees += degrees;
-            Invalidate();
-            OnRotated?.Invoke(this);
+            if (degrees != 0)
+            {
+                Velocity.Angle.Degrees += degrees;
+                Invalidate();
+                OnRotated?.Invoke(this);
+            }
         }
 
         public void MoveInDirectionOf(PointD location, double? speed = null)
@@ -322,6 +345,16 @@ namespace Simulator.Engine
         public double AngleTo(BaseGraphicObject atObj)
         {
             return Utility.AngleTo(this, atObj);
+        }
+
+        public bool IsPointingAt(BaseGraphicObject atObj, double toleranceDegrees, double maxDistance, double offsetAngle)
+        {
+            return Utility.IsPointingAt(this, atObj, toleranceDegrees, maxDistance, offsetAngle);
+        }
+
+        public bool IsPointingAt( BaseGraphicObject atObj, double toleranceDegrees, double maxDistance)
+        {
+            return Utility.IsPointingAt(this, atObj, toleranceDegrees, maxDistance);
         }
 
         public bool IsPointingAt(BaseGraphicObject atObj, double toleranceDegrees)

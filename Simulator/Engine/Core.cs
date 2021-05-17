@@ -14,8 +14,9 @@ namespace Simulator.Engine
         public bool IsRendering { get; private set; } = false;
         public object DrawingSemaphore { get; private set; } = new object();
         public Actors Actors { get; private set; }
-        public EngineThread EngineThread { get; private set; }
-        public EngineDisplay EngineDisplay { get; private set; }
+        public EngineThread Thread { get; private set; }
+        public EngineDisplay Display { get; private set; }
+        public EngineInput Input { get; set; }
 
         public Control DrawingSurface;
         private Dictionary<string, Bitmap> _Bitmaps { get; set; } = new Dictionary<string, Bitmap>();
@@ -24,18 +25,19 @@ namespace Simulator.Engine
         {
             DrawingSurface = drawingSurface;
             Actors = new Actors(this);
-            EngineThread = new EngineThread(this);
-            EngineDisplay = new EngineDisplay(this, drawingSurface, visibleSize);
+            Thread = new EngineThread(this);
+            Input = new EngineInput(this);
+            Display = new EngineDisplay(this, drawingSurface, visibleSize);
         }
 
         public void Start()
         {
-            EngineThread.Start();
+            Thread.Start();
         }
 
         public void Stop()
         {
-            EngineThread.Stop();
+            Thread.Stop();
         }
 
         public void Render(Graphics dc)

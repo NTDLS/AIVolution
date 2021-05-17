@@ -12,7 +12,7 @@ namespace Simulator.Engine
             : base(core)
         {
             this.SetImage("../../../Images/BigShroom24x24.png");
-            this.Location = Core.EngineDisplay.RandomOnScreenLocation();
+            this.Location = Core.Display.RandomOnScreenLocation();
             this.Velocity.Angle.Degrees = 0;
             this.Velocity.MaxSpeed = 1;
             this.Velocity.ThrottlePercentage = 0;

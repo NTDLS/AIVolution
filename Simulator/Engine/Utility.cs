@@ -131,24 +131,45 @@ namespace Simulator.Engine
             return PointD.AngleTo(from.Location, to);
         }
 
-
         public static bool IsPointingAt(BaseGraphicObject fromObj, BaseGraphicObject atObj, double toleranceDegrees)
         {
             var deltaAngle = Math.Abs(DeltaAngle(fromObj, atObj));
             return deltaAngle < toleranceDegrees || deltaAngle > (360 - toleranceDegrees);
         }
 
-        public static double DeltaAngle(BaseGraphicObject fromObj, BaseGraphicObject atObj)
+        public static bool IsPointingAt(BaseGraphicObject fromObj, BaseGraphicObject atObj, double toleranceDegrees, double maxDistance, double offsetAngle = 0)
         {
+            var deltaAngle = Math.Abs(DeltaAngle(fromObj, atObj, offsetAngle));
+            if (deltaAngle < toleranceDegrees || deltaAngle > (360 - toleranceDegrees))
+            {
+                double distance = DistanceTo(fromObj, atObj);
+
+                return distance <= maxDistance;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="fromObj"></param>
+        /// <param name="atObj"></param>
+        /// <param name="offsetAngle">-90 degrees would be looking off te left-hand side of the object</param>
+        /// <returns></returns>
+        public static double DeltaAngle(BaseGraphicObject fromObj, BaseGraphicObject atObj, double offsetAngle = 0)
+        {
+            double fromAngle = fromObj.Velocity.Angle.Degrees + offsetAngle;
+
             double angleTo = AngleTo(fromObj, atObj);
 
-            if (fromObj.Velocity.Angle.Degrees < 0) fromObj.Velocity.Angle.Degrees = (0 - fromObj.Velocity.Angle.Degrees);
+            if (fromAngle < 0) fromAngle = (0 - fromAngle);
             if (angleTo < 0)
             {
                 angleTo = (0 - angleTo);
             }
 
-            angleTo = fromObj.Velocity.Angle.Degrees - angleTo;
+            angleTo = fromAngle - angleTo;
 
             if (angleTo < 0)
             {
@@ -166,15 +187,27 @@ namespace Simulator.Engine
         #endregion
 
         #region Random.
+        public static Random Random = new Random();
 
+        /// <summary>
+        /// Flips a coin with a probability between 0.0 - 1.0.
+        /// </summary>
+        /// <param name="probability"></param>
+        /// <returns></returns>
+        private bool FlipCoin(double probability)
+        {
+            double d = Random.Next(0, 1000);
+
+            bool result = (d / 1000 >= probability);
+
+            return result;
+        }
 
         public static bool ChanceIn(int n)
         {
             return (Random.Next(0, n * 10) % n) == n/2;
         }
 
-
-        public static Random Random = new Random();
         public static bool FlipCoin()
         {
             return Random.Next(0, 1000) >= 500;

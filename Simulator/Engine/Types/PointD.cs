@@ -63,6 +63,23 @@ namespace Simulator.Engine.Types
             return (Math.Round(((PointD)o).X, 4) == this.X && Math.Round(((PointD)o).Y, 4) == this.Y);
         }
 
+        public static bool operator !=(PointD lhs, PointD rhs) => !(lhs == rhs);
+
+        public static bool operator ==(PointD lhs, PointD rhs)
+        {
+            if (object.ReferenceEquals(lhs, null))
+            {
+                return object.ReferenceEquals(rhs, null);
+            }
+
+            if (object.ReferenceEquals(rhs, null))
+            {
+                return object.ReferenceEquals(lhs, null);
+            }
+
+            return lhs.Equals(rhs);
+        }
+
         #endregion
 
         public override int GetHashCode()
