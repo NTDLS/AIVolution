@@ -13,6 +13,8 @@ namespace Simulator.Engine
     {
         private Core _core;
 
+        public int Permutations { get; set; } = -1;//How many times have we reset with a new generation.
+
         public EngineWorld(Core core)
         {
             _core = core;
@@ -46,13 +48,10 @@ namespace Simulator.Engine
             {
                 debugText.Text += "\r\nOldest Generation: " + bugsAlive.Max(o => (o as ActorBug).Brain.Fitness);
             }
+            debugText.Text += "\r\nPermutations: " + Permutations;
 
             if (_core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).Count() <= 2)
             {
-                var victorText = new ActorTextBlock(_core, "Consolas", Brushes.Red, 30, new PointD(25, 300), true);
-                victorText.Text = "Superior specimen(s) identified";
-                _core.Actors.Add(victorText);
-
                 var bestBugs = _core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).ToList();
 
                 var greatestMinds = new List<NeuralNetwork>();
@@ -109,9 +108,9 @@ namespace Simulator.Engine
 
         private void ResetMap(List<NeuralNetwork> brains = null)
         {
-            _core.Actors.Collection.Clear();
+            Permutations++;
 
-            _core.Actors.Add(new ActorTextBlock(_core, "Consolas", Brushes.Aqua, 10, new PointD(5, 5), true, "Debug Text Block"));
+            _core.Actors.Collection.Clear();
 
             WallInArena();
 
@@ -147,6 +146,8 @@ namespace Simulator.Engine
                 }
 
                 _core.Actors.Add(new ActorBug(_core, brain));
+
+                _core.Actors.Add(new ActorTextBlock(_core, "Consolas", Brushes.Aqua, 10, new PointD(25, 10), true, "Debug Text Block"));
             }
         }
     }
