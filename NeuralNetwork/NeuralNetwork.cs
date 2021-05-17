@@ -24,17 +24,33 @@ namespace Algorithms
         private NeuralNetworkConfig configuration;
         private int randomSeed = 0;
 
-        public NeuralNetwork(NeuralNetworkConfig configuration, float learningRate, int randomSeed = 0)
+        public void Reseed(int randomSeed = 0)
         {
+            Random rand = new Random(Guid.NewGuid().GetHashCode());
+
             if (randomSeed == 0)
             {
-                this.randomSeed = (int)(DateTime.Now.Ticks & 0x0000FFFF);
+                this.randomSeed = Guid.NewGuid().GetHashCode();
             }
             else
             {
                 this.randomSeed = randomSeed;
-
             }
+
+            random = new Random(this.randomSeed);
+        }
+
+        public NeuralNetwork(NeuralNetworkConfig configuration, float learningRate, int randomSeed = 0)
+        {
+            if (randomSeed == 0)
+            {
+                this.randomSeed = Guid.NewGuid().GetHashCode();
+            }
+            else
+            {
+                this.randomSeed = randomSeed;
+            }
+
             random = new Random(this.randomSeed);
 
             this.configuration = configuration;
@@ -291,8 +307,10 @@ namespace Algorithms
         /// <summary>
         /// Used as a simple mutation function for any genetic implementations.
         /// </summary>
-        public void Mutate(double mutationProbability, float mutationSeverity)
+        public void Mutate(double mutationProbability, float mutationSeverity, int randomSeed = 0)
         {
+            Reseed(randomSeed);
+
             for (int i = 0; i < biases.Length; i++)
             {
                 for (int j = 0; j < biases[i].Length; j++)
