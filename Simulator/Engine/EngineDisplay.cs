@@ -4,6 +4,9 @@ using System.Windows.Forms;
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// Handles all matters related to screen metrics.
+    /// </summary>
     public class EngineDisplay
     {
         private Core _core;

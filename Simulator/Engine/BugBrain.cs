@@ -2,6 +2,9 @@
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// This is a pre-trained bug brain with some basic intelligence on obsticle avoidance.
+    /// </summary>
     public static class BugBrain
     {
         public static class Inputs
@@ -36,22 +39,22 @@ namespace Simulator.Engine
 
                 for (int i = 0; i < 10000; i++)
                 {
-                    //Left side detection:
+                    //Left side detection, go right.
                     _brain.BackPropagate(TrainingScenerio(1, 0, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(0, 1, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(1, 1, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
 
-                    //Right side detection:
+                    //Right side detection, go left.
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 1), TrainingDecision(1, 0, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 0), TrainingDecision(1, 0, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 1), TrainingDecision(1, 0, 1, 1, 0));
 
-                    //Front side detection:
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 1, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
+                    //Front side detection, so left or right.
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 1, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(0, 1, 1, 1, 0), TrainingDecision(1, 1, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(1, 1, 1, 1, 1), TrainingDecision(1, 1, 1, 1, 0));
 
-                    //No dection side detection:
+                    //No objects dection, speed up and cruise.
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 0), TrainingDecision(0.4f, 0.4f, 0.4f, 0.9f, 0.9f));
                 }
             }

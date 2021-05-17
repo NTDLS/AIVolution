@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace Simulator.Engine
 {
-    public class ActorTextBlock : BaseGraphicObject
+    public class ActorTextBlock : ActorBase
     {
         private Rectangle? _prevRegion = null;
         private Font _font;

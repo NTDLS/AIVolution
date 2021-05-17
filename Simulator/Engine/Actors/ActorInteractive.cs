@@ -1,7 +1,7 @@
 ﻿namespace Simulator.Engine
 {
 
-    public class ActorInteractive : BaseGraphicObject
+    public class ActorInteractive : ActorBase
     {
         public ActorInteractive(Core core, string name)
             : base(core, name)

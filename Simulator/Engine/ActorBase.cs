@@ -5,18 +5,18 @@ using System.Drawing;
 
 namespace Simulator.Engine
 {
-    public class BaseGraphicObject
+    public class ActorBase
     {
         #region Properties.
         public Core Core;
 
-        public delegate void PositionChanged(BaseGraphicObject obj);
+        public delegate void PositionChanged(ActorBase obj);
         public event PositionChanged OnPositionChanged;
 
-        public delegate void Rotated(BaseGraphicObject obj);
+        public delegate void Rotated(ActorBase obj);
         public event Rotated OnRotated;
 
-        public delegate void VisibilityChange(BaseGraphicObject obj);
+        public delegate void VisibilityChange(ActorBase obj);
         public event VisibilityChange OnVisibilityChange;
 
         public Guid UID { get; private set; } = Guid.NewGuid();
@@ -158,7 +158,7 @@ namespace Simulator.Engine
 
         #endregion
 
-        public BaseGraphicObject(Core core, string name = "")
+        public ActorBase(Core core, string name = "")
         {
             Name = name;
             Core = core;
@@ -167,7 +167,6 @@ namespace Simulator.Engine
             Velocity.MaxRotationSpeed = Constants.Limits.MaxPlayerSpeed;
             Velocity.ThrottlePercentage = 0;
         }
-
 
         public virtual void ApplyIntelligence()
         {
@@ -253,7 +252,7 @@ namespace Simulator.Engine
             }
         }
 
-        public bool Intersects(BaseGraphicObject otherObject)
+        public bool Intersects(ActorBase otherObject)
         {
             if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
             {
@@ -268,7 +267,7 @@ namespace Simulator.Engine
         /// <param name="otherObject"></param>
         /// <param name="sizeAdjust"></param>
         /// <returns></returns>
-        public bool Intersects(BaseGraphicObject otherObject, PointD sizeAdjust)
+        public bool Intersects(ActorBase otherObject, PointD sizeAdjust)
         {
             if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
             {
@@ -283,9 +282,9 @@ namespace Simulator.Engine
             return false;
         }
 
-        public List<BaseGraphicObject> Intersections()
+        public List<ActorBase> Intersections()
         {
-            var intersections = new List<BaseGraphicObject>();
+            var intersections = new List<ActorBase>();
 
             foreach (var intersection in Core.Actors.Collection)
             {
@@ -320,7 +319,7 @@ namespace Simulator.Engine
             }
         }
 
-        public void MoveInDirectionOf(BaseGraphicObject obj, double? speed = null)
+        public void MoveInDirectionOf(ActorBase obj, double? speed = null)
         {
             this.Velocity.Angle.Degrees = PointD.AngleTo(this.Location, obj.Location);
 
@@ -335,7 +334,7 @@ namespace Simulator.Engine
         /// </summary>
         /// <param name="atObj"></param>
         /// <returns></returns>
-        public double DeltaAngle(BaseGraphicObject atObj)
+        public double DeltaAngle(ActorBase atObj)
         {
             return Utility.DeltaAngle(this, atObj);
         }
@@ -345,27 +344,27 @@ namespace Simulator.Engine
         /// </summary>
         /// <param name="atObj"></param>
         /// <returns></returns>
-        public double AngleTo(BaseGraphicObject atObj)
+        public double AngleTo(ActorBase atObj)
         {
             return Utility.AngleTo(this, atObj);
         }
 
-        public bool IsPointingAt(BaseGraphicObject atObj, double toleranceDegrees, double maxDistance, double offsetAngle)
+        public bool IsPointingAt(ActorBase atObj, double toleranceDegrees, double maxDistance, double offsetAngle)
         {
             return Utility.IsPointingAt(this, atObj, toleranceDegrees, maxDistance, offsetAngle);
         }
 
-        public bool IsPointingAt( BaseGraphicObject atObj, double toleranceDegrees, double maxDistance)
+        public bool IsPointingAt(ActorBase atObj, double toleranceDegrees, double maxDistance)
         {
             return Utility.IsPointingAt(this, atObj, toleranceDegrees, maxDistance);
         }
 
-        public bool IsPointingAt(BaseGraphicObject atObj, double toleranceDegrees)
+        public bool IsPointingAt(ActorBase atObj, double toleranceDegrees)
         {
             return Utility.IsPointingAt(this, atObj, toleranceDegrees);
         }
 
-        public double DistanceTo(BaseGraphicObject to)
+        public double DistanceTo(ActorBase to)
         {
             return PointD.DistanceTo(this.Location, to.Location);
         }

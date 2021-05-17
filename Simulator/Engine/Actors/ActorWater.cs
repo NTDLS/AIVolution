@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simulator.Engine
 {
-    public class ActorWater : BaseGraphicObject
+    public class ActorWater : ActorBase
     {
         public ActorWater(Core core)
             : base(core)

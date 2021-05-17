@@ -1,11 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// Keeps track of the enigne frame-rate.
+    /// </summary>
     public class FrameCounter
     {
         public DateTime _lastFrame;

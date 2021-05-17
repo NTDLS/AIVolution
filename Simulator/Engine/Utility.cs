@@ -116,28 +116,28 @@ namespace Simulator.Engine
         /// <param name="from"></param>
         /// <param name="to"></param>
         /// <returns></returns>
-        public static double AngleTo(BaseGraphicObject from, BaseGraphicObject to)
+        public static double AngleTo(ActorBase from, ActorBase to)
         {
             return PointD.AngleTo(from.Location, to.Location);
         }
 
-        public static double AngleTo(PointD from, BaseGraphicObject to)
+        public static double AngleTo(PointD from, ActorBase to)
         {
             return PointD.AngleTo(from, to.Location);
         }
 
-        public static double AngleTo(BaseGraphicObject from, PointD to)
+        public static double AngleTo(ActorBase from, PointD to)
         {
             return PointD.AngleTo(from.Location, to);
         }
 
-        public static bool IsPointingAt(BaseGraphicObject fromObj, BaseGraphicObject atObj, double toleranceDegrees)
+        public static bool IsPointingAt(ActorBase fromObj, ActorBase atObj, double toleranceDegrees)
         {
             var deltaAngle = Math.Abs(DeltaAngle(fromObj, atObj));
             return deltaAngle < toleranceDegrees || deltaAngle > (360 - toleranceDegrees);
         }
 
-        public static bool IsPointingAt(BaseGraphicObject fromObj, BaseGraphicObject atObj, double toleranceDegrees, double maxDistance, double offsetAngle = 0)
+        public static bool IsPointingAt(ActorBase fromObj, ActorBase atObj, double toleranceDegrees, double maxDistance, double offsetAngle = 0)
         {
             var deltaAngle = Math.Abs(DeltaAngle(fromObj, atObj, offsetAngle));
             if (deltaAngle < toleranceDegrees || deltaAngle > (360 - toleranceDegrees))
@@ -157,7 +157,7 @@ namespace Simulator.Engine
         /// <param name="atObj"></param>
         /// <param name="offsetAngle">-90 degrees would be looking off te left-hand side of the object</param>
         /// <returns></returns>
-        public static double DeltaAngle(BaseGraphicObject fromObj, BaseGraphicObject atObj, double offsetAngle = 0)
+        public static double DeltaAngle(ActorBase fromObj, ActorBase atObj, double offsetAngle = 0)
         {
             double fromAngle = fromObj.Velocity.Angle.Degrees + offsetAngle;
 
@@ -179,7 +179,7 @@ namespace Simulator.Engine
             return angleTo;
         }
 
-        public static double DistanceTo(BaseGraphicObject from, BaseGraphicObject to)
+        public static double DistanceTo(ActorBase from, ActorBase to)
         {
             return PointD.DistanceTo(from.Location, to.Location);
         }

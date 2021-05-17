@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simulator.Engine
 {
-    public class ActorGrass : BaseGraphicObject
+    public class ActorGrass : ActorBase
     {
         public ActorGrass(Core core)
             : base(core)

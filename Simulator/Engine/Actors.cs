@@ -6,7 +6,7 @@ namespace Simulator.Engine
     {
         private Core _core;
 
-        public List<BaseGraphicObject> Collection = new List<BaseGraphicObject>();
+        public List<ActorBase> Collection = new List<ActorBase>();
 
         public Actors(Core core)
         {
@@ -14,7 +14,7 @@ namespace Simulator.Engine
 
         }
 
-        public void Add(BaseGraphicObject actor)
+        public void Add(ActorBase actor)
         {
             Collection.Add(actor);
         }

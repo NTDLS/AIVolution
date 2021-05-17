@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Simulator.Engine
 {
-    public class ActorLava : BaseGraphicObject
+    public class ActorLava : ActorBase
     {
         public ActorLava(Core core)
             : base(core)

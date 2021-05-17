@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// Handles keyboard input.
+    /// </summary>
     public class EngineInput
     {
         private Core _core;

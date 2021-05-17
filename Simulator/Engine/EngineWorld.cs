@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// Handles what the world/map looks like - populates objects.
+    /// </summary>
     public class EngineWorld
     {
         private Core _core;

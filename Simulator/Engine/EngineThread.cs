@@ -4,6 +4,9 @@ using System.Threading;
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// This is the thread that all objects are advanced in. It also spawns map creation and object descruction.
+    /// </summary>
     public class EngineThread
     {
         private Core _core;

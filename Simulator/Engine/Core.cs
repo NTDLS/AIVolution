@@ -7,6 +7,9 @@ using System.Linq;
 
 namespace Simulator.Engine
 {
+    /// <summary>
+    /// This is the engine core, all other components branch off from here.
+    /// </summary>
     public class Core
     {
         private static dynamic DynamicCast(dynamic source, Type dest) => Convert.ChangeType(source, dest);

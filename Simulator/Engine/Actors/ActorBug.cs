@@ -6,7 +6,7 @@ using System.Linq;
 namespace Simulator.Engine
 {
 
-    public class ActorBug : BaseGraphicObject
+    public class ActorBug : ActorBase
     {
         private DateTime? _lastDecisionTime;
         private PointD _lastDecisionLocation = null;
