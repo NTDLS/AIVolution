@@ -2,26 +2,26 @@
 
 namespace Simulator.Engine
 {
-    static class BrainInputs
+    public static class BugBrain
     {
-        public const int ObjTo90Left = 0;
-        public const int ObjTo45Left = 1;
-        public const int ObjAhead = 2;
-        public const int ObjTo45Right = 3;
-        public const int ObjTo90Right = 4;
-    }
+        public static class Inputs
+        {
+            public const int ObjTo90Left = 0;
+            public const int ObjTo45Left = 1;
+            public const int ObjAhead = 2;
+            public const int ObjTo45Right = 3;
+            public const int ObjTo90Right = 4;
+        }
 
-    static class BrainOutputs
-    {
-        public const int ShouldRotate = 0;
-        public const int RotateLeftOrRight = 1;
-        public const int RotateLeftOrRightAmount = 2;
-        public const int ShouldSpeedUpOrDown = 3;
-        public const int SpeedUpOrDownAmount = 4;
-    }
+        public static class Outputs
+        {
+            public const int ShouldRotate = 0;
+            public const int RotateLeftOrRight = 1;
+            public const int RotateLeftOrRightAmount = 2;
+            public const int ShouldSpeedUpOrDown = 3;
+            public const int SpeedUpOrDownAmount = 4;
+        }
 
-    public static class TrainedBrain
-    {
         private static NeuralNetwork _brain = null;
 
         public static NeuralNetwork GetBrain()
@@ -36,10 +36,6 @@ namespace Simulator.Engine
 
                 for (int i = 0; i < 10000; i++)
                 {
-                    _brain.BackPropagate(TrainingScenerio(1, 0, 0, 0, 0), TrainingDecision(0.5f, 0.5f, 0.5f, 0, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 1, 0, 0, 0), TrainingDecision(0.5f, 0.5f, 0.5f, 0, 0));
-                    _brain.BackPropagate(TrainingScenerio(1, 1, 0, 0, 0), TrainingDecision(0.5f, 0.5f, 0.5f, 0, 0));
-
                     //Left side detection:
                     _brain.BackPropagate(TrainingScenerio(1, 0, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(0, 1, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
@@ -67,11 +63,11 @@ namespace Simulator.Engine
         {
             var scenerio = new float[5];
 
-            scenerio[BrainInputs.ObjTo90Left] = objectTo90LeftCloseness;
-            scenerio[BrainInputs.ObjTo45Left] = objectTo45LeftCloseness;
-            scenerio[BrainInputs.ObjAhead] = objectAheadCloseness;
-            scenerio[BrainInputs.ObjTo45Right] = objectTo45RightCloseness;
-            scenerio[BrainInputs.ObjTo90Right] = objectTo90RightCloseness;
+            scenerio[Inputs.ObjTo90Left] = objectTo90LeftCloseness;
+            scenerio[Inputs.ObjTo45Left] = objectTo45LeftCloseness;
+            scenerio[Inputs.ObjAhead] = objectAheadCloseness;
+            scenerio[Inputs.ObjTo45Right] = objectTo45RightCloseness;
+            scenerio[Inputs.ObjTo90Right] = objectTo90RightCloseness;
 
             return scenerio;
         }
@@ -80,11 +76,11 @@ namespace Simulator.Engine
         {
             var decision = new float[5];
 
-            decision[BrainOutputs.ShouldRotate] = shouldRotate;
-            decision[BrainOutputs.RotateLeftOrRight] = rotateLeftOrRight;
-            decision[BrainOutputs.RotateLeftOrRightAmount] = rotateLeftOrRightAmount;
-            decision[BrainOutputs.ShouldSpeedUpOrDown] = shouldSpeedUpOrDown;
-            decision[BrainOutputs.SpeedUpOrDownAmount] = speedUpOrDownAmount;
+            decision[Outputs.ShouldRotate] = shouldRotate;
+            decision[Outputs.RotateLeftOrRight] = rotateLeftOrRight;
+            decision[Outputs.RotateLeftOrRightAmount] = rotateLeftOrRightAmount;
+            decision[Outputs.ShouldSpeedUpOrDown] = shouldSpeedUpOrDown;
+            decision[Outputs.SpeedUpOrDownAmount] = speedUpOrDownAmount;
 
             return decision;
         }

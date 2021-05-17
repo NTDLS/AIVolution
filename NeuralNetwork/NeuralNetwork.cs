@@ -332,7 +332,7 @@ namespace Algorithms
         }
 
         /// <summary>
-        /// Comparing For Genetic implementations. Used for sorting based on the fitness of the network
+        /// Comparing For genetic implementations. Used for sorting based on the fitness of the network
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>

@@ -1,31 +1,47 @@
 ﻿using Algorithms;
 using Simulator.Engine.Types;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Simulator.Engine
 {
 
     public class ActorBug : BaseGraphicObject
     {
-        public NeuralNetwork Brain { get; set; }
+        private DateTime? _lastDecisionTime;
+        private PointD _lastDecisionLocation = null;
 
+        public NeuralNetwork Brain { get; private set; }
         public double MinimumTravelDistanceBeforeDamage { get; set; } = 20;
         public double MaxObserveDistance { get; set; } = 100;
         public double VisionToleranceDegrees { get; set; } = 25;
-        public DateTime? LastDecisionTime { get; set; }
-        public PointD LastDecisionLocation { get; set; }
         public int MillisecondsBetweenDecisions { get; set; } = 50;
         public float DecisionSensitivity { get; set; } = (float)Utility.RandomNumber(0.25, 0.55);
-        public int LifeForce { get; set; } = 100; //Hitpoints? :)
+        public int Health { get; set; } = 100;
 
         public ActorBug(Core core, NeuralNetwork brain = null)
             : base(core)
         {
-            this.SetImage("../../../Images/Bug16x16.png");
+            if (brain != null)
+            {
+                if (brain.Fitness > 1)
+                {
+                    this.SetImage("../../../Images/Bug32x32.png");
+                }
+                else if (brain.Fitness > 0)
+                {
+                    this.SetImage("../../../Images/Bug24x24.png");
+                }
+                else
+                {
+                    this.SetImage("../../../Images/Bug16x16.png");
+                }
+            }
+            else
+            {
+                this.SetImage("../../../Images/Bug16x16.png");
+            }
+
             this.Location = Core.Display.RandomOnScreenLocation();
             this.Velocity.Angle.Degrees = Utility.RandomNumber(0, 359);
             this.Velocity.ThrottlePercentage = Utility.RandomNumber(0.10, 0.25);
@@ -40,7 +56,7 @@ namespace Simulator.Engine
 
             if (brain == null)
             {
-                Brain = TrainedBrain.GetBrain();
+                Brain = BugBrain.GetBrain();
             }
             else
             {
@@ -56,26 +72,26 @@ namespace Simulator.Engine
 
             DateTime now = DateTime.UtcNow;
 
-            if (LastDecisionTime == null ||  (now - (DateTime)LastDecisionTime).TotalMilliseconds >= MillisecondsBetweenDecisions)
+            if (_lastDecisionTime == null ||  (now - (DateTime)_lastDecisionTime).TotalMilliseconds >= MillisecondsBetweenDecisions)
             {
-                if (LastDecisionLocation != null)
+                if (_lastDecisionLocation != null)
                 {
-                    if (this.DistanceTo(LastDecisionLocation as PointD) < MinimumTravelDistanceBeforeDamage)
+                    if (this.DistanceTo(_lastDecisionLocation as PointD) < MinimumTravelDistanceBeforeDamage)
                     {
-                        this.LifeForce--;
+                        this.Health--;
                     }
                 }
-                LastDecisionLocation = this.Location;
+                _lastDecisionLocation = this.Location;
 
-                var decidingFactors = GetVisionIntelligence();
+                var decidingFactors = GetVisionInputs();
 
                 var decisions = this.Brain.FeedForward(decidingFactors);
 
-                if (decisions[BrainOutputs.ShouldRotate] >= DecisionSensitivity)
+                if (decisions[BugBrain.Outputs.ShouldRotate] >= DecisionSensitivity)
                 {
-                    var rotateAmount = decisions[BrainOutputs.RotateLeftOrRightAmount];
+                    var rotateAmount = decisions[BugBrain.Outputs.RotateLeftOrRightAmount];
 
-                    if (decisions[BrainOutputs.RotateLeftOrRight] >= DecisionSensitivity)
+                    if (decisions[BugBrain.Outputs.RotateLeftOrRight] >= DecisionSensitivity)
                     {
                         this.Rotate(45 * rotateAmount);
                     }
@@ -85,14 +101,14 @@ namespace Simulator.Engine
                     }
                 }
 
-                if (decisions[BrainOutputs.ShouldSpeedUpOrDown] >= DecisionSensitivity)
+                if (decisions[BugBrain.Outputs.ShouldSpeedUpOrDown] >= DecisionSensitivity)
                 {
-                    double speedFactor = decisions[BrainOutputs.SpeedUpOrDownAmount];
+                    double speedFactor = decisions[BugBrain.Outputs.SpeedUpOrDownAmount];
                     this.Velocity.ThrottlePercentage += (speedFactor / 5.0);
                 }
                 else
                 {
-                    double speedFactor = decisions[BrainOutputs.SpeedUpOrDownAmount];
+                    double speedFactor = decisions[BugBrain.Outputs.SpeedUpOrDownAmount];
                     this.Velocity.ThrottlePercentage += -(speedFactor / 5.0);
                 }
 
@@ -105,7 +121,7 @@ namespace Simulator.Engine
                     this.Velocity.ThrottlePercentage = 0.10;
                 }
 
-                LastDecisionTime = now;
+                _lastDecisionTime = now;
             }
 
             if (this.IsOnScreen == false)
@@ -116,18 +132,10 @@ namespace Simulator.Engine
 
             var intersections = Intersections();
 
-            if (intersections.Where(o=> o is not ActorBug).Count() > 0 || this.LifeForce == 0)
+            if (intersections.Where(o=> o is ActorRock || o is ActorLava).Count() > 0 || this.Health == 0)
             {
                 //Kill this bug:
-                this.Visable = false;
-
-                /* //Nah, he didnt do anything wrong.
-                //Kill all coliding bugs:
-                foreach (var intersection in intersections)
-                {
-                    intersection.Visable = false;
-                }
-                */
+                this.Delete();
             }
         }
 
@@ -135,7 +143,7 @@ namespace Simulator.Engine
         /// Looks around and gets neuralnetwork inputs for visible proximity objects.
         /// </summary>
         /// <returns></returns>
-        private float[] GetVisionIntelligence()
+        private float[] GetVisionInputs()
         {
             var scenerio = new float[5];
 
@@ -147,39 +155,37 @@ namespace Simulator.Engine
                     continue;
                 }
 
+                double distance = this.DistanceTo(other);
+                double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
+
                 if (this.IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -90))
                 {
-                    double distance = this.DistanceTo(other);
-                    double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
-                    scenerio[BrainInputs.ObjTo90Left] = (float)(percentageOfCloseness > scenerio[BrainInputs.ObjTo90Left] ? percentageOfCloseness : scenerio[BrainInputs.ObjTo90Left]);
+                    scenerio[BugBrain.Inputs.ObjTo90Left] = (float)
+                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo90Left] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo90Left]);
                 }
 
                 if (this.IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -45))
                 {
-                    double distance = this.DistanceTo(other);
-                    double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
-                    scenerio[BrainInputs.ObjTo45Left] = (float)(percentageOfCloseness > scenerio[BrainInputs.ObjTo45Left] ? percentageOfCloseness : scenerio[BrainInputs.ObjTo45Left]);
+                    scenerio[BugBrain.Inputs.ObjTo45Left] = (float)
+                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo45Left] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo45Left]);
                 }
 
                 if (this.IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 0))
                 {
-                    double distance = this.DistanceTo(other);
-                    double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
-                    scenerio[BrainInputs.ObjAhead] = (float)(percentageOfCloseness > scenerio[BrainInputs.ObjAhead] ? percentageOfCloseness : scenerio[BrainInputs.ObjAhead]);
+                    scenerio[BugBrain.Inputs.ObjAhead] = (float)
+                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjAhead] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjAhead]);
                 }
 
                 if (this.IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, +45))
                 {
-                    double distance = this.DistanceTo(other);
-                    double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
-                    scenerio[BrainInputs.ObjTo45Right] = (float)(percentageOfCloseness > scenerio[BrainInputs.ObjTo45Right] ? percentageOfCloseness : scenerio[BrainInputs.ObjTo45Right]);
+                    scenerio[BugBrain.Inputs.ObjTo45Right] = (float)
+                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo45Right] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo45Right]);
                 }
 
                 if (this.IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, +90))
                 {
-                    double distance = this.DistanceTo(other);
-                    double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
-                    scenerio[BrainInputs.ObjTo90Right] = (float)(percentageOfCloseness > scenerio[BrainInputs.ObjTo90Right] ? percentageOfCloseness : scenerio[BrainInputs.ObjTo90Right]);
+                    scenerio[BugBrain.Inputs.ObjTo90Right] = (float)
+                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo90Right] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo90Right]);
                 }
             }
 

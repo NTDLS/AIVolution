@@ -10,23 +10,22 @@ namespace Simulator.Engine
     public class Core
     {
         private static dynamic DynamicCast(dynamic source, Type dest) => Convert.ChangeType(source, dest);
+        private Dictionary<string, Bitmap> _bitmapCache { get; set; } = new Dictionary<string, Bitmap>();
 
         public bool IsRendering { get; private set; } = false;
         public object DrawingSemaphore { get; private set; } = new object();
         public Actors Actors { get; private set; }
         public EngineThread Thread { get; private set; }
         public EngineDisplay Display { get; private set; }
-        public EngineInput Input { get; set; }
-
-        public Control DrawingSurface;
-        private Dictionary<string, Bitmap> _Bitmaps { get; set; } = new Dictionary<string, Bitmap>();
+        public EngineInput Input { get; private set; }
+        public EngineWorld World { get; private set; }
 
         public Core(Control drawingSurface, Size visibleSize)
         {
-            DrawingSurface = drawingSurface;
             Actors = new Actors(this);
             Thread = new EngineThread(this);
             Input = new EngineInput(this);
+            World = new EngineWorld(this);
             Display = new EngineDisplay(this, drawingSurface, visibleSize);
         }
 
@@ -83,11 +82,11 @@ namespace Simulator.Engine
 
             path = path.ToLower();
 
-            lock (_Bitmaps)
+            lock (_bitmapCache)
             {
-                if (_Bitmaps.ContainsKey(path))
+                if (_bitmapCache.ContainsKey(path))
                 {
-                    result = _Bitmaps[path].Clone() as Bitmap;
+                    result = _bitmapCache[path].Clone() as Bitmap;
                 }
                 else
                 {
@@ -95,7 +94,7 @@ namespace Simulator.Engine
                     using (var newbitmap = new Bitmap(image))
                     {
                         result = (Bitmap)newbitmap.Clone();
-                        _Bitmaps.Add(path, result);
+                        _bitmapCache.Add(path, result);
                     }
                 }
             }

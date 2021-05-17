@@ -71,8 +71,8 @@ namespace Simulator.Engine
 
         #endregion
 
-        public ActorTextBlock(Core core, string font, Brush color, double size, PointD location, bool isPositionStatic)
-            : base(core)
+        public ActorTextBlock(Core core, string font, Brush color, double size, PointD location, bool isPositionStatic, string name = "")
+            : base(core, name)
         {
             IsPositionStatic = isPositionStatic;
             Location = new PointD(location);

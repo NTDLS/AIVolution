@@ -7,6 +7,7 @@ namespace Simulator.Engine
 {
     public class BaseGraphicObject
     {
+        #region Properties.
         public Core Core;
 
         public delegate void PositionChanged(BaseGraphicObject obj);
@@ -21,9 +22,9 @@ namespace Simulator.Engine
         public Guid UID { get; private set; } = Guid.NewGuid();
         public VelocityD Velocity { get; set; } = new VelocityD();
         public RotationMode RotationMode { get; set; }
+        public string Name { get; set; }
 
         private Image _image;
-
         private PointD _location = new PointD();
 
         /// <summary>
@@ -107,21 +108,19 @@ namespace Simulator.Engine
             }
         }
 
-        private bool _readyForDeletion;
-        public bool ReadyForDeletion
+        private bool _isDeleted;
+        public bool IsDeleted
         {
             get
             {
-                return _readyForDeletion;
+                return _isDeleted;
             }
-            set
-            {
-                _readyForDeletion = value;
-                if (_readyForDeletion)
-                {
-                    Visable = false;
-                }
-            }
+        }
+
+        public void Delete()
+        {
+            _isDeleted = true;
+            Visable = false;
         }
 
         private bool _isVisible = true;
@@ -129,7 +128,7 @@ namespace Simulator.Engine
         {
             get
             {
-                return _isVisible && !_readyForDeletion;
+                return _isVisible && !_isDeleted;
             }
             set
             {
@@ -142,20 +141,11 @@ namespace Simulator.Engine
                         (int)(_location.Y - (_size.Height / 2.0)),
                         _size.Width, _size.Height);
 
-                    Core.DrawingSurface.Invalidate(invalidRect);
+                    Core.Display.DrawingSurface.Invalidate(invalidRect);
 
                     OnVisibilityChange?.Invoke(this);
                 }
             }
-        }
-
-        public BaseGraphicObject(Core core)
-        {
-            Core = core;
-            RotationMode = RotationMode.Upsize;
-            Velocity.MaxSpeed = Constants.Limits.MaxPlayerSpeed;
-            Velocity.MaxRotationSpeed = Constants.Limits.MaxPlayerSpeed;
-            Velocity.ThrottlePercentage = 0;
         }
 
         public bool IsOnScreen
@@ -165,6 +155,19 @@ namespace Simulator.Engine
                 return Core.Display.VisibleBounds.IntersectsWith(Bounds);
             }
         }
+
+        #endregion
+
+        public BaseGraphicObject(Core core, string name = "")
+        {
+            Name = name;
+            Core = core;
+            RotationMode = RotationMode.Upsize;
+            Velocity.MaxSpeed = Constants.Limits.MaxPlayerSpeed;
+            Velocity.MaxRotationSpeed = Constants.Limits.MaxPlayerSpeed;
+            Velocity.ThrottlePercentage = 0;
+        }
+
 
         public virtual void ApplyIntelligence()
         {
@@ -177,7 +180,7 @@ namespace Simulator.Engine
                 (int)(_location.X - (_size.Width / 2.0)),
                 (int)(_location.Y - (_size.Height / 2.0)),
                 _size.Width, _size.Height);
-            Core.DrawingSurface.Invalidate(invalidRect);
+            Core.Display.DrawingSurface.Invalidate(invalidRect);
         }
 
         public void SetImage(Image image, Size? size = null)
@@ -252,7 +255,7 @@ namespace Simulator.Engine
 
         public bool Intersects(BaseGraphicObject otherObject)
         {
-            if (Visable && otherObject.Visable && !ReadyForDeletion && !otherObject.ReadyForDeletion)
+            if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
             {
                 return this.Bounds.IntersectsWith(otherObject.Bounds);
             }
@@ -267,7 +270,7 @@ namespace Simulator.Engine
         /// <returns></returns>
         public bool Intersects(BaseGraphicObject otherObject, PointD sizeAdjust)
         {
-            if (Visable && otherObject.Visable && !ReadyForDeletion && !otherObject.ReadyForDeletion)
+            if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
             {
                 var alteredHitBox = new RectangleF(
                     otherObject.Bounds.X - (float)(sizeAdjust.X / 2),

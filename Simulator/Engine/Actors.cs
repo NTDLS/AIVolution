@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Simulator.Engine
 {
@@ -21,6 +17,11 @@ namespace Simulator.Engine
         public void Add(BaseGraphicObject actor)
         {
             Collection.Add(actor);
+        }
+
+        public void RemoveDeletedActors()
+        {
+            Collection.RemoveAll(o => o.IsDeleted);
         }
     }
 }
