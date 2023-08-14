@@ -14,18 +14,38 @@ namespace Determinet
         public void AddLinearLayer(LayerType type, int nodes, double alpha, DoubleRange range)
         {
             var param = new object[2] { alpha, range };
-            _layers.Add(new NeuralNetworkLayer(type, nodes, ActivationType.Linear, param));
+            _layers.Add(new NeuralNetworkLayer(type, nodes, ActivationType.Linear, null, param));
         }
 
         public void AddBernoulliLayer(LayerType type, int nodes, double alpha)
         {
             var param = new object[1] { alpha };
-            _layers.Add(new NeuralNetworkLayer(type, nodes, ActivationType.Bernoulli, param));
+            _layers.Add(new NeuralNetworkLayer(type, nodes, ActivationType.Bernoulli, null, param));
         }
 
         public void AddLayer(LayerType type, int nodes, ActivationType activationType)
         {
             _layers.Add(new NeuralNetworkLayer(type, nodes, activationType));
+        }
+
+        public void AddInputLayer(int nodes, ActivationType activationType)
+        {
+            _layers.Add(new NeuralNetworkLayer(LayerType.Input, nodes, activationType));
+        }
+
+        public void AddInputLayer(ActivationType activationType, string[] inputNodeNames)
+        {
+            _layers.Add(new NeuralNetworkLayer(LayerType.Input, inputNodeNames.Length, activationType, inputNodeNames));
+        }
+
+        public void AddOutputLayer(ActivationType activationType, string[] inputNodeNames)
+        {
+            _layers.Add(new NeuralNetworkLayer(LayerType.Output, inputNodeNames.Length, activationType, inputNodeNames));
+        }
+
+        public void AddOutputLayer(int nodes, ActivationType activationType, string[] outputNodeNames)
+        {
+            _layers.Add(new NeuralNetworkLayer(LayerType.Output, nodes, activationType, outputNodeNames));
         }
 
         public void AddLayer(NeuralNetworkLayer layerConfig)

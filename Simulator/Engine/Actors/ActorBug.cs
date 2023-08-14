@@ -87,21 +87,13 @@ namespace Simulator.Engine
 
                 var decidingFactors = GetVisionInputs();
 
-                var rawDecisionValues = Brain.FeedForward(decidingFactors.ToArray());
+                var decisions = Brain.FeedForward(decidingFactors);
 
-                var decisions = new AIParameters<AIOutputs, double>();
-
-                decisions.Set(AIOutputs.ShouldRotate, rawDecisionValues[(int)AIOutputs.ShouldRotate]);
-                decisions.Set(AIOutputs.RotateLeftOrRight, rawDecisionValues[(int)AIOutputs.RotateLeftOrRight]);
-                decisions.Set(AIOutputs.RotateLeftOrRightAmount, rawDecisionValues[(int)AIOutputs.RotateLeftOrRightAmount]);
-                decisions.Set(AIOutputs.ShouldSpeedUpOrDown, rawDecisionValues[(int)AIOutputs.ShouldSpeedUpOrDown]);
-                decisions.Set(AIOutputs.SpeedUpOrDownAmount, rawDecisionValues[(int)AIOutputs.SpeedUpOrDownAmount]);
-
-                if (decisions.Get(AIOutputs.ShouldRotate) >= DecisionSensitivity)
+                if (decisions.Get(AIOutputs.OutChangeDirection) >= DecisionSensitivity)
                 {
-                    var rotateAmount = decisions.Get(AIOutputs.RotateLeftOrRightAmount);
+                    var rotateAmount = decisions.Get(AIOutputs.OutRotationAmount);
 
-                    if (decisions.Get(AIOutputs.RotateLeftOrRight) >= DecisionSensitivity)
+                    if (decisions.Get(AIOutputs.OutRotateDirection) >= DecisionSensitivity)
                     {
                         Rotate(45 * rotateAmount);
                     }
@@ -111,14 +103,14 @@ namespace Simulator.Engine
                     }
                 }
 
-                if (decisions.Get(AIOutputs.ShouldSpeedUpOrDown) >= DecisionSensitivity)
+                if (decisions.Get(AIOutputs.OutChangeSpeed) >= DecisionSensitivity)
                 {
-                    double speedFactor = decisions.Get(AIOutputs.SpeedUpOrDownAmount);
+                    double speedFactor = decisions.Get(AIOutputs.OutChangeSpeedAmount);
                     Velocity.ThrottlePercentage += (speedFactor / 5.0);
                 }
                 else
                 {
-                    double speedFactor = decisions.Get(AIOutputs.SpeedUpOrDownAmount);
+                    double speedFactor = decisions.Get(AIOutputs.OutChangeSpeedAmount);
                     Velocity.ThrottlePercentage += -(speedFactor / 5.0);
                 }
 
@@ -153,9 +145,9 @@ namespace Simulator.Engine
         /// Looks around and gets neuralnetwork inputs for visible proximity objects.
         /// </summary>
         /// <returns></returns>
-        private AIParameters<AIInputs, double> GetVisionInputs()
+        private AIParameters GetVisionInputs()
         {
-            var aiParams = new AIParameters<AIInputs, double>();
+            var aiParams = new AIParameters();
 
             //The closeness is expressed as a percentage of how close to the other object they are. 100% being touching 0% being 1 pixel from out-of-range.
             foreach (var other in Core.Actors.Collection.Where(o => o is not ActorTextBlock))
@@ -168,44 +160,29 @@ namespace Simulator.Engine
                 double distance = DistanceTo(other);
                 double percentageOfCloseness = 1 - (distance / MaxObserveDistance);
 
-                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -90))
+                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 0))
                 {
-                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo90Left, 0))
-                    {
-                        aiParams.Set(AIInputs.ObjTo90Left, percentageOfCloseness);
-                    }
+                    aiParams.SetIfLess(AIInputs.In0Degrees, percentageOfCloseness);
+                }
+
+                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 45))
+                {
+                    aiParams.SetIfLess(AIInputs.In45Degrees, percentageOfCloseness);
+                }
+
+                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 90))
+                {
+                    aiParams.SetIfLess(AIInputs.In90Degrees, percentageOfCloseness);
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -45))
                 {
-                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo45Left, 0))
-                    {
-                        aiParams.Set(AIInputs.ObjTo45Left, percentageOfCloseness);
-                    }
+                    aiParams.SetIfLess(AIInputs.In270Degrees, percentageOfCloseness);
                 }
 
-                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 0))
+                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -90))
                 {
-                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjAhead, 0))
-                    {
-                        aiParams.Set(AIInputs.ObjAhead, percentageOfCloseness);
-                    }
-                }
-
-                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, +45))
-                {
-                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo45Right, 0))
-                    {
-                        aiParams.Set(AIInputs.ObjTo45Right, percentageOfCloseness);
-                    }
-                }
-
-                if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, +90))
-                {
-                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo90Right, 0))
-                    {
-                        aiParams.Set(AIInputs.ObjTo90Right, percentageOfCloseness);
-                    }
+                    aiParams.SetIfLess(AIInputs.In315Degrees, percentageOfCloseness);
                 }
             }
 

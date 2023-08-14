@@ -1,7 +1,9 @@
 ﻿using Determinet.ActivationFunctions;
+using Determinet.Types;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 
 namespace Determinet
 {
@@ -56,6 +58,29 @@ namespace Determinet
             InitializeNeurons();
             InitializeBiases();
             InitializeWeights();
+        }
+
+        public AIParameters FeedForward(AIParameters param)
+        {
+            var inputAliases = _configuration.Layer(0).Aliases;
+            double[] inputInputs = new double[inputAliases.Length];
+            for (int i = 0; i < inputAliases.Length; i++)
+            {
+                var alias = inputAliases[i];
+                inputInputs[i] = param.Get(alias, 0);
+            }
+
+            var rawOutputs = FeedForward(inputInputs);
+
+            AIParameters friendlyOutputs = new();
+
+            var outputAliases = _configuration.Layer(_configuration.LayerCount - 1).Aliases;
+            for (int i = 0; i < outputAliases.Length; i++)
+            {
+                friendlyOutputs.Set(outputAliases[i], rawOutputs[i]);
+            }
+
+            return friendlyOutputs;
         }
 
         /// <summary>
@@ -153,6 +178,11 @@ namespace Determinet
         #endregion
 
         #region Backpropagation.
+
+        public void BackPropagate(AIParameters inputs, AIParameters expected)
+        {
+            BackPropagate(inputs.ToArray(), expected.ToArray());
+        }
 
         public void BackPropagate(double[] inputs, double[] expected)//backpropogation;
         {

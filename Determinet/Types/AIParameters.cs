@@ -1,14 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace Determinet.Types
 {
-    public class AIParameters<K, V> where V : IComparable<V>
+    public class AIParameters
     {
-        private readonly Dictionary<K, V> _dictonary = new();
+        private readonly Dictionary<string, double> _dictonary = new();
 
-        public void Set(K key, V value)
+        public void Set(string key, double value)
         {
             if (_dictonary.ContainsKey(key))
             {
@@ -20,43 +19,43 @@ namespace Determinet.Types
             }
         }
 
-        public void SetIfLess(K key, V value)
+        public void SetIfLess(string key, double value)
         {
-            var existingValue = Get(key);
-
-            if (existingValue.CompareTo(value) < 0)
+            if (_dictonary.ContainsKey(key) == false)
             {
-                if (_dictonary.ContainsKey(key))
+                _dictonary.Add(key, value);
+            }
+            else
+            {
+                var existingValue = _dictonary[key];
+
+                if (value < existingValue)
                 {
                     _dictonary[key] = value;
-                }
-                else
-                {
-                    _dictonary.Add(key, value);
                 }
             }
         }
 
-        public void SetIfGreater(K key, V value)
+        public void SetIfGreater(string key, double value)
         {
-            var existingValue = Get(key);
-
-            if (existingValue.CompareTo(value) > 0)
+            if (_dictonary.ContainsKey(key) == false)
             {
-                if (_dictonary.ContainsKey(key))
+                _dictonary.Add(key, value);
+            }
+            else
+            {
+                var existingValue = _dictonary[key];
+
+                if (value > existingValue)
                 {
                     _dictonary[key] = value;
-                }
-                else
-                {
-                    _dictonary.Add(key, value);
                 }
             }
         }
 
-        public V[] ToArray()
+        public double[] ToArray()
         {
-            var values = new V[_dictonary.Count];
+            var values = new double[_dictonary.Count];
             var keys = _dictonary.Keys.ToList();
             for (int i = 0; i < keys.Count; i++)
             {
@@ -65,14 +64,19 @@ namespace Determinet.Types
             return values;
         }
 
-        public V Get(K key)
+        public double Get(string key)
         {
             return _dictonary[key];
         }
 
-        public V Get(K key, V defaultValue)
+        public KeyValuePair<string, double> Get(int index)
         {
-            if (_dictonary.TryGetValue(key, out V value))
+            return _dictonary.ElementAt(index);
+        }
+
+        public double Get(string key, double defaultValue)
+        {
+            if (_dictonary.TryGetValue(key, out double value))
             {
                 return value;
             }

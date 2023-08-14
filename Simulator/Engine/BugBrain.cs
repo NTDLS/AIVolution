@@ -8,22 +8,22 @@ namespace Simulator.Engine
     /// </summary>
     public static class BugBrain
     {
-        public enum AIInputs
+        public static class AIInputs
         {
-            ObjTo90Left,
-            ObjTo45Left,
-            ObjAhead,
-            ObjTo45Right,
-            ObjTo90Right,
+            public const string In0Degrees = "In0Degrees";
+            public const string In45Degrees = "In45Degrees";
+            public const string In90Degrees = "In90Degrees";
+            public const string In270Degrees = "In270Degrees";
+            public const string In315Degrees = "In315Degrees";
         }
 
-        public enum AIOutputs
+        public static class AIOutputs
         {
-            ShouldRotate,
-            RotateLeftOrRight,
-            RotateLeftOrRightAmount,
-            ShouldSpeedUpOrDown,
-            SpeedUpOrDownAmount
+            public const string OutChangeDirection = "OutChangeDirection";
+            public const string OutRotateDirection = "OutRotateDirection";
+            public const string OutRotationAmount = "OutRotationAmount";
+            public const string OutChangeSpeed = "OutChangeSpeed";
+            public const string OutChangeSpeedAmount = "OutChangeSpeedAmount";
         }
 
         private static NeuralNetwork _brain = null;
@@ -33,9 +33,15 @@ namespace Simulator.Engine
             if (_brain == null)
             {
                 var nnConfig = new NeuralNetworkConfig();
-                nnConfig.AddLayer(LayerType.Input, 5, ActivationType.Linear); //Vision inputs
+
+                nnConfig.AddInputLayer(ActivationType.Linear, //Vision inputs
+                    new string[] { AIInputs.In0Degrees, AIInputs.In45Degrees, AIInputs.In90Degrees, AIInputs.In270Degrees, AIInputs.In315Degrees });
+
                 nnConfig.AddLayer(LayerType.Intermediate, 12, ActivationType.Linear);
-                nnConfig.AddLayer(LayerType.Output, 5, ActivationType.Linear); //Movement decisions.
+
+                nnConfig.AddOutputLayer(ActivationType.Linear, //Vision inputs
+                    new string[] { AIOutputs.OutChangeDirection, AIOutputs.OutRotateDirection, AIOutputs.OutRotationAmount, AIOutputs.OutChangeSpeed, AIOutputs.OutChangeSpeedAmount });
+
                 _brain = new NeuralNetwork(nnConfig, 0.02f);
 
                 for (int i = 0; i < 10000; i++)
@@ -63,30 +69,26 @@ namespace Simulator.Engine
             return _brain.Clone();
         }
 
-        private static double[] TrainingScenerio(double objectTo90LeftCloseness, double objectTo45LeftCloseness, double objectAheadCloseness, double objectTo45RightCloseness, double objectTo90RightCloseness)
+        private static AIParameters TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
         {
-            var scenerio = new double[5];
-
-            scenerio[(int)AIInputs.ObjTo90Left] = objectTo90LeftCloseness;
-            scenerio[(int)AIInputs.ObjTo45Left] = objectTo45LeftCloseness;
-            scenerio[(int)AIInputs.ObjAhead] = objectAheadCloseness;
-            scenerio[(int)AIInputs.ObjTo45Right] = objectTo45RightCloseness;
-            scenerio[(int)AIInputs.ObjTo90Right] = objectTo90RightCloseness;
-
-            return scenerio;
+            var param = new AIParameters();
+            param.Set(AIInputs.In0Degrees, in0Degrees);
+            param.Set(AIInputs.In45Degrees, in45Degrees);
+            param.Set(AIInputs.In90Degrees, in90Degrees);
+            param.Set(AIInputs.In270Degrees, in270Degrees);
+            param.Set(AIInputs.In315Degrees, in315Degrees);
+            return param;
         }
 
-        private static double[] TrainingDecision(double shouldRotate, double rotateLeftOrRight, double rotateLeftOrRightAmount, double shouldSpeedUpOrDown, double speedUpOrDownAmount)
+        private static AIParameters TrainingDecision(double outChangeDirection, double outRotateDirection, double outRotationAmount, double outChangeSpeed, double outChangeSpeedAmount)
         {
-            var decision = new double[5];
-
-            decision[(int)AIOutputs.ShouldRotate] = shouldRotate;
-            decision[(int)AIOutputs.RotateLeftOrRight] = rotateLeftOrRight;
-            decision[(int)AIOutputs.RotateLeftOrRightAmount] = rotateLeftOrRightAmount;
-            decision[(int)AIOutputs.ShouldSpeedUpOrDown] = shouldSpeedUpOrDown;
-            decision[(int)AIOutputs.SpeedUpOrDownAmount] = speedUpOrDownAmount;
-
-            return decision;
+            var param = new AIParameters();
+            param.Set(AIOutputs.OutChangeDirection, outChangeDirection);
+            param.Set(AIOutputs.OutRotateDirection, outRotateDirection);
+            param.Set(AIOutputs.OutRotationAmount, outRotationAmount);
+            param.Set(AIOutputs.OutChangeSpeed, outChangeSpeed);
+            param.Set(AIOutputs.OutChangeSpeedAmount, outChangeSpeedAmount);
+            return param;
         }
     }
 }

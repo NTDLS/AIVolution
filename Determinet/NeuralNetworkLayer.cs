@@ -9,7 +9,9 @@ namespace Determinet
         /// <summary>
         /// The number of nodes in this layer.
         /// </summary>
-        public int Nodes { get; set; }
+        public int Nodes { get; private set; }
+
+        public string[] Aliases { get; private set; }
 
         /// <summary>
         /// The type of the later (input, intermediate (Hidden) or output). 
@@ -21,18 +23,16 @@ namespace Determinet
         /// </summary>
         public IActivationFunction ActivationFunction { get; set; }
 
-        public NeuralNetworkLayer(LayerType type, int nodes, ActivationType activationType)
-        {
-            ActivationFunction = CreateActivationType(activationType, null);
-            LayerType = type;
-            Nodes = nodes;
-        }
-
-        public NeuralNetworkLayer(LayerType type, int nodes, ActivationType activationType, object[] param)
+        public NeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, string []nodeAlias = null, object[] param = null)
         {
             ActivationFunction = CreateActivationType(activationType, param);
             LayerType = type;
-            Nodes = nodes;
+            Nodes = nodeCount;
+            Aliases = nodeAlias;
+            if (Aliases == null)
+            {
+                Aliases = new string[nodeCount];
+            }
         }
 
         private IActivationFunction CreateActivationType(ActivationType activationType, object[] param)
