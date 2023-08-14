@@ -69,6 +69,7 @@ namespace Determinet
             {
                 _neurons[0][i] = inputs[i];
             }
+
             for (int i = 1; i < _layers.Length; i++)
             {
                 int layer = i - 1;

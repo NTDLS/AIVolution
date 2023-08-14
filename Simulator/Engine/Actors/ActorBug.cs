@@ -2,6 +2,7 @@
 using Simulator.Engine.Types;
 using System;
 using System.Linq;
+using static Simulator.Engine.BugBrain;
 
 namespace Simulator.Engine
 {
@@ -70,7 +71,7 @@ namespace Simulator.Engine
 
             var debugBlock = Core.Actors.Collection.Where(o => o is ActorTextBlock).First() as ActorTextBlock;
 
-            DateTime now = DateTime.UtcNow;
+            var now = DateTime.UtcNow;
 
             if (_lastDecisionTime == null || (now - (DateTime)_lastDecisionTime).TotalMilliseconds >= MillisecondsBetweenDecisions)
             {
@@ -85,13 +86,21 @@ namespace Simulator.Engine
 
                 var decidingFactors = GetVisionInputs();
 
-                var decisions = Brain.FeedForward(decidingFactors);
+                var rawDecisionValues = Brain.FeedForward(decidingFactors.ToArray());
 
-                if (decisions[BugBrain.Outputs.ShouldRotate] >= DecisionSensitivity)
+                var decisions = new AIParameters<AIOutputs, double>();
+
+                decisions.Upsert(AIOutputs.ShouldRotate, rawDecisionValues[(int)AIOutputs.ShouldRotate]);
+                decisions.Upsert(AIOutputs.RotateLeftOrRight, rawDecisionValues[(int)AIOutputs.RotateLeftOrRight]);
+                decisions.Upsert(AIOutputs.RotateLeftOrRightAmount, rawDecisionValues[(int)AIOutputs.RotateLeftOrRightAmount]);
+                decisions.Upsert(AIOutputs.ShouldSpeedUpOrDown, rawDecisionValues[(int)AIOutputs.ShouldSpeedUpOrDown]);
+                decisions.Upsert(AIOutputs.SpeedUpOrDownAmount, rawDecisionValues[(int)AIOutputs.SpeedUpOrDownAmount]);
+
+                if (decisions.Get(AIOutputs.ShouldRotate) >= DecisionSensitivity)
                 {
-                    var rotateAmount = decisions[BugBrain.Outputs.RotateLeftOrRightAmount];
+                    var rotateAmount = decisions.Get(AIOutputs.RotateLeftOrRightAmount);
 
-                    if (decisions[BugBrain.Outputs.RotateLeftOrRight] >= DecisionSensitivity)
+                    if (decisions.Get(AIOutputs.RotateLeftOrRight) >= DecisionSensitivity)
                     {
                         Rotate(45 * rotateAmount);
                     }
@@ -101,14 +110,14 @@ namespace Simulator.Engine
                     }
                 }
 
-                if (decisions[BugBrain.Outputs.ShouldSpeedUpOrDown] >= DecisionSensitivity)
+                if (decisions.Get(AIOutputs.ShouldSpeedUpOrDown) >= DecisionSensitivity)
                 {
-                    double speedFactor = decisions[BugBrain.Outputs.SpeedUpOrDownAmount];
+                    double speedFactor = decisions.Get(AIOutputs.SpeedUpOrDownAmount);
                     Velocity.ThrottlePercentage += (speedFactor / 5.0);
                 }
                 else
                 {
-                    double speedFactor = decisions[BugBrain.Outputs.SpeedUpOrDownAmount];
+                    double speedFactor = decisions.Get(AIOutputs.SpeedUpOrDownAmount);
                     Velocity.ThrottlePercentage += -(speedFactor / 5.0);
                 }
 
@@ -143,11 +152,11 @@ namespace Simulator.Engine
         /// Looks around and gets neuralnetwork inputs for visible proximity objects.
         /// </summary>
         /// <returns></returns>
-        private double[] GetVisionInputs()
+        private AIParameters<AIInputs, double> GetVisionInputs()
         {
-            var scenerio = new double[5];
+            var aiParams = new AIParameters<AIInputs, double>();
 
-            //The closeness is expressed as a percentage of how close to the other object they are. 100% being touching 0% being 1 pixel from out of range.
+            //The closeness is expressed as a percentage of how close to the other object they are. 100% being touching 0% being 1 pixel from out-of-range.
             foreach (var other in Core.Actors.Collection.Where(o => o is not ActorTextBlock))
             {
                 if (other == this)
@@ -160,36 +169,46 @@ namespace Simulator.Engine
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -90))
                 {
-                    scenerio[BugBrain.Inputs.ObjTo90Left] = (double)
-                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo90Left] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo90Left]);
+                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo90Left, 0))
+                    {
+                        aiParams.Upsert(AIInputs.ObjTo90Left, percentageOfCloseness);
+                    }
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -45))
                 {
-                    scenerio[BugBrain.Inputs.ObjTo45Left] = (double)
-                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo45Left] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo45Left]);
+                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo45Left, 0))
+                    {
+                        aiParams.Upsert(AIInputs.ObjTo45Left, percentageOfCloseness);
+                    }
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 0))
                 {
-                    scenerio[BugBrain.Inputs.ObjAhead] = (double)
-                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjAhead] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjAhead]);
+                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjAhead, 0))
+                    {
+                        aiParams.Upsert(AIInputs.ObjAhead, percentageOfCloseness);
+                    }
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, +45))
                 {
-                    scenerio[BugBrain.Inputs.ObjTo45Right] = (double)
-                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo45Right] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo45Right]);
+                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo45Right, 0))
+                    {
+                        aiParams.Upsert(AIInputs.ObjTo45Right, percentageOfCloseness);
+                    }
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, +90))
                 {
-                    scenerio[BugBrain.Inputs.ObjTo90Right] = (double)
-                        (percentageOfCloseness > scenerio[BugBrain.Inputs.ObjTo90Right] ? percentageOfCloseness : scenerio[BugBrain.Inputs.ObjTo90Right]);
+                    if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo90Right, 0))
+                    {
+                        aiParams.Upsert(AIInputs.ObjTo90Right, percentageOfCloseness);
+                    }
                 }
             }
 
-            return scenerio;
+            return aiParams;
         }
     }
 }

@@ -8,22 +8,22 @@ namespace Simulator.Engine
     /// </summary>
     public static class BugBrain
     {
-        public static class Inputs
+        public enum AIInputs
         {
-            public const int ObjTo90Left = 0;
-            public const int ObjTo45Left = 1;
-            public const int ObjAhead = 2;
-            public const int ObjTo45Right = 3;
-            public const int ObjTo90Right = 4;
+            ObjTo90Left,
+            ObjTo45Left,
+            ObjAhead,
+            ObjTo45Right,
+            ObjTo90Right,
         }
 
-        public static class Outputs
+        public enum AIOutputs
         {
-            public const int ShouldRotate = 0;
-            public const int RotateLeftOrRight = 1;
-            public const int RotateLeftOrRightAmount = 2;
-            public const int ShouldSpeedUpOrDown = 3;
-            public const int SpeedUpOrDownAmount = 4;
+            ShouldRotate,
+            RotateLeftOrRight,
+            RotateLeftOrRightAmount,
+            ShouldSpeedUpOrDown,
+            SpeedUpOrDownAmount
         }
 
         private static NeuralNetwork _brain = null;
@@ -32,7 +32,7 @@ namespace Simulator.Engine
         {
             if (_brain == null)
             {
-                NeuralNetworkConfig nnConfig = new NeuralNetworkConfig();
+                var nnConfig = new NeuralNetworkConfig();
                 nnConfig.AddLayer(LayerType.Input, 5, ActivationType.Linear); //Vision inputs
                 nnConfig.AddLayer(LayerType.Intermediate, 12, ActivationType.Linear);
                 nnConfig.AddLayer(LayerType.Output, 5, ActivationType.Linear); //Movement decisions.
@@ -67,11 +67,11 @@ namespace Simulator.Engine
         {
             var scenerio = new double[5];
 
-            scenerio[Inputs.ObjTo90Left] = objectTo90LeftCloseness;
-            scenerio[Inputs.ObjTo45Left] = objectTo45LeftCloseness;
-            scenerio[Inputs.ObjAhead] = objectAheadCloseness;
-            scenerio[Inputs.ObjTo45Right] = objectTo45RightCloseness;
-            scenerio[Inputs.ObjTo90Right] = objectTo90RightCloseness;
+            scenerio[(int)AIInputs.ObjTo90Left] = objectTo90LeftCloseness;
+            scenerio[(int)AIInputs.ObjTo45Left] = objectTo45LeftCloseness;
+            scenerio[(int)AIInputs.ObjAhead] = objectAheadCloseness;
+            scenerio[(int)AIInputs.ObjTo45Right] = objectTo45RightCloseness;
+            scenerio[(int)AIInputs.ObjTo90Right] = objectTo90RightCloseness;
 
             return scenerio;
         }
@@ -80,11 +80,11 @@ namespace Simulator.Engine
         {
             var decision = new double[5];
 
-            decision[Outputs.ShouldRotate] = shouldRotate;
-            decision[Outputs.RotateLeftOrRight] = rotateLeftOrRight;
-            decision[Outputs.RotateLeftOrRightAmount] = rotateLeftOrRightAmount;
-            decision[Outputs.ShouldSpeedUpOrDown] = shouldSpeedUpOrDown;
-            decision[Outputs.SpeedUpOrDownAmount] = speedUpOrDownAmount;
+            decision[(int)AIOutputs.ShouldRotate] = shouldRotate;
+            decision[(int)AIOutputs.RotateLeftOrRight] = rotateLeftOrRight;
+            decision[(int)AIOutputs.RotateLeftOrRightAmount] = rotateLeftOrRightAmount;
+            decision[(int)AIOutputs.ShouldSpeedUpOrDown] = shouldSpeedUpOrDown;
+            decision[(int)AIOutputs.SpeedUpOrDownAmount] = speedUpOrDownAmount;
 
             return decision;
         }
