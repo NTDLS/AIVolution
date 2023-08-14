@@ -2,12 +2,12 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net5.0-windows</TargetFramework>
+    <TargetFramework>net7.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NeuralNetwork\Algorithms.csproj" />
+    <ProjectReference Include="..\Determinet\Determinet.csproj" />
   </ItemGroup>
 
 </Project>

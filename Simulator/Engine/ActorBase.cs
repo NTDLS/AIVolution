@@ -256,7 +256,7 @@ namespace Simulator.Engine
         {
             if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
             {
-                return this.Bounds.IntersectsWith(otherObject.Bounds);
+                return Bounds.IntersectsWith(otherObject.Bounds);
             }
             return false;
         }
@@ -277,7 +277,7 @@ namespace Simulator.Engine
                     otherObject.Bounds.Width + (float)(sizeAdjust.X / 2),
                     otherObject.Bounds.Height + (float)(sizeAdjust.Y / 2));
 
-                return this.Bounds.IntersectsWith(alteredHitBox);
+                return Bounds.IntersectsWith(alteredHitBox);
             }
             return false;
         }
@@ -290,7 +290,7 @@ namespace Simulator.Engine
             {
                 if (intersection != this && intersection.Visable && intersection is not ActorTextBlock)
                 {
-                    if (this.Intersects(intersection))
+                    if (Intersects(intersection))
                     {
                         intersections.Add(intersection);
                     }
@@ -312,20 +312,20 @@ namespace Simulator.Engine
 
         public void MoveInDirectionOf(PointD location, double? speed = null)
         {
-            this.Velocity.Angle.Degrees = PointD.AngleTo(this.Location, location);
+            Velocity.Angle.Degrees = PointD.AngleTo(Location, location);
             if (speed != null)
             {
-                this.Velocity.MaxSpeed = (double)speed;
+                Velocity.MaxSpeed = (double)speed;
             }
         }
 
         public void MoveInDirectionOf(ActorBase obj, double? speed = null)
         {
-            this.Velocity.Angle.Degrees = PointD.AngleTo(this.Location, obj.Location);
+            Velocity.Angle.Degrees = PointD.AngleTo(Location, obj.Location);
 
             if (speed != null)
             {
-                this.Velocity.MaxSpeed = (double)speed;
+                Velocity.MaxSpeed = (double)speed;
             }
         }
 
@@ -366,12 +366,12 @@ namespace Simulator.Engine
 
         public double DistanceTo(ActorBase to)
         {
-            return PointD.DistanceTo(this.Location, to.Location);
+            return PointD.DistanceTo(Location, to.Location);
         }
 
         public double DistanceTo(PointD to)
         {
-            return PointD.DistanceTo(this.Location, to);
+            return PointD.DistanceTo(Location, to);
         }
     }
 }

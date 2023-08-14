@@ -1,4 +1,4 @@
-﻿using Algorithms;
+﻿using Determinet;
 using Simulator.Engine.Types;
 using System.Collections.Generic;
 using System.Drawing;

@@ -2,11 +2,11 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NeuralNetwork\Algorithms.csproj" />
+    <ProjectReference Include="..\Determinet\Determinet.csproj" />
   </ItemGroup>
 
 </Project>

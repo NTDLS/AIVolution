@@ -1,13 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31025.194
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33829.357
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Algorithms", "NeuralNetwork\Algorithms.csproj", "{D99F79C5-74C4-4EBF-9D54-DA4FA07845EF}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Simulator", "Simulator\Simulator.csproj", "{56810B24-6CF3-49D5-8DD2-7057EA9F47B9}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestHarness", "TestHarness\TestHarness.csproj", "{C8CA4742-250D-43DA-8E35-AD511348822F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Determinet", "Determinet\Determinet.csproj", "{89F327A4-9A8C-4D66-85ED-6015E796CE78}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,10 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D99F79C5-74C4-4EBF-9D54-DA4FA07845EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D99F79C5-74C4-4EBF-9D54-DA4FA07845EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D99F79C5-74C4-4EBF-9D54-DA4FA07845EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D99F79C5-74C4-4EBF-9D54-DA4FA07845EF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{56810B24-6CF3-49D5-8DD2-7057EA9F47B9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{56810B24-6CF3-49D5-8DD2-7057EA9F47B9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56810B24-6CF3-49D5-8DD2-7057EA9F47B9}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -27,6 +23,10 @@ Global
 		{C8CA4742-250D-43DA-8E35-AD511348822F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8CA4742-250D-43DA-8E35-AD511348822F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8CA4742-250D-43DA-8E35-AD511348822F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F327A4-9A8C-4D66-85ED-6015E796CE78}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F327A4-9A8C-4D66-85ED-6015E796CE78}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F327A4-9A8C-4D66-85ED-6015E796CE78}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F327A4-9A8C-4D66-85ED-6015E796CE78}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

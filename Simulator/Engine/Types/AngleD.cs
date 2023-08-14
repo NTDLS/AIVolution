@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Numerics;
-using System.Windows;
 
 namespace Simulator.Engine.Types
 {
@@ -113,21 +111,21 @@ namespace Simulator.Engine.Types
 
         public override bool Equals(object o)
         {
-            return (Math.Round(((AngleD)o).X, 4) == this.X && Math.Round(((AngleD)o).Y, 4) == this.Y);
+            return (Math.Round(((AngleD)o).X, 4) == X && Math.Round(((AngleD)o).Y, 4) == Y);
         }
 
         #endregion
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
 
         public override string ToString()
         {
             return $"{{{Math.Round(X, 4):#.####}x,{Math.Round(Y, 4):#.####}y}}";
         }
-        
+
         public double _degrees = 0;
         public double Degrees
         {

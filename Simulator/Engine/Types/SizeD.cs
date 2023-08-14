@@ -7,7 +7,6 @@
 
         public SizeD()
         {
-
         }
 
         public SizeD(double width, double height)

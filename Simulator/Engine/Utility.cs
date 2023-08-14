@@ -205,7 +205,7 @@ namespace Simulator.Engine
 
         public static bool ChanceIn(int n)
         {
-            return (Random.Next(0, n * 10) % n) == n/2;
+            return (Random.Next(0, n * 10) % n) == n / 2;
         }
 
         public static bool FlipCoin()

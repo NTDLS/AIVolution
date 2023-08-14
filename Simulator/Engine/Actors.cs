@@ -11,7 +11,6 @@ namespace Simulator.Engine
         public Actors(Core core)
         {
             _core = core;
-
         }
 
         public void Add(ActorBase actor)

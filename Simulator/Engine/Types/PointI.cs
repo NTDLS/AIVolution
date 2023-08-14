@@ -13,32 +13,32 @@ namespace Simulator.Engine.Types
 
         public PointI(int x, int y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public PointI(PointI p)
         {
-            this.X = p.X;
-            this.Y = p.Y;
+            X = p.X;
+            Y = p.Y;
         }
 
         public PointI(PointD p)
         {
-            this.X = (int)p.X;
-            this.Y = (int)p.Y;
+            X = (int)p.X;
+            Y = (int)p.Y;
         }
 
         public PointI(PointF p)
         {
-            this.X = (int)p.X;
-            this.Y = (int)p.Y;
+            X = (int)p.X;
+            Y = (int)p.Y;
         }
 
         public PointI(Point p)
         {
-            this.X = p.X;
-            this.Y = p.Y;
+            X = p.X;
+            Y = p.Y;
         }
     }
 }

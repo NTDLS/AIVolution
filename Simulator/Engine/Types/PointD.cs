@@ -60,7 +60,7 @@ namespace Simulator.Engine.Types
 
         public override bool Equals(object o)
         {
-            return (Math.Round(((PointD)o).X, 4) == this.X && Math.Round(((PointD)o).Y, 4) == this.Y);
+            return (Math.Round(((PointD)o).X, 4) == X && Math.Round(((PointD)o).Y, 4) == Y);
         }
 
         public static bool operator !=(PointD lhs, PointD rhs) => !(lhs == rhs);
@@ -84,7 +84,7 @@ namespace Simulator.Engine.Types
 
         public override int GetHashCode()
         {
-            return this.ToString().GetHashCode();
+            return ToString().GetHashCode();
         }
 
         public override string ToString()
@@ -94,26 +94,26 @@ namespace Simulator.Engine.Types
 
         public PointD(double x, double y)
         {
-            this.X = x;
-            this.Y = y;
+            X = x;
+            Y = y;
         }
 
         public PointD(PointD p)
         {
-            this.X = p.X;
-            this.Y = p.Y;
+            X = p.X;
+            Y = p.Y;
         }
 
         public PointD(PointF p)
         {
-            this.X = p.X;
-            this.Y = p.Y;
+            X = p.X;
+            Y = p.Y;
         }
 
         public PointD(Point p)
         {
-            this.X = p.X;
-            this.Y = p.Y;
+            X = p.X;
+            Y = p.Y;
         }
     }
 }

@@ -30,9 +30,9 @@ namespace Simulator
             SetStyle(ControlStyles.AllPaintingInWmPaint, true);
             SetStyle(ControlStyles.UserPaint, true);
 
-            this.BackColor = Color.FromArgb(1, 1, 10);
+            BackColor = Color.FromArgb(1, 1, 10);
 
-            _core = new Core(this, new Size(this.Width, this.Height));
+            _core = new Core(this, new Size(Width, Height));
 
             _core.Start();
         }

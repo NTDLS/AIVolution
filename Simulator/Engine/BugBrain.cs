@@ -1,4 +1,5 @@
-﻿using Algorithms;
+﻿using Determinet;
+using Determinet.Types;
 
 namespace Simulator.Engine
 {
@@ -32,9 +33,9 @@ namespace Simulator.Engine
             if (_brain == null)
             {
                 NeuralNetworkConfig nnConfig = new NeuralNetworkConfig();
-                nnConfig.AddLayer(LayerType.Input, 5); //Vision inouts
-                nnConfig.AddLayer(LayerType.Intermediate, 12, ActivationType.LeakyRelu);
-                nnConfig.AddLayer(LayerType.Output, 5, ActivationType.LeakyRelu); //Movement decisions.
+                nnConfig.AddLayer(LayerType.Input, 5, ActivationType.Linear); //Vision inputs
+                nnConfig.AddLayer(LayerType.Intermediate, 12, ActivationType.Linear);
+                nnConfig.AddLayer(LayerType.Output, 5, ActivationType.Linear); //Movement decisions.
                 _brain = new NeuralNetwork(nnConfig, 0.02f);
 
                 for (int i = 0; i < 10000; i++)
@@ -62,9 +63,9 @@ namespace Simulator.Engine
             return _brain.Clone();
         }
 
-        private static float[] TrainingScenerio(float objectTo90LeftCloseness, float objectTo45LeftCloseness, float objectAheadCloseness, float objectTo45RightCloseness, float objectTo90RightCloseness)
+        private static double[] TrainingScenerio(double objectTo90LeftCloseness, double objectTo45LeftCloseness, double objectAheadCloseness, double objectTo45RightCloseness, double objectTo90RightCloseness)
         {
-            var scenerio = new float[5];
+            var scenerio = new double[5];
 
             scenerio[Inputs.ObjTo90Left] = objectTo90LeftCloseness;
             scenerio[Inputs.ObjTo45Left] = objectTo45LeftCloseness;
@@ -75,9 +76,9 @@ namespace Simulator.Engine
             return scenerio;
         }
 
-        private static float[] TrainingDecision(float shouldRotate, float rotateLeftOrRight, float rotateLeftOrRightAmount, float shouldSpeedUpOrDown, float speedUpOrDownAmount)
+        private static double[] TrainingDecision(double shouldRotate, double rotateLeftOrRight, double rotateLeftOrRightAmount, double shouldSpeedUpOrDown, double speedUpOrDownAmount)
         {
-            var decision = new float[5];
+            var decision = new double[5];
 
             decision[Outputs.ShouldRotate] = shouldRotate;
             decision[Outputs.RotateLeftOrRight] = rotateLeftOrRight;

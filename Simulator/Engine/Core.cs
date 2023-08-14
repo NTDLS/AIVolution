@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using System.Linq;
 
 namespace Simulator.Engine
 {
@@ -51,7 +50,7 @@ namespace Simulator.Engine
 
             try
             {
-                Monitor.TryEnter(this.DrawingSemaphore, timeout, ref lockTaken);
+                Monitor.TryEnter(DrawingSemaphore, timeout, ref lockTaken);
 
                 if (lockTaken)
                 {
