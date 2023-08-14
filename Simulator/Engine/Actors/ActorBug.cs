@@ -1,4 +1,5 @@
 ﻿using Determinet;
+using Determinet.Types;
 using Simulator.Engine.Types;
 using System;
 using System.Linq;
@@ -90,11 +91,11 @@ namespace Simulator.Engine
 
                 var decisions = new AIParameters<AIOutputs, double>();
 
-                decisions.Upsert(AIOutputs.ShouldRotate, rawDecisionValues[(int)AIOutputs.ShouldRotate]);
-                decisions.Upsert(AIOutputs.RotateLeftOrRight, rawDecisionValues[(int)AIOutputs.RotateLeftOrRight]);
-                decisions.Upsert(AIOutputs.RotateLeftOrRightAmount, rawDecisionValues[(int)AIOutputs.RotateLeftOrRightAmount]);
-                decisions.Upsert(AIOutputs.ShouldSpeedUpOrDown, rawDecisionValues[(int)AIOutputs.ShouldSpeedUpOrDown]);
-                decisions.Upsert(AIOutputs.SpeedUpOrDownAmount, rawDecisionValues[(int)AIOutputs.SpeedUpOrDownAmount]);
+                decisions.Set(AIOutputs.ShouldRotate, rawDecisionValues[(int)AIOutputs.ShouldRotate]);
+                decisions.Set(AIOutputs.RotateLeftOrRight, rawDecisionValues[(int)AIOutputs.RotateLeftOrRight]);
+                decisions.Set(AIOutputs.RotateLeftOrRightAmount, rawDecisionValues[(int)AIOutputs.RotateLeftOrRightAmount]);
+                decisions.Set(AIOutputs.ShouldSpeedUpOrDown, rawDecisionValues[(int)AIOutputs.ShouldSpeedUpOrDown]);
+                decisions.Set(AIOutputs.SpeedUpOrDownAmount, rawDecisionValues[(int)AIOutputs.SpeedUpOrDownAmount]);
 
                 if (decisions.Get(AIOutputs.ShouldRotate) >= DecisionSensitivity)
                 {
@@ -171,7 +172,7 @@ namespace Simulator.Engine
                 {
                     if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo90Left, 0))
                     {
-                        aiParams.Upsert(AIInputs.ObjTo90Left, percentageOfCloseness);
+                        aiParams.Set(AIInputs.ObjTo90Left, percentageOfCloseness);
                     }
                 }
 
@@ -179,7 +180,7 @@ namespace Simulator.Engine
                 {
                     if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo45Left, 0))
                     {
-                        aiParams.Upsert(AIInputs.ObjTo45Left, percentageOfCloseness);
+                        aiParams.Set(AIInputs.ObjTo45Left, percentageOfCloseness);
                     }
                 }
 
@@ -187,7 +188,7 @@ namespace Simulator.Engine
                 {
                     if (percentageOfCloseness > aiParams.Get(AIInputs.ObjAhead, 0))
                     {
-                        aiParams.Upsert(AIInputs.ObjAhead, percentageOfCloseness);
+                        aiParams.Set(AIInputs.ObjAhead, percentageOfCloseness);
                     }
                 }
 
@@ -195,7 +196,7 @@ namespace Simulator.Engine
                 {
                     if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo45Right, 0))
                     {
-                        aiParams.Upsert(AIInputs.ObjTo45Right, percentageOfCloseness);
+                        aiParams.Set(AIInputs.ObjTo45Right, percentageOfCloseness);
                     }
                 }
 
@@ -203,7 +204,7 @@ namespace Simulator.Engine
                 {
                     if (percentageOfCloseness > aiParams.Get(AIInputs.ObjTo90Right, 0))
                     {
-                        aiParams.Upsert(AIInputs.ObjTo90Right, percentageOfCloseness);
+                        aiParams.Set(AIInputs.ObjTo90Right, percentageOfCloseness);
                     }
                 }
             }
