@@ -8,11 +8,11 @@ namespace Simulator.Engine.Controllers
     /// </summary>
     public class EngineThread
     {
-        private EngineCore _core;
+        private readonly EngineCore _core;
         private bool _keepRunning = false;
         public Thread? Handle { get; private set; }
 
-        public int FrameAdvanceDelay { get; set; } = 25;
+        public int FrameAdvanceDelay { get; private set; } = 25;
 
         public EngineThread(EngineCore core)
         {

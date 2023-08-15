@@ -8,8 +8,9 @@ namespace Simulator.Engine.Controllers
     /// </summary>
     public class EngineInput
     {
-        private EngineCore _core;
-        private Dictionary<PlayerKey, KeyPressState> _keyStates = new Dictionary<PlayerKey, KeyPressState>();
+        private readonly EngineCore _core;
+        private readonly Dictionary<PlayerKey, KeyPressState> _keyStates = new();
+
         public EngineInput(EngineCore core)
         {
             _core = core;

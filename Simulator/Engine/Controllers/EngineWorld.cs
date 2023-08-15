@@ -9,9 +9,9 @@ namespace Simulator.Engine.Controllers
     /// </summary>
     public class EngineWorld
     {
-        private EngineCore _core;
+        private readonly EngineCore _core;
 
-        public int Permutations { get; set; } = -1;//How many times have we reset with a new generation.
+        public int Permutations { get; private set; } = -1;//How many times have we reset with a new generation.
 
         public EngineWorld(EngineCore core)
         {

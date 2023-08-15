@@ -2,9 +2,9 @@
 {
     public class EngineActors
     {
-        private EngineCore _core;
+        private readonly EngineCore _core;
 
-        public List<Actors.ActorBase> Collection { get; set; } = new List<Actors.ActorBase>();
+        public List<Actors.ActorBase> Collection { get; private set; } = new();
 
         public EngineActors(EngineCore core)
         {

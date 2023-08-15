@@ -7,8 +7,8 @@ namespace Simulator.Engine.Controllers
     /// </summary>
     public class EngineDisplay
     {
-        private EngineCore _core;
-        public FrameCounter FrameCounter { get; set; } = new FrameCounter();
+        private readonly EngineCore _core;
+        public FrameCounter FrameCounter { get; private set; } = new();
         public RectangleF VisibleBounds { get; private set; }
 
         private Size _visibleSize;
