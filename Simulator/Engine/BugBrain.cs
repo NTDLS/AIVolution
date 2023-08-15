@@ -1,5 +1,6 @@
 ﻿using Determinet;
 using Determinet.Types;
+using static Simulator.Engine.BugBrain;
 
 namespace Simulator.Engine
 {
@@ -69,7 +70,7 @@ namespace Simulator.Engine
             return _brain.Clone();
         }
 
-        private static AIParameters TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
+        private static AIParameters TrainingScenerio(double in270Degrees, double in315Degrees, double in0Degrees, double in45Degrees, double in90Degrees)
         {
             var param = new AIParameters();
             param.Set(AIInputs.In0Degrees, in0Degrees);
