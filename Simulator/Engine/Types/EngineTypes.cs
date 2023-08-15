@@ -24,6 +24,7 @@
         Right,
         Up,
         Down,
-        Enter
+        Enter,
+        Pause
     }
 }

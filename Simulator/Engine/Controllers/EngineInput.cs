@@ -45,6 +45,11 @@ namespace Simulator.Engine.Controllers
 
         public void HandleSingleKeyPress(Keys key)
         {
+            if (key == Keys.P)
+            {
+                _core.TogglePause();
+            }
+
             var player = _core.Actors.Collection.Where(o => o is ActorInteractive && o.Name == "Player").FirstOrDefault();
 
             if (player != null)

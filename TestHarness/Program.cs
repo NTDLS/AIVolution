@@ -19,15 +19,12 @@ namespace AIVolution
             nn.Layers.AddLinearIntermediateLayer(4, 1, new RangeD(-1, 1));
             nn.Layers.AddOutputLayer(1, ActivationType.Linear);
 
-            nn.Load("C:\\network.txt");
-
             //Train the network
             for (int i = 0; i < 20000; i++)
             {
                 nn.BackPropagate(new double[] { 0, 0, 0 }, new double[] { 0 });
                 nn.BackPropagate(new double[] { 1, 0, 0 }, new double[] { 1 });
                 nn.BackPropagate(new double[] { 0, 1, 0 }, new double[] { 1 });
-
 
                 nn.BackPropagate(new double[] { 0, 0, 1 }, new double[] { 1 });
                 nn.BackPropagate(new double[] { 0, 0, 1 }, new double[] { 0 });
@@ -44,7 +41,6 @@ namespace AIVolution
             Console.WriteLine($"Cost: {nn.Cost:0.########}");
 
             nn.Save("C:\\network.txt");
-
 
             VerboseFeedForward(nn, new double[] { 0, 0, 0 });
             VerboseFeedForward(nn, new double[] { 1, 0, 0 });
