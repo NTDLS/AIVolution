@@ -32,9 +32,9 @@ namespace Simulator.Engine
         {
             if (_brain == null)
             {
-                var nnConfig = new NeuralNetworkConfig();
+                _brain = new NeuralNetwork(0.02f);
 
-                nnConfig.AddInputLayer(ActivationType.Sigmoid, //Vision inputs
+                _brain.Layers.AddInputLayer(ActivationType.Sigmoid, //Vision inputs
                     new string[] {
                         AIInputs.In0Degrees,
                         AIInputs.In45Degrees,
@@ -43,9 +43,9 @@ namespace Simulator.Engine
                         AIInputs.In315Degrees
                     });
 
-                nnConfig.AddIntermediateLayer(32, ActivationType.Sigmoid);
+                _brain.Layers.AddIntermediateLayer(32, ActivationType.Sigmoid);
 
-                nnConfig.AddOutputLayer(ActivationType.Sigmoid, //Decision outputs
+                _brain.Layers.AddOutputLayer(ActivationType.Sigmoid, //Decision outputs
                     new string[] {
                         AIOutputs.OutChangeDirection,
                         AIOutputs.OutRotateDirection,
@@ -54,24 +54,22 @@ namespace Simulator.Engine
                         AIOutputs.OutChangeSpeedAmount
                     });
 
-                _brain = new NeuralNetwork(nnConfig, 0.02f);
-
                 for (int i = 0; i < 10000; i++)
                 {
                     //Left side detection, go right.
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 0), TrainingDecision(1, 1, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 1), TrainingDecision(1, 1, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 1), TrainingDecision(1, 1, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 2, 0), TrainingDecision(2, 2, 2, 2, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 2), TrainingDecision(2, 2, 2, 2, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 2, 2), TrainingDecision(2, 2, 2, 2, 0));
 
                     //Right side detection, go left.
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 1, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 1, 0, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 1, 1, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 2, 0, 0), TrainingDecision(2, 0, 2, 2, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 2, 0, 0, 0), TrainingDecision(2, 0, 2, 2, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 2, 2, 0, 0), TrainingDecision(2, 0, 2, 2, 0));
 
                     //Front side detection, so left or right.
-                    _brain.BackPropagate(TrainingScenerio(1, 0, 0, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(1, 1, 0, 0, 1), TrainingDecision(1, 1, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(1, 1, 1, 1, 1), TrainingDecision(1, 1, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(2, 0, 0, 0, 0), TrainingDecision(2, 0, 2, 2, 0));
+                    _brain.BackPropagate(TrainingScenerio(2, 2, 0, 0, 2), TrainingDecision(2, 2, 2, 2, 0));
+                    _brain.BackPropagate(TrainingScenerio(2, 2, 2, 2, 2), TrainingDecision(2, 2, 2, 2, 0));
 
                     //No objects dection, speed up and cruise.
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 0), TrainingDecision(0.4f, 0.4f, 0.4f, 0.9f, 0.9f));

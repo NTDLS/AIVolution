@@ -2,14 +2,11 @@
 
 namespace Determinet
 {
-    public class NeuralNetworkConfig
+    public class NeuralNetworkLayers
     {
         private readonly List<NeuralNetworkLayer> _layers = new();
-
-        public int LayerCount => _layers.Count;
-
+        public int Count => _layers.Count;
         public NeuralNetworkLayer Layer(int i) => _layers[i];
-
 
         #region Add input layers.
 
@@ -107,5 +104,16 @@ namespace Determinet
         }
 
         #endregion
+
+        public NeuralNetworkLayers Clone()
+        {
+            var clone = new NeuralNetworkLayers();
+            foreach (var layer in _layers)
+            {
+                clone._layers.Add(layer.Clone());
+            }
+
+            return clone;
+        }
     }
 }

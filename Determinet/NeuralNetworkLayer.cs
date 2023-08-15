@@ -8,12 +8,14 @@ namespace Determinet
         /// <summary>
         /// The number of nodes in this layer.
         /// </summary>
-        public int Nodes { get; private set; }
+        public int NodeCount { get; private set; }
+        public ActivationType ActivationType { get; private set; }
+        private object[]? _param;
 
         public string[]? Aliases { get; private set; }
 
         /// <summary>
-        /// The type of the later (input, intermediate (Hidden) or output). 
+        /// The type of the later (input, intermediate (hidden) or output). 
         /// </summary>
         public LayerType LayerType { get; set; }
 
@@ -24,14 +26,12 @@ namespace Determinet
 
         public NeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, string[]? nodeAlias, object[]? param)
         {
+            ActivationType = activationType;
+            _param = param;
             ActivationFunction = CreateActivationType(activationType, param);
             LayerType = type;
-            Nodes = nodeCount;
-            Aliases = nodeAlias;
-            if (Aliases == null)
-            {
-                Aliases = new string[nodeCount];
-            }
+            NodeCount = nodeCount;
+            Aliases = nodeAlias?.ToArray() ?? new string[nodeCount];
         }
 
         private IActivationFunction CreateActivationType(ActivationType activationType, object[]? param)
@@ -47,6 +47,11 @@ namespace Determinet
                 ActivationType.LeakyReLU => new LeakyReLUFunction(param),
                 _ => throw new NotImplementedException("Unknown activation function.")
             };
+        }
+
+        public NeuralNetworkLayer Clone()
+        {
+            return new NeuralNetworkLayer(LayerType, NodeCount, ActivationType, Aliases, _param);
         }
     }
 }

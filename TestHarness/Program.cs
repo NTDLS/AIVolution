@@ -13,14 +13,11 @@ namespace AIVolution
 
         private static void Start()
         {
-            var nnConfig = new NeuralNetworkConfig();
-
-            nnConfig.AddInputLayer(3, ActivationType.Linear);
-            nnConfig.AddIntermediateLayer(5, ActivationType.Linear);
-            nnConfig.AddLinearIntermediateLayer(4, 1, new RangeD(-1, 1));
-            nnConfig.AddOutputLayer(1, ActivationType.Linear);
-
-            var nn = new NeuralNetwork(nnConfig, 0.01f);
+            var nn = new NeuralNetwork(0.01f);
+            nn.Layers.AddInputLayer(3, ActivationType.Linear);
+            nn.Layers.AddIntermediateLayer(5, ActivationType.Linear);
+            nn.Layers.AddLinearIntermediateLayer(4, 1, new RangeD(-1, 1));
+            nn.Layers.AddOutputLayer(1, ActivationType.Linear);
 
             nn.Load("C:\\network.txt");
 
