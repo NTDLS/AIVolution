@@ -1,6 +1,5 @@
 ﻿using Determinet;
 using Determinet.Types;
-using static Simulator.Engine.BugBrain;
 
 namespace Simulator.Engine
 {
@@ -36,30 +35,42 @@ namespace Simulator.Engine
                 var nnConfig = new NeuralNetworkConfig();
 
                 nnConfig.AddInputLayer(ActivationType.Linear, //Vision inputs
-                    new string[] { AIInputs.In0Degrees, AIInputs.In45Degrees, AIInputs.In90Degrees, AIInputs.In270Degrees, AIInputs.In315Degrees });
+                    new string[] {
+                        AIInputs.In0Degrees,
+                        AIInputs.In45Degrees,
+                        AIInputs.In90Degrees,
+                        AIInputs.In270Degrees,
+                        AIInputs.In315Degrees
+                    });
 
-                nnConfig.AddIntermediateLayer(12, ActivationType.Linear);
+                nnConfig.AddIntermediateLayer(32, ActivationType.Linear);
 
                 nnConfig.AddOutputLayer(ActivationType.Linear, //Vision inputs
-                    new string[] { AIOutputs.OutChangeDirection, AIOutputs.OutRotateDirection, AIOutputs.OutRotationAmount, AIOutputs.OutChangeSpeed, AIOutputs.OutChangeSpeedAmount });
+                    new string[] {
+                        AIOutputs.OutChangeDirection,
+                        AIOutputs.OutRotateDirection,
+                        AIOutputs.OutRotationAmount,
+                        AIOutputs.OutChangeSpeed,
+                        AIOutputs.OutChangeSpeedAmount
+                    });
 
                 _brain = new NeuralNetwork(nnConfig, 0.02f);
 
                 for (int i = 0; i < 10000; i++)
                 {
                     //Left side detection, go right.
-                    _brain.BackPropagate(TrainingScenerio(1, 0, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 1, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(1, 1, 0, 0, 0), TrainingDecision(1, 1, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 0), TrainingDecision(1, 1, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 1), TrainingDecision(1, 1, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 1), TrainingDecision(1, 1, 1, 1, 0));
 
                     //Right side detection, go left.
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 1), TrainingDecision(1, 0, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 0), TrainingDecision(1, 0, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 0, 1, 1), TrainingDecision(1, 0, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 0, 1, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 1, 0, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(0, 1, 1, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
 
                     //Front side detection, so left or right.
-                    _brain.BackPropagate(TrainingScenerio(0, 0, 1, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
-                    _brain.BackPropagate(TrainingScenerio(0, 1, 1, 1, 0), TrainingDecision(1, 1, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(1, 0, 0, 0, 0), TrainingDecision(1, 0, 1, 1, 0));
+                    _brain.BackPropagate(TrainingScenerio(1, 1, 0, 0, 1), TrainingDecision(1, 1, 1, 1, 0));
                     _brain.BackPropagate(TrainingScenerio(1, 1, 1, 1, 1), TrainingDecision(1, 1, 1, 1, 0));
 
                     //No objects dection, speed up and cruise.
@@ -70,7 +81,7 @@ namespace Simulator.Engine
             return _brain.Clone();
         }
 
-        private static AIParameters TrainingScenerio(double in270Degrees, double in315Degrees, double in0Degrees, double in45Degrees, double in90Degrees)
+        private static AIParameters TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
         {
             var param = new AIParameters();
             param.Set(AIInputs.In0Degrees, in0Degrees);
