@@ -1,9 +1,11 @@
-﻿namespace Simulator.Engine
+﻿namespace Simulator.Engine.Actors
 {
-
+    /// <summary>
+    /// This is a human (interactive) player.
+    /// </summary>
     public class ActorInteractive : ActorBase
     {
-        public ActorInteractive(Core core, string name)
+        public ActorInteractive(EngineCore core, string name)
             : base(core, name)
         {
             SetImage("../../../Images/Interactive24x24.png");

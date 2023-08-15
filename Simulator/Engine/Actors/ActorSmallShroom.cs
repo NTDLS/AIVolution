@@ -1,8 +1,8 @@
-﻿namespace Simulator.Engine
+﻿namespace Simulator.Engine.Actors
 {
     public class ActorSmallShroom : ActorBase
     {
-        public ActorSmallShroom(Core core)
+        public ActorSmallShroom(EngineCore core)
             : base(core)
         {
             SetImage("../../../Images/SmallShroom18x18.png");

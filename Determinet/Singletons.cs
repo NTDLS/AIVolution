@@ -1,12 +1,10 @@
-﻿using System;
-
-namespace Determinet
+﻿namespace Determinet
 {
     internal static class Singletons
     {
         internal static class Generators
         {
-            private static Random _random;
+            private static Random? _random;
 
             public static Random Random
             {

@@ -1,8 +1,8 @@
-﻿namespace Simulator.Engine
+﻿namespace Simulator.Engine.Actors
 {
     public class ActorWater : ActorBase
     {
-        public ActorWater(Core core)
+        public ActorWater(EngineCore core)
             : base(core)
         {
             SetImage("../../../Images/Water32x32.png");

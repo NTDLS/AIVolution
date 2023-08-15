@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Determinet.ActivationFunctions
+﻿namespace Determinet.ActivationFunctions
 {
     /// <summary>
     /// The sigmoid activation function, also called the logistic function, is traditionally a very popular activation function for neural networks.
@@ -11,7 +9,7 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class SigmoidFunction : IActivationFunction
     {
-        public SigmoidFunction(object[] param)
+        public SigmoidFunction(object[]? param)
         {
         }
 

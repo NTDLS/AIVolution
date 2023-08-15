@@ -1,17 +1,13 @@
 ﻿using Determinet;
 using Determinet.Types;
-using System;
 
 namespace AIVolution
 {
     class Program
     {
-        private static NeuralNetwork nn;
-
-        static void Main(string[] args)
+        static void Main()
         {
             Start();
-
             Console.ReadLine();
         }
 
@@ -24,7 +20,7 @@ namespace AIVolution
             nnConfig.AddLinearIntermediateLayer(4, 1, new DoubleRange(-1, 1));
             nnConfig.AddOutputLayer(1, ActivationType.Linear);
 
-            nn = new NeuralNetwork(nnConfig, 0.01f);
+            var nn = new NeuralNetwork(nnConfig, 0.01f);
 
             nn.Load("C:\\network.txt");
 
@@ -80,7 +76,7 @@ namespace AIVolution
                 Console.Write($"{val:0.####},");
             }
 
-            var result = nn.FeedForward(inputs)[0];
+            var result = net.FeedForward(inputs)[0];
 
             Console.WriteLine("Result: {0}", result > 0.5 ? "True" : "False");
 

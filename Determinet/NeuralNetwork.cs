@@ -1,8 +1,5 @@
 ﻿using Determinet.ActivationFunctions;
 using Determinet.Types;
-using System;
-using System.Collections.Generic;
-using System.IO;
 
 namespace Determinet
 {
@@ -22,7 +19,7 @@ namespace Determinet
         public double Cost { get; private set; } = 0; //Not used in calculions, only to identify the performance of the network.
 
         //Other.
-        private Random _random;
+        private Random _random = new Random();
         private readonly NeuralNetworkConfig _configuration;
         private int _randomSeed = 0;
 
@@ -54,14 +51,57 @@ namespace Determinet
                 _layers[i] = configuration.Layer(i).Nodes;
             }
 
-            InitializeNeurons();
-            InitializeBiases();
-            InitializeWeights();
+            /// Create empty storage array for the neurons in the network.
+            var neuronsList = new List<double[]>();
+            for (int i = 0; i < _layers.Length; i++)
+            {
+                neuronsList.Add(new double[_layers[i]]);
+            }
+            _neurons = neuronsList.ToArray();
+
+            /// Initializes random array for the biases being held within the network.
+            var biasList = new List<double[]>();
+            for (int i = 1; i < _layers.Length; i++)
+            {
+                var bias = new double[_layers[i]];
+                for (int j = 0; j < _layers[i]; j++)
+                {
+                    bias[j] = GetRandomBias();
+                }
+                biasList.Add(bias);
+            }
+            _biases = biasList.ToArray();
+
+            /// Initializes random array for the weights being held in the network.
+            var weightsList = new List<double[][]>();
+            for (int i = 1; i < _layers.Length; i++)
+            {
+                var layerWeightsList = new List<double[]>();
+                int neuronsInPreviousLayer = _layers[i - 1];
+                for (int j = 0; j < _layers[i]; j++)
+                {
+                    var neuronWeights = new double[neuronsInPreviousLayer];
+                    for (int k = 0; k < neuronsInPreviousLayer; k++)
+                    {
+                        neuronWeights[k] = GetRandomBias();
+                    }
+                    layerWeightsList.Add(neuronWeights);
+                }
+                weightsList.Add(layerWeightsList.ToArray());
+            }
+            _weights = weightsList.ToArray();
         }
+
+        #region Feed forward.
 
         public AIParameters FeedForward(AIParameters param)
         {
             var inputAliases = _configuration.Layer(0).Aliases;
+            if (inputAliases == null)
+            {
+                throw new Exception("Alises are not defined for the input layer.");
+            }
+
             double[] inputInputs = new double[inputAliases.Length];
             for (int i = 0; i < inputAliases.Length; i++)
             {
@@ -74,6 +114,11 @@ namespace Determinet
             AIParameters friendlyOutputs = new();
 
             var outputAliases = _configuration.Layer(_configuration.LayerCount - 1).Aliases;
+            if (outputAliases == null)
+            {
+                throw new Exception("Alises are not defined for the output layer.");
+            }
+
             for (int i = 0; i < outputAliases.Length; i++)
             {
                 friendlyOutputs.Set(outputAliases[i], rawOutputs[i]);
@@ -115,63 +160,6 @@ namespace Determinet
                 }
             }
             return _neurons[_layers.Length - 1];
-        }
-
-        #region Initilization.
-
-        /// <summary>
-        /// Create empty storage array for the neurons in the network.
-        /// </summary>
-        private void InitializeNeurons()
-        {
-            var neuronsList = new List<double[]>();
-            for (int i = 0; i < _layers.Length; i++)
-            {
-                neuronsList.Add(new double[_layers[i]]);
-            }
-            _neurons = neuronsList.ToArray();
-        }
-
-        /// <summary>
-        /// Initializes random array for the biases being held within the network.
-        /// </summary>
-        private void InitializeBiases()
-        {
-            var biasList = new List<double[]>();
-            for (int i = 1; i < _layers.Length; i++)
-            {
-                var bias = new double[_layers[i]];
-                for (int j = 0; j < _layers[i]; j++)
-                {
-                    bias[j] = GetRandomBias();
-                }
-                biasList.Add(bias);
-            }
-            _biases = biasList.ToArray();
-        }
-
-        /// <summary>
-        /// Initializes random array for the weights being held in the network.
-        /// </summary>
-        private void InitializeWeights()
-        {
-            var weightsList = new List<double[][]>();
-            for (int i = 1; i < _layers.Length; i++)
-            {
-                var layerWeightsList = new List<double[]>();
-                int neuronsInPreviousLayer = _layers[i - 1];
-                for (int j = 0; j < _layers[i]; j++)
-                {
-                    var neuronWeights = new double[neuronsInPreviousLayer];
-                    for (int k = 0; k < neuronsInPreviousLayer; k++)
-                    {
-                        neuronWeights[k] = GetRandomBias();
-                    }
-                    layerWeightsList.Add(neuronWeights);
-                }
-                weightsList.Add(layerWeightsList.ToArray());
-            }
-            _weights = weightsList.ToArray();
         }
 
         #endregion
@@ -335,12 +323,12 @@ namespace Determinet
             using (TextReader tr = new StreamReader(path))
             {
                 int NumberOfLines = (int)new FileInfo(path).Length;
-                string[] ListLines = new string[NumberOfLines];
+                var ListLines = new string[NumberOfLines];
                 int index = 1;
 
                 for (int i = 1; i < NumberOfLines; i++)
                 {
-                    ListLines[i] = tr.ReadLine();
+                    ListLines[i] = tr.ReadLine() ?? string.Empty;
                 }
 
                 if (new FileInfo(path).Length > 0)

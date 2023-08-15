@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simulator.Engine.Types
+﻿namespace Simulator.Engine.Types
 {
     public class AngleD
     {
@@ -109,8 +107,13 @@ namespace Simulator.Engine.Types
             return new AngleD(original.Degrees * degrees);
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
+            if (o == null || o is not AngleD)
+            {
+                return false;
+            }
+
             return (Math.Round(((AngleD)o).X, 4) == X && Math.Round(((AngleD)o).Y, 4) == Y);
         }
 

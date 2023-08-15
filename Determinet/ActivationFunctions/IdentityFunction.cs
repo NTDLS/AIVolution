@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Determinet.ActivationFunctions
+﻿namespace Determinet.ActivationFunctions
 {
     /// <summary>
     /// An identity function is a function that returns the same value as its input. In machine learning, an identity
@@ -10,7 +8,7 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class IdentityFunction : IActivationFunction
     {
-        public IdentityFunction(object[] param)
+        public IdentityFunction(object[]? param)
         {
         }
 

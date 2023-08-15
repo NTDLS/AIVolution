@@ -1,18 +1,16 @@
-﻿using Simulator.Engine.Types;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
+﻿using Simulator.Engine.Actors;
+using Simulator.Engine.Types;
 
-namespace Simulator.Engine
+namespace Simulator.Engine.Controllers
 {
     /// <summary>
     /// Handles keyboard input.
     /// </summary>
     public class EngineInput
     {
-        private Core _core;
+        private EngineCore _core;
         private Dictionary<PlayerKey, KeyPressState> _keyStates = new Dictionary<PlayerKey, KeyPressState>();
-        public EngineInput(Core core)
+        public EngineInput(EngineCore core)
         {
             _core = core;
         }
@@ -21,7 +19,7 @@ namespace Simulator.Engine
         {
             if (_keyStates.ContainsKey(key))
             {
-                return (_keyStates[key] == KeyPressState.Down);
+                return _keyStates[key] == KeyPressState.Down;
             }
 
             return false;

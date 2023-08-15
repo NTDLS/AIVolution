@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-namespace Simulator.Engine.Types
+﻿namespace Simulator.Engine.Types
 {
     public class PointD
     {
@@ -58,14 +55,19 @@ namespace Simulator.Engine.Types
             return new PointD(original.X * modifier, original.Y * modifier);
         }
 
-        public override bool Equals(object o)
+        public override bool Equals(object? o)
         {
+            if (o == null || o is not AngleD)
+            {
+                return false;
+            }
+
             return (Math.Round(((PointD)o).X, 4) == X && Math.Round(((PointD)o).Y, 4) == Y);
         }
 
-        public static bool operator !=(PointD lhs, PointD rhs) => !(lhs == rhs);
+        public static bool operator !=(PointD? lhs, PointD? rhs) => !(lhs == rhs);
 
-        public static bool operator ==(PointD lhs, PointD rhs)
+        public static bool operator ==(PointD? lhs, PointD? rhs)
         {
             if (object.ReferenceEquals(lhs, null))
             {

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Determinet.Types
+﻿namespace Determinet.Types
 {
     /// <summary>
     ///   Common interface for Range objects, such as <see cref="DoubleRange"/>,

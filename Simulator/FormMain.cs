@@ -1,14 +1,11 @@
 ﻿using Simulator.Engine;
 using Simulator.Engine.Types;
-using System;
-using System.Drawing;
-using System.Windows.Forms;
 
 namespace Simulator
 {
     public partial class FormMain : Form
     {
-        private Core _core;
+        private EngineCore _core;
 
         protected override CreateParams CreateParams
         {
@@ -32,7 +29,7 @@ namespace Simulator
 
             BackColor = Color.FromArgb(1, 1, 10);
 
-            _core = new Core(this, new Size(Width, Height));
+            _core = new EngineCore(this, new Size(Width, Height));
 
             _core.Start();
         }
@@ -92,6 +89,5 @@ namespace Simulator
             if (e.KeyCode == Keys.Down) _core.Input.KeyStateChanged(PlayerKey.Down, KeyPressState.Up);
             if (e.KeyCode == Keys.Enter) _core.Input.KeyStateChanged(PlayerKey.Enter, KeyPressState.Up);
         }
-
     }
 }

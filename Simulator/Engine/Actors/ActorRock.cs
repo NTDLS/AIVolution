@@ -1,8 +1,8 @@
-﻿namespace Simulator.Engine
+﻿namespace Simulator.Engine.Actors
 {
     public class ActorRock : ActorBase
     {
-        public ActorRock(Core core)
+        public ActorRock(EngineCore core)
             : base(core)
         {
             SetImage("../../../Images/Rock32x32.png");

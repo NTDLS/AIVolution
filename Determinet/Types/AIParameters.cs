@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-
-namespace Determinet.Types
+﻿namespace Determinet.Types
 {
     public class AIParameters
     {

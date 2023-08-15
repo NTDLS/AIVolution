@@ -26,7 +26,7 @@ namespace Simulator.Engine
             public const string OutChangeSpeedAmount = "OutChangeSpeedAmount";
         }
 
-        private static NeuralNetwork _brain = null;
+        private static NeuralNetwork? _brain = null;
 
         public static NeuralNetwork GetBrain()
         {
@@ -34,7 +34,7 @@ namespace Simulator.Engine
             {
                 var nnConfig = new NeuralNetworkConfig();
 
-                nnConfig.AddInputLayer(ActivationType.Linear, //Vision inputs
+                nnConfig.AddInputLayer(ActivationType.Sigmoid, //Vision inputs
                     new string[] {
                         AIInputs.In0Degrees,
                         AIInputs.In45Degrees,
@@ -43,9 +43,9 @@ namespace Simulator.Engine
                         AIInputs.In315Degrees
                     });
 
-                nnConfig.AddIntermediateLayer(32, ActivationType.Linear);
+                nnConfig.AddIntermediateLayer(32, ActivationType.Sigmoid);
 
-                nnConfig.AddOutputLayer(ActivationType.Linear, //Vision inputs
+                nnConfig.AddOutputLayer(ActivationType.Sigmoid, //Decision outputs
                     new string[] {
                         AIOutputs.OutChangeDirection,
                         AIOutputs.OutRotateDirection,

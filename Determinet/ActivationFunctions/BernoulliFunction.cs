@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Determinet.ActivationFunctions
+﻿namespace Determinet.ActivationFunctions
 {
     [Serializable]
     public class BernoulliFunction : IActivationMachine
@@ -12,7 +10,7 @@ namespace Determinet.ActivationFunctions
             set { alpha = value; }
         }
 
-        public BernoulliFunction(object[] param)
+        public BernoulliFunction(object[]? param)
         {
             if (param == null)
             {

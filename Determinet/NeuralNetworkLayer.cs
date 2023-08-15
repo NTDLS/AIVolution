@@ -1,6 +1,5 @@
 ﻿using Determinet.ActivationFunctions;
 using Determinet.Types;
-using System;
 
 namespace Determinet
 {
@@ -11,7 +10,7 @@ namespace Determinet
         /// </summary>
         public int Nodes { get; private set; }
 
-        public string[] Aliases { get; private set; }
+        public string[]? Aliases { get; private set; }
 
         /// <summary>
         /// The type of the later (input, intermediate (Hidden) or output). 
@@ -23,7 +22,7 @@ namespace Determinet
         /// </summary>
         public IActivationFunction ActivationFunction { get; set; }
 
-        public NeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, string[] nodeAlias, object[] param)
+        public NeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, string[]? nodeAlias, object[]? param)
         {
             ActivationFunction = CreateActivationType(activationType, param);
             LayerType = type;
@@ -35,7 +34,7 @@ namespace Determinet
             }
         }
 
-        private IActivationFunction CreateActivationType(ActivationType activationType, object[] param)
+        private IActivationFunction CreateActivationType(ActivationType activationType, object[]? param)
         {
             return activationType switch
             {

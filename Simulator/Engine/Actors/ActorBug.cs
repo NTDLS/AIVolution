@@ -1,17 +1,16 @@
 ﻿using Determinet;
 using Determinet.Types;
 using Simulator.Engine.Types;
-using System;
-using System.Linq;
-using static Simulator.Engine.BugBrain;
 
-namespace Simulator.Engine
+namespace Simulator.Engine.Actors
 {
-
+    /// <summary>
+    /// These are the intelligent bugs.
+    /// </summary>
     public class ActorBug : ActorBase
     {
         private DateTime? _lastDecisionTime;
-        private PointD _lastDecisionLocation = null;
+        private PointD? _lastDecisionLocation = null;
 
         public NeuralNetwork Brain { get; private set; }
         public double MinimumTravelDistanceBeforeDamage { get; set; } = 20;
@@ -21,7 +20,7 @@ namespace Simulator.Engine
         public double DecisionSensitivity { get; set; } = Utility.RandomNumber(0.25, 0.55);
         public int Health { get; set; } = 100;
 
-        public ActorBug(Core core, NeuralNetwork brain = null)
+        public ActorBug(EngineCore core, NeuralNetwork? brain = null)
             : base(core)
         {
             if (brain != null)
@@ -48,14 +47,6 @@ namespace Simulator.Engine
             Velocity.Angle.Degrees = Utility.RandomNumber(0, 359);
             Velocity.ThrottlePercentage = Utility.RandomNumber(0.10, 0.25);
 
-            /*
-             * Added 5 input nodes to act as distance sensors.
-             * We need to determine how far away any object is from each of these sensors (within some sane range)
-             * and use those distances as inputs.
-             * 
-             * Perhaps we use the output as the rotation angle?
-             */
-
             if (brain == null)
             {
                 Brain = BugBrain.GetBrain();
@@ -80,7 +71,7 @@ namespace Simulator.Engine
                 {
                     if (DistanceTo(_lastDecisionLocation as PointD) < MinimumTravelDistanceBeforeDamage)
                     {
-                        Health--;
+                        //Health--;
                     }
                 }
                 _lastDecisionLocation = Location;
@@ -89,11 +80,11 @@ namespace Simulator.Engine
 
                 var decisions = Brain.FeedForward(decidingFactors);
 
-                if (decisions.Get(AIOutputs.OutChangeDirection) >= DecisionSensitivity)
+                if (decisions.Get(BugBrain.AIOutputs.OutChangeDirection) >= DecisionSensitivity)
                 {
-                    var rotateAmount = decisions.Get(AIOutputs.OutRotationAmount);
+                    var rotateAmount = decisions.Get(BugBrain.AIOutputs.OutRotationAmount);
 
-                    if (decisions.Get(AIOutputs.OutRotateDirection) >= DecisionSensitivity)
+                    if (decisions.Get(BugBrain.AIOutputs.OutRotateDirection) >= DecisionSensitivity)
                     {
                         Rotate(45 * rotateAmount);
                     }
@@ -103,14 +94,14 @@ namespace Simulator.Engine
                     }
                 }
 
-                if (decisions.Get(AIOutputs.OutChangeSpeed) >= DecisionSensitivity)
+                if (decisions.Get(BugBrain.AIOutputs.OutChangeSpeed) >= DecisionSensitivity)
                 {
-                    double speedFactor = decisions.Get(AIOutputs.OutChangeSpeedAmount);
+                    double speedFactor = decisions.Get(BugBrain.AIOutputs.OutChangeSpeedAmount, 0);
                     Velocity.ThrottlePercentage += (speedFactor / 5.0);
                 }
                 else
                 {
-                    double speedFactor = decisions.Get(AIOutputs.OutChangeSpeedAmount);
+                    double speedFactor = decisions.Get(BugBrain.AIOutputs.OutChangeSpeedAmount, 0);
                     Velocity.ThrottlePercentage += -(speedFactor / 5.0);
                 }
 
@@ -162,27 +153,27 @@ namespace Simulator.Engine
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 0))
                 {
-                    aiParams.SetIfLess(AIInputs.In0Degrees, percentageOfCloseness);
+                    aiParams.SetIfLess(BugBrain.AIInputs.In0Degrees, percentageOfCloseness);
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 45))
                 {
-                    aiParams.SetIfLess(AIInputs.In45Degrees, percentageOfCloseness);
+                    aiParams.SetIfLess(BugBrain.AIInputs.In45Degrees, percentageOfCloseness);
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, 90))
                 {
-                    aiParams.SetIfLess(AIInputs.In90Degrees, percentageOfCloseness);
+                    aiParams.SetIfLess(BugBrain.AIInputs.In90Degrees, percentageOfCloseness);
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -45))
                 {
-                    aiParams.SetIfLess(AIInputs.In270Degrees, percentageOfCloseness);
+                    aiParams.SetIfLess(BugBrain.AIInputs.In270Degrees, percentageOfCloseness);
                 }
 
                 if (IsPointingAt(other, VisionToleranceDegrees, MaxObserveDistance, -90))
                 {
-                    aiParams.SetIfLess(AIInputs.In315Degrees, percentageOfCloseness);
+                    aiParams.SetIfLess(BugBrain.AIInputs.In315Degrees, percentageOfCloseness);
                 }
             }
 

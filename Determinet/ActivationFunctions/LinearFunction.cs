@@ -1,5 +1,4 @@
 ﻿using Determinet.Types;
-using System;
 
 namespace Determinet.ActivationFunctions
 {
@@ -27,7 +26,7 @@ namespace Determinet.ActivationFunctions
             set { range = value; }
         }
 
-        public LinearFunction(object[] param)
+        public LinearFunction(object[]? param)
         {
             if (param == null)
             {

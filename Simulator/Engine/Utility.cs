@@ -1,6 +1,5 @@
-﻿using Simulator.Engine.Types;
-using System;
-using System.Drawing;
+﻿using Simulator.Engine.Actors;
+using Simulator.Engine.Types;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 

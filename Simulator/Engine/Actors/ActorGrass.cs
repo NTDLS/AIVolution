@@ -1,8 +1,8 @@
-﻿namespace Simulator.Engine
+﻿namespace Simulator.Engine.Actors
 {
     public class ActorGrass : ActorBase
     {
-        public ActorGrass(Core core)
+        public ActorGrass(EngineCore core)
             : base(core)
         {
             SetImage("../../../Images/Grass32x32.png");

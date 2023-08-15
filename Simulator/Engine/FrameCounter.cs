@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simulator.Engine
+﻿namespace Simulator.Engine
 {
     /// <summary>
     /// Keeps track of the enigne frame-rate.

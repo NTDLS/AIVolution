@@ -1,15 +1,13 @@
 ﻿using Simulator.Engine.Types;
-using System.Drawing;
-using System.Windows.Forms;
 
-namespace Simulator.Engine
+namespace Simulator.Engine.Controllers
 {
     /// <summary>
     /// Handles all matters related to screen metrics.
     /// </summary>
     public class EngineDisplay
     {
-        private Core _core;
+        private EngineCore _core;
         public FrameCounter FrameCounter { get; set; } = new FrameCounter();
         public RectangleF VisibleBounds { get; private set; }
 
@@ -72,7 +70,7 @@ namespace Simulator.Engine
             return new PointD(x, y);
         }
 
-        public EngineDisplay(Core core, Control drawingSurface, Size visibleSize)
+        public EngineDisplay(EngineCore core, Control drawingSurface, Size visibleSize)
         {
             _core = core;
             _drawingSurface = drawingSurface;

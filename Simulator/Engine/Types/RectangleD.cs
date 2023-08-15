@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Simulator.Engine.Types
+﻿namespace Simulator.Engine.Types
 {
     public class RectangleD
     {

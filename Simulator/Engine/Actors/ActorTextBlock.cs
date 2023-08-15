@@ -1,15 +1,13 @@
 ﻿using Simulator.Engine.Types;
-using System;
-using System.Drawing;
 
-namespace Simulator.Engine
+namespace Simulator.Engine.Actors
 {
     public class ActorTextBlock : ActorBase
     {
         private Rectangle? _prevRegion = null;
-        private Font _font;
-        private Graphics _genericDC; //Not used for drawing, only measuring.
-        private Brush _color;
+        private readonly Font _font;
+        private readonly Graphics _genericDC; //Not used for drawing, only measuring.
+        private readonly Brush _color;
         public bool IsPositionStatic { get; set; }
 
         #region Properties.
@@ -27,7 +25,7 @@ namespace Simulator.Engine
             }
         }
 
-        private string _lastTextSizeCheck;
+        private string _lastTextSizeCheck = string.Empty;
         private Size _size = Size.Empty;
         public override Size Size
         {
@@ -44,7 +42,7 @@ namespace Simulator.Engine
             }
         }
 
-        private string _text;
+        private string _text = string.Empty;
         public string Text
         {
             get
@@ -71,7 +69,7 @@ namespace Simulator.Engine
 
         #endregion
 
-        public ActorTextBlock(Core core, string font, Brush color, double size, PointD location, bool isPositionStatic, string name = "")
+        public ActorTextBlock(EngineCore core, string font, Brush color, double size, PointD location, bool isPositionStatic, string name = "")
             : base(core, name)
         {
             IsPositionStatic = isPositionStatic;

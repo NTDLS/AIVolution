@@ -1,8 +1,8 @@
-﻿namespace Simulator.Engine
+﻿namespace Simulator.Engine.Actors
 {
     public class ActorLava : ActorBase
     {
-        public ActorLava(Core core)
+        public ActorLava(EngineCore core)
             : base(core)
         {
             SetImage("../../../Images/Lava32x32.png");

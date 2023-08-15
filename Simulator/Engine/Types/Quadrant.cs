@@ -1,6 +1,4 @@
-﻿using System.Drawing;
-
-namespace Simulator.Engine
+﻿namespace Simulator.Engine
 {
     public class Quadrant
     {
