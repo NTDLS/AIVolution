@@ -19,6 +19,11 @@ namespace Determinet.Types
             }
         }
 
+        /// <summary>
+        /// Sets the input value if the given value is less than the existing value or if the key does not yet exist.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetIfLess(string key, double value)
         {
             if (_dictonary.ContainsKey(key) == false)
@@ -36,6 +41,11 @@ namespace Determinet.Types
             }
         }
 
+        /// <summary>
+        /// Sets the input value if the given value is greater than the existing value or if the key does not yet exist.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
         public void SetIfGreater(string key, double value)
         {
             if (_dictonary.ContainsKey(key) == false)

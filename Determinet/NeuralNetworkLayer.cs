@@ -23,7 +23,7 @@ namespace Determinet
         /// </summary>
         public IActivationFunction ActivationFunction { get; set; }
 
-        public NeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, string []nodeAlias = null, object[] param = null)
+        public NeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, string[] nodeAlias, object[] param)
         {
             ActivationFunction = CreateActivationType(activationType, param);
             LayerType = type;

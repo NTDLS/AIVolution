@@ -37,7 +37,7 @@ namespace Simulator.Engine
                 nnConfig.AddInputLayer(ActivationType.Linear, //Vision inputs
                     new string[] { AIInputs.In0Degrees, AIInputs.In45Degrees, AIInputs.In90Degrees, AIInputs.In270Degrees, AIInputs.In315Degrees });
 
-                nnConfig.AddLayer(LayerType.Intermediate, 12, ActivationType.Linear);
+                nnConfig.AddIntermediateLayer(12, ActivationType.Linear);
 
                 nnConfig.AddOutputLayer(ActivationType.Linear, //Vision inputs
                     new string[] { AIOutputs.OutChangeDirection, AIOutputs.OutRotateDirection, AIOutputs.OutRotationAmount, AIOutputs.OutChangeSpeed, AIOutputs.OutChangeSpeedAmount });
