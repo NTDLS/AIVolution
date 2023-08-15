@@ -1,7 +1,9 @@
-﻿namespace Determinet.ActivationFunctions
+﻿using Determinet.ActivationFunctions.Interfaces;
+
+namespace Determinet.ActivationFunctions
 {
     [Serializable]
-    public class BernoulliFunction : IActivationMachine
+    public class DNBernoulliFunction : DNIActivationMachine
     {
         private Random _random;
 
@@ -12,9 +14,9 @@
             set { alpha = value; }
         }
 
-        public BernoulliFunction(object[]? param)
+        public DNBernoulliFunction(object[]? param)
         {
-            var seed = Utility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
+            var seed = DNUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
             _random = new Random(seed);
 
             if (param == null)

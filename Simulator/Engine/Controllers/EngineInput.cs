@@ -49,6 +49,33 @@ namespace Simulator.Engine.Controllers
             {
                 _core.TogglePause();
             }
+            else if (key == Keys.S)
+            {
+                bool wasPaused = _core.IsPaused;
+                if (wasPaused == false)
+                {
+                    _core.TogglePause();
+                }
+
+                var oldestBug = _core.Actors.Collection.OfType<ActorBug>().Where(o => o.Visable == true)
+                    .OrderByDescending(o => o.Brain.Fitness).Take(1).FirstOrDefault();
+
+                if (oldestBug != null)
+                {
+                    using var sfd = new SaveFileDialog();
+                    sfd.Filter = "Text File (*.txt)|*.txt|All files (*.*)|*.*";
+                    sfd.FileName = "bugbrain.txt";
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                    {
+                        oldestBug.Brain.Save(sfd.FileName);
+                    }
+                }
+
+                if (wasPaused == false)
+                {
+                    _core.TogglePause();
+                }
+            }
 
             var player = _core.Actors.Collection.Where(o => o is ActorInteractive && o.Name == "Player").FirstOrDefault();
 

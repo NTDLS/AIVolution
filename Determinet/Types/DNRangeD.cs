@@ -2,7 +2,7 @@
 namespace Determinet.Types
 {
     [Serializable]
-    public struct RangeD
+    public struct DNRangeD
     {
         private double min, max;
 
@@ -20,9 +20,9 @@ namespace Determinet.Types
 
         public double Length => max - min;
         public readonly double[] ToArray() => new[] { min, max };
-        public static implicit operator double[](RangeD range) => range.ToArray();
+        public static implicit operator double[](DNRangeD range) => range.ToArray();
 
-        public RangeD(double min, double max)
+        public DNRangeD(double min, double max)
         {
             this.min = min;
             this.max = max;

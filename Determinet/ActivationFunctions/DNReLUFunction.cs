@@ -1,4 +1,6 @@
-﻿namespace Determinet.ActivationFunctions
+﻿using Determinet.ActivationFunctions.Interfaces;
+
+namespace Determinet.ActivationFunctions
 {
     /// <summary>
     ///  The rectified linear activation function or ReLU for short is a piecewise linear function that will output the input directly
@@ -6,9 +8,9 @@
     ///  because a model that uses it is easier to train and often achieves better performance.
     /// </summary>
     [Serializable]
-    public class ReLUFunction : IActivationFunction
+    public class DNReLUFunction : DNIActivationFunction
     {
-        public ReLUFunction(object[]? param)
+        public DNReLUFunction(object[]? param)
         {
         }
 

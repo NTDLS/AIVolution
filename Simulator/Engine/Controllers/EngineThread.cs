@@ -12,7 +12,7 @@ namespace Simulator.Engine.Controllers
         private bool _keepRunning = false;
         public Thread? Handle { get; private set; }
 
-        public int FrameAdvanceDelay { get; private set; } = 25;
+        public int FrameAdvanceDelay { get; private set; } = 10;
 
         public EngineThread(EngineCore core)
         {

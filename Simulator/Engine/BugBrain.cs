@@ -26,13 +26,13 @@ namespace Simulator.Engine
             public const string OutChangeSpeedAmount = "OutChangeSpeedAmount";
         }
 
-        private static NeuralNetwork? _brain = null;
+        private static DNNeuralNetwork? _brain = null;
 
-        public static NeuralNetwork GetBrain()
+        public static DNNeuralNetwork GetBrain()
         {
             if (_brain == null)
             {
-                _brain = new NeuralNetwork(0.02f);
+                _brain = new DNNeuralNetwork(0.09f);
 
                 _brain.Layers.AddInputLayer(ActivationType.Sigmoid, //Vision inputs
                     new string[] {
@@ -54,7 +54,7 @@ namespace Simulator.Engine
                         AIOutputs.OutChangeSpeedAmount
                     });
 
-                for (int i = 0; i < 10000; i++)
+                for (int i = 0; i < 5000; i++)
                 {
                     //Left side detection, go right.
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 2, 0), TrainingDecision(2, 2, 2, 2, 0));
@@ -79,9 +79,9 @@ namespace Simulator.Engine
             return _brain.Clone();
         }
 
-        private static AIParameters TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
+        private static DNNamedParameter TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
         {
-            var param = new AIParameters();
+            var param = new DNNamedParameter();
             param.Set(AIInputs.In0Degrees, in0Degrees);
             param.Set(AIInputs.In45Degrees, in45Degrees);
             param.Set(AIInputs.In90Degrees, in90Degrees);
@@ -90,9 +90,9 @@ namespace Simulator.Engine
             return param;
         }
 
-        private static AIParameters TrainingDecision(double outChangeDirection, double outRotateDirection, double outRotationAmount, double outChangeSpeed, double outChangeSpeedAmount)
+        private static DNNamedParameter TrainingDecision(double outChangeDirection, double outRotateDirection, double outRotationAmount, double outChangeSpeed, double outChangeSpeedAmount)
         {
-            var param = new AIParameters();
+            var param = new DNNamedParameter();
             param.Set(AIOutputs.OutChangeDirection, outChangeDirection);
             param.Set(AIOutputs.OutRotateDirection, outRotateDirection);
             param.Set(AIOutputs.OutRotationAmount, outRotationAmount);

@@ -1,4 +1,6 @@
-﻿namespace Determinet.ActivationFunctions
+﻿using Determinet.ActivationFunctions.Interfaces;
+
+namespace Determinet.ActivationFunctions
 {
     /// <summary>
     /// Both ReLU and Leaky ReLU are activation functions used in neural networks. The main difference between them is that ReLU sets all negative
@@ -7,9 +9,9 @@
     /// efficient and simpler than Leaky ReLU, which makes it more suitable for shallow architectures1.
     /// </summary>
     [Serializable]
-    public class LeakyReLUFunction : IActivationFunction
+    public class DNLeakyReLUFunction : DNIActivationFunction
     {
-        public LeakyReLUFunction(object[]? param)
+        public DNLeakyReLUFunction(object[]? param)
         {
         }
 

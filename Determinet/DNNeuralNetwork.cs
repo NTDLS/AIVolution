@@ -1,26 +1,27 @@
-﻿using Determinet.ActivationFunctions;
+﻿using Determinet.ActivationFunctions.Interfaces;
 using Determinet.Types;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 
 namespace Determinet
 {
-    public class NeuralNetwork
+    [Serializable]
+    public class DNNeuralNetwork
     {
         //Controllers:
-        public NeuralNetworkLayers Layers { get; private set; } = new();
         public bool IsInitalized { get; private set; }
 
         //Fundamental.
-        //private int[]? _layers;
-        private double[][]? _neurons;
-        private double[][]? _biases;
-        private double[][][]? _weights;
+        public DNNeuralNetworkLayers Layers { get; private set; } = new();
+        public double[][]? Neurons { get; private set; }
+        public double[][]? Biases { get; private set; }
+        public double[][][]? Weights { get; private set; }
 
         //Genetic.
         public double Fitness { get; set; } = 0;
 
         //Backprop.
-        public double LearningRate { get; set; } = 0.01f;
+        public double LearningRate { get; private set; } = 0.01f;
         public double Cost { get; private set; } = 0; //Not used in calculions, only to identify the performance of the network.
 
         //Other.
@@ -41,7 +42,7 @@ namespace Determinet
             _random = new Random(randomSeed);
         }
 
-        public NeuralNetwork(double learningRate, int randomSeed = 0)
+        public DNNeuralNetwork(double learningRate, int randomSeed = 0)
         {
             Reseed(randomSeed);
             LearningRate = learningRate;
@@ -59,14 +60,13 @@ namespace Determinet
 
         private void InitializeNeurons()
         {
-
             /// Create empty storage array for the neurons in the network.
             var neuronsList = new List<double[]>();
             for (int i = 0; i < Layers.Count; i++)
             {
-                neuronsList.Add(new double[Layers.Layer(i).NodeCount]);
+                neuronsList.Add(new double[Layers[i].NodeCount]);
             }
-            _neurons = neuronsList.ToArray();
+            Neurons = neuronsList.ToArray();
         }
 
         private void InitializeBiases()
@@ -75,14 +75,14 @@ namespace Determinet
             var biasList = new List<double[]>();
             for (int i = 1; i < Layers.Count; i++)
             {
-                var bias = new double[Layers.Layer(i).NodeCount];
-                for (int j = 0; j < Layers.Layer(i).NodeCount; j++)
+                var bias = new double[Layers[i].NodeCount];
+                for (int j = 0; j < Layers[i].NodeCount; j++)
                 {
                     bias[j] = GetRandomBias();
                 }
                 biasList.Add(bias);
             }
-            _biases = biasList.ToArray();
+            Biases = biasList.ToArray();
         }
 
         private void InitializeWeights()
@@ -92,8 +92,8 @@ namespace Determinet
             for (int i = 1; i < Layers.Count; i++)
             {
                 var layerWeightsList = new List<double[]>();
-                int neuronsInPreviousLayer = Layers.Layer(i - 1).NodeCount;
-                for (int j = 0; j < Layers.Layer(i).NodeCount; j++)
+                int neuronsInPreviousLayer = Layers[i - 1].NodeCount;
+                for (int j = 0; j < Layers[i].NodeCount; j++)
                 {
                     var neuronWeights = new double[neuronsInPreviousLayer];
                     for (int k = 0; k < neuronsInPreviousLayer; k++)
@@ -104,33 +104,21 @@ namespace Determinet
                 }
                 weightsList.Add(layerWeightsList.ToArray());
             }
-            _weights = weightsList.ToArray();
+            Weights = weightsList.ToArray();
         }
 
         #endregion
 
         #region Feed forward.
 
-        public AIParameters FeedForward(AIParameters param)
+        public DNNamedParameter FeedForward(DNNamedParameter param)
         {
             if (IsInitalized == false)
             {
                 Initialize();
             }
-            if (_biases == null)
-            {
-                throw new Exception("Biases have not been initialized.");
-            }
-            if (_weights == null)
-            {
-                throw new Exception("Weights have not been initialized.");
-            }
-            if (_neurons == null)
-            {
-                throw new Exception("Neurons have not been initialized.");
-            }
 
-            var inputAliases = Layers.Layer(0).Aliases;
+            var inputAliases = Layers[0].Aliases;
             if (inputAliases == null)
             {
                 throw new Exception("Alises are not defined for the input layer.");
@@ -145,9 +133,9 @@ namespace Determinet
 
             var rawOutputs = FeedForward(inputInputs);
 
-            AIParameters friendlyOutputs = new();
+            DNNamedParameter friendlyOutputs = new();
 
-            var outputAliases = Layers.Layer(Layers.Count - 1).Aliases;
+            var outputAliases = Layers[Layers.Count - 1].Aliases;
             if (outputAliases == null)
             {
                 throw new Exception("Alises are not defined for the output layer.");
@@ -172,52 +160,52 @@ namespace Determinet
             {
                 Initialize();
             }
-            if (_biases == null)
+            if (Biases == null)
             {
                 throw new Exception("Biases have not been initialized.");
             }
-            if (_weights == null)
+            if (Weights == null)
             {
                 throw new Exception("Weights have not been initialized.");
             }
-            if (_neurons == null)
+            if (Neurons == null)
             {
                 throw new Exception("Neurons have not been initialized.");
             }
 
             for (int i = 0; i < inputs.Length; i++)
             {
-                _neurons[0][i] = inputs[i];
+                Neurons[0][i] = inputs[i];
             }
 
             for (int i = 1; i < Layers.Count; i++)
             {
                 int layer = i - 1;
-                for (int j = 0; j < Layers.Layer(i).NodeCount; j++)
+                for (int j = 0; j < Layers[i].NodeCount; j++)
                 {
                     double value = 0;
-                    for (int k = 0; k < Layers.Layer(i - 1).NodeCount; k++)
+                    for (int k = 0; k < Layers[i - 1].NodeCount; k++)
                     {
-                        value += _weights[i - 1][j][k] * _neurons[i - 1][k];
+                        value += Weights[i - 1][j][k] * Neurons[i - 1][k];
                     }
 
-                    _neurons[i][j] = Layers.Layer(layer).ActivationFunction.Activation(value + _biases[i - 1][j]);
+                    Neurons[i][j] = Layers[layer].ActivationFunction.Activation(value + Biases[i - 1][j]);
 
-                    var mahcine = Layers.Layer(layer).ActivationFunction as IActivationMachine;
+                    var mahcine = Layers[layer].ActivationFunction as DNIActivationMachine;
                     if (mahcine != null)
                     {
-                        _neurons[i][j] = mahcine.Generate(_neurons[i][j]);
+                        Neurons[i][j] = mahcine.Generate(Neurons[i][j]);
                     }
                 }
             }
-            return _neurons[Layers.Count - 1];
+            return Neurons[Layers.Count - 1];
         }
 
         #endregion
 
         #region Backpropagation.
 
-        public void BackPropagate(AIParameters inputs, AIParameters expected)
+        public void BackPropagate(DNNamedParameter inputs, DNNamedParameter expected)
         {
             BackPropagate(inputs.ToArray(), expected.ToArray());
         }
@@ -228,15 +216,15 @@ namespace Determinet
             {
                 Initialize();
             }
-            if (_biases == null)
+            if (Biases == null)
             {
                 throw new Exception("Biases have not been initialized.");
             }
-            if (_weights == null)
+            if (Weights == null)
             {
                 throw new Exception("Weights have not been initialized.");
             }
-            if (_neurons == null)
+            if (Neurons == null)
             {
                 throw new Exception("Neurons have not been initialized.");
             }
@@ -255,44 +243,44 @@ namespace Determinet
             var gammaList = new List<double[]>();
             for (int i = 0; i < Layers.Count; i++)
             {
-                gammaList.Add(new double[Layers.Layer(i).NodeCount]);
+                gammaList.Add(new double[Layers[i].NodeCount]);
             }
             gamma = gammaList.ToArray(); //gamma initialization
 
             int layer = Layers.Count - 2;
             for (int i = 0; i < output.Length; i++)
             {
-                gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * Layers.Layer(layer).ActivationFunction.Derivative(output[i]); //Gamma calculation
+                gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * Layers[layer].ActivationFunction.Derivative(output[i]); //Gamma calculation
             }
 
-            for (int i = 0; i < Layers.Layer(Layers.Count - 1).NodeCount; i++) //calculates the w' and b' for the last layer in the network
+            for (int i = 0; i < Layers[Layers.Count - 1].NodeCount; i++) //calculates the w' and b' for the last layer in the network
             {
-                _biases[Layers.Count - 2][i] -= gamma[Layers.Count - 1][i] * LearningRate;
-                for (int j = 0; j < Layers.Layer(Layers.Count - 2).NodeCount; j++)
+                Biases[Layers.Count - 2][i] -= gamma[Layers.Count - 1][i] * LearningRate;
+                for (int j = 0; j < Layers[Layers.Count - 2].NodeCount; j++)
                 {
 
-                    _weights[Layers.Count - 2][i][j] -= gamma[Layers.Count - 1][i] * _neurons[Layers.Count - 2][j] * LearningRate; //*learning 
+                    Weights[Layers.Count - 2][i][j] -= gamma[Layers.Count - 1][i] * Neurons[Layers.Count - 2][j] * LearningRate; //*learning 
                 }
             }
 
             for (int i = Layers.Count - 2; i > 0; i--) //runs on all hidden layers
             {
                 layer = i - 1;
-                for (int j = 0; j < Layers.Layer(i).NodeCount; j++) //outputs
+                for (int j = 0; j < Layers[i].NodeCount; j++) //outputs
                 {
                     gamma[i][j] = 0;
                     for (int k = 0; k < gamma[i + 1].Length; k++)
                     {
-                        gamma[i][j] += gamma[i + 1][k] * _weights[i][k][j];
+                        gamma[i][j] += gamma[i + 1][k] * Weights[i][k][j];
                     }
-                    gamma[i][j] *= Layers.Layer(layer).ActivationFunction.Derivative(_neurons[i][j]); //calculate gamma
+                    gamma[i][j] *= Layers[layer].ActivationFunction.Derivative(Neurons[i][j]); //calculate gamma
                 }
-                for (int j = 0; j < Layers.Layer(i).NodeCount; j++) //itterate over outputs of layer
+                for (int j = 0; j < Layers[i].NodeCount; j++) //itterate over outputs of layer
                 {
-                    _biases[i - 1][j] -= gamma[i][j] * LearningRate; //modify biases of network
-                    for (int k = 0; k < Layers.Layer(i - 1).NodeCount; k++) //itterate over inputs to layer
+                    Biases[i - 1][j] -= gamma[i][j] * LearningRate; //modify biases of network
+                    for (int k = 0; k < Layers[i - 1].NodeCount; k++) //itterate over inputs to layer
                     {
-                        _weights[i - 1][j][k] -= gamma[i][j] * _neurons[i - 1][k] * LearningRate; //modify weights of network
+                        Weights[i - 1][j][k] -= gamma[i][j] * Neurons[i - 1][k] * LearningRate; //modify weights of network
                     }
                 }
             }
@@ -311,36 +299,32 @@ namespace Determinet
             {
                 Initialize();
             }
-            if (_biases == null)
+            if (Biases == null)
             {
                 throw new Exception("Biases have not been initialized.");
             }
-            if (_weights == null)
+            if (Weights == null)
             {
                 throw new Exception("Weights have not been initialized.");
-            }
-            if (_neurons == null)
-            {
-                throw new Exception("Neurons have not been initialized.");
             }
 
             Reseed(randomSeed);
 
-            for (int i = 0; i < _biases.Length; i++)
+            for (int i = 0; i < Biases.Length; i++)
             {
-                for (int j = 0; j < _biases[i].Length; j++)
+                for (int j = 0; j < Biases[i].Length; j++)
                 {
-                    _biases[i][j] = FlipCoin(mutationProbability) ? _biases[i][j] += NextDouble(-mutationSeverity, mutationSeverity) : _biases[i][j];
+                    Biases[i][j] = FlipCoin(mutationProbability) ? Biases[i][j] += NextDouble(-mutationSeverity, mutationSeverity) : Biases[i][j];
                 }
             }
 
-            for (int i = 0; i < _weights.Length; i++)
+            for (int i = 0; i < Weights.Length; i++)
             {
-                for (int j = 0; j < _weights[i].Length; j++)
+                for (int j = 0; j < Weights[i].Length; j++)
                 {
-                    for (int k = 0; k < _weights[i][j].Length; k++)
+                    for (int k = 0; k < Weights[i][j].Length; k++)
                     {
-                        _weights[i][j][k] = FlipCoin(mutationProbability) ? _weights[i][j][k] += NextDouble(-mutationSeverity, mutationSeverity) : _weights[i][j][k];
+                        Weights[i][j][k] = FlipCoin(mutationProbability) ? Weights[i][j][k] += NextDouble(-mutationSeverity, mutationSeverity) : Weights[i][j][k];
                     }
                 }
             }
@@ -351,7 +335,7 @@ namespace Determinet
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(NeuralNetwork other)
+        public int CompareTo(DNNeuralNetwork other)
         {
             if (other == null) return 1;
 
@@ -368,26 +352,26 @@ namespace Determinet
         /// </summary>
         /// <param name="nn"></param>
         /// <returns></returns>
-        public NeuralNetwork Clone()
+        public DNNeuralNetwork Clone()
         {
             if (IsInitalized == false)
             {
                 Initialize();
             }
-            if (_biases == null)
+            if (Biases == null)
             {
                 throw new Exception("Biases have not been initialized.");
             }
-            if (_weights == null)
+            if (Weights == null)
             {
                 throw new Exception("Weights have not been initialized.");
             }
-            if (_neurons == null)
+            if (Neurons == null)
             {
                 throw new Exception("Neurons have not been initialized.");
             }
 
-            var nn = new NeuralNetwork(LearningRate, _randomSeed)
+            var nn = new DNNeuralNetwork(LearningRate, _randomSeed)
             {
                 Fitness = Fitness
             };
@@ -396,31 +380,31 @@ namespace Determinet
             nn.Layers = Layers.Clone();
 
             //Clone biases:
-            nn._biases = new double[_biases.Length][];
-            for (int i = 0; i < _biases.Length; i++)
+            nn.Biases = new double[Biases.Length][];
+            for (int i = 0; i < Biases.Length; i++)
             {
-                nn._biases[i] = new double[_biases[i].Length];
-                Array.Copy(_biases[i], nn._biases[i], _biases[i].Length);
+                nn.Biases[i] = new double[Biases[i].Length];
+                Array.Copy(Biases[i], nn.Biases[i], Biases[i].Length);
             }
 
             //Clone weights:
-            nn._weights = new double[_weights.Length][][];
-            for (int i = 0; i < _weights.Length; i++)
+            nn.Weights = new double[Weights.Length][][];
+            for (int i = 0; i < Weights.Length; i++)
             {
-                nn._weights[i] = new double[_weights[i].Length][];
-                for (int j = 0; j < _weights[i].Length; j++)
+                nn.Weights[i] = new double[Weights[i].Length][];
+                for (int j = 0; j < Weights[i].Length; j++)
                 {
-                    nn._weights[i][j] = new double[_weights[i][j].Length];
-                    Array.Copy(_weights[i][j], nn._weights[i][j], _weights[i][j].Length);
+                    nn.Weights[i][j] = new double[Weights[i][j].Length];
+                    Array.Copy(Weights[i][j], nn.Weights[i][j], Weights[i][j].Length);
                 }
             }
 
             //Clone neurons:
-            nn._neurons = new double[_neurons.Length][];
-            for (int i = 0; i < _neurons.Length; i++)
+            nn.Neurons = new double[Neurons.Length][];
+            for (int i = 0; i < Neurons.Length; i++)
             {
-                nn._neurons[i] = new double[_neurons[i].Length];
-                Array.Copy(_neurons[i], nn._neurons[i], _neurons[i].Length);
+                nn.Neurons[i] = new double[Neurons[i].Length];
+                Array.Copy(Neurons[i], nn.Neurons[i], Neurons[i].Length);
             }
 
             nn.IsInitalized = true;
@@ -436,10 +420,9 @@ namespace Determinet
         /// Loads the biases and weights from within a file into the neural network.
         /// </summary>
         /// <param name="path"></param>
-        public static NeuralNetwork? Load(string path)
+        public static DNNeuralNetwork? Load(string path)
         {
-            var searilized = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<NeuralNetwork>(searilized);
+            return JsonConvert.DeserializeObject<DNNeuralNetwork>(File.ReadAllText(path));
         }
 
         /// <summary>
@@ -452,21 +435,8 @@ namespace Determinet
             {
                 Initialize();
             }
-            if (_biases == null)
-            {
-                throw new Exception("Biases have not been initialized.");
-            }
-            if (_weights == null)
-            {
-                throw new Exception("Weights have not been initialized.");
-            }
-            if (_neurons == null)
-            {
-                throw new Exception("Neurons have not been initialized.");
-            }
 
-            var searilized = JsonConvert.SerializeObject(this);
-            File.WriteAllText(path, searilized);
+            File.WriteAllText(path, JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter()));
         }
 
         #endregion

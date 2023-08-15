@@ -1,6 +1,6 @@
 ﻿namespace Determinet.Types
 {
-    public class AIParameters
+    public class DNNamedParameter
     {
         private readonly Dictionary<string, double> _dictonary = new();
 

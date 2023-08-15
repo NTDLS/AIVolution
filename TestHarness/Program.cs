@@ -13,14 +13,14 @@ namespace AIVolution
 
         private static void Start()
         {
-            var nn = new NeuralNetwork(0.01f);
+            var nn = new DNNeuralNetwork(0.01f);
             nn.Layers.AddInputLayer(3, ActivationType.Linear);
             nn.Layers.AddIntermediateLayer(5, ActivationType.Linear);
-            nn.Layers.AddLinearIntermediateLayer(4, 1, new RangeD(-1, 1));
+            nn.Layers.AddLinearIntermediateLayer(4, 1, new DNRangeD(-1, 1));
             nn.Layers.AddOutputLayer(1, ActivationType.Linear);
 
             //Train the network
-            for (int i = 0; i < 20000; i++)
+            for (int i = 0; i < 10000; i++)
             {
                 nn.BackPropagate(new double[] { 0, 0, 0 }, new double[] { 0 });
                 nn.BackPropagate(new double[] { 1, 0, 0 }, new double[] { 1 });
@@ -62,7 +62,7 @@ namespace AIVolution
             // 1 1 1    => 1
         }
 
-        private static double VerboseFeedForward(NeuralNetwork net, double[] inputs)
+        private static double VerboseFeedForward(DNNeuralNetwork net, double[] inputs)
         {
             foreach (var val in inputs)
             {

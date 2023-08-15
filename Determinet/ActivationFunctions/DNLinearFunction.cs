@@ -1,4 +1,5 @@
-﻿using Determinet.Types;
+﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 
 namespace Determinet.ActivationFunctions
 {
@@ -6,13 +7,13 @@ namespace Determinet.ActivationFunctions
     /// Linear bounded activation function.
     /// </summary>
     [Serializable]
-    public class LinearFunction : IActivationFunction
+    public class DNLinearFunction : DNIActivationFunction
     {
         // linear slope value
         private double alpha;
 
         // function output range
-        private RangeD range;
+        private DNRangeD range;
 
         public double Alpha //Linear slope value.
         {
@@ -20,23 +21,23 @@ namespace Determinet.ActivationFunctions
             set { alpha = value; }
         }
 
-        public RangeD Range //Function output range.
+        public DNRangeD Range //Function output range.
         {
             get { return range; }
             set { range = value; }
         }
 
-        public LinearFunction(object[]? param)
+        public DNLinearFunction(object[]? param)
         {
             if (param == null)
             {
                 alpha = 1;
-                range = new RangeD(-1, +1);
+                range = new DNRangeD(-1, +1);
             }
             else if (param.Length != 2)
             {
                 Alpha = (double)param[0];
-                Range = (RangeD)param[1];
+                Range = (DNRangeD)param[1];
             }
             else
             {

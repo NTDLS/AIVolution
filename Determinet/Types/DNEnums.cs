@@ -1,5 +1,6 @@
 ﻿namespace Determinet.Types
 {
+    [Serializable]
     public enum LayerType
     {
         Input,
@@ -7,6 +8,7 @@
         Output
     }
 
+    [Serializable]
     public enum ActivationType
     {
         /// <summary>

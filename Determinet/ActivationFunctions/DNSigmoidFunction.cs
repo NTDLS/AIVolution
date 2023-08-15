@@ -1,4 +1,6 @@
-﻿namespace Determinet.ActivationFunctions
+﻿using Determinet.ActivationFunctions.Interfaces;
+
+namespace Determinet.ActivationFunctions
 {
     /// <summary>
     /// The sigmoid activation function, also called the logistic function, is traditionally a very popular activation function for neural networks.
@@ -7,9 +9,9 @@
     /// through 0.5 to 1.0. For a long time, through the early 1990s, it was the default activation used on neural networks.
     /// </summary>
     [Serializable]
-    public class SigmoidFunction : IActivationFunction
+    public class DNSigmoidFunction : DNIActivationFunction
     {
-        public SigmoidFunction(object[]? param)
+        public DNSigmoidFunction(object[]? param)
         {
         }
 

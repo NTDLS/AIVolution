@@ -1,4 +1,6 @@
-﻿namespace Determinet.ActivationFunctions
+﻿using Determinet.ActivationFunctions.Interfaces;
+
+namespace Determinet.ActivationFunctions
 {
     /// <summary>
     /// The hyperbolic tangent function, or tanh for short, is a similar shaped nonlinear activation function that outputs values between -1.0 and 1.0.
@@ -6,9 +8,9 @@
     /// easier to train and often had better predictive performance.
     /// </summary>
     [Serializable]
-    public class TanhFunction : IActivationFunction
+    public class DNTanhFunction : DNIActivationFunction
     {
-        public TanhFunction(object[]? param)
+        public DNTanhFunction(object[]? param)
         {
         }
 

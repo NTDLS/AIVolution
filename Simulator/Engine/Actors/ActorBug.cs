@@ -12,7 +12,7 @@ namespace Simulator.Engine.Actors
         private DateTime? _lastDecisionTime;
         private PointD? _lastDecisionLocation = null;
 
-        public NeuralNetwork Brain { get; private set; }
+        public DNNeuralNetwork Brain { get; private set; }
         public double MinimumTravelDistanceBeforeDamage { get; set; } = 20;
         public double MaxObserveDistance { get; set; } = 100;
         public double VisionToleranceDegrees { get; set; } = 25;
@@ -20,7 +20,7 @@ namespace Simulator.Engine.Actors
         public double DecisionSensitivity { get; set; } = Utility.RandomNumber(0.25, 0.55);
         public int Health { get; set; } = 100;
 
-        public ActorBug(EngineCore core, NeuralNetwork? brain = null)
+        public ActorBug(EngineCore core, DNNeuralNetwork? brain = null)
             : base(core)
         {
             if (brain != null)
@@ -136,9 +136,9 @@ namespace Simulator.Engine.Actors
         /// Looks around and gets neuralnetwork inputs for visible proximity objects.
         /// </summary>
         /// <returns></returns>
-        private AIParameters GetVisionInputs()
+        private DNNamedParameter GetVisionInputs()
         {
-            var aiParams = new AIParameters();
+            var aiParams = new DNNamedParameter();
 
             //The closeness is expressed as a percentage of how close to the other object they are. 100% being touching 0% being 1 pixel from out-of-range.
             foreach (var other in Core.Actors.Collection.Where(o => o is not ActorTextBlock))
