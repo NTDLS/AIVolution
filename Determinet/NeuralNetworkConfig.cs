@@ -23,7 +23,7 @@ namespace Determinet
             _layers.Add(new NeuralNetworkLayer(LayerType.Input, inputNodeNames.Length, activationType, inputNodeNames, null));
         }
 
-        public void AddLinearInputLayer(int nodes, double alpha, DoubleRange range)
+        public void AddLinearInputLayer(int nodes, double alpha, RangeD range)
         {
             var param = new object[2] { alpha, range };
             _layers.Add(new NeuralNetworkLayer(LayerType.Input, nodes, ActivationType.Linear, null, param));
@@ -35,7 +35,7 @@ namespace Determinet
             _layers.Add(new NeuralNetworkLayer(LayerType.Input, nodes, ActivationType.Bernoulli, null, param));
         }
 
-        public void AddLinearInputLayer(string[] inputNodeNames, double alpha, DoubleRange range)
+        public void AddLinearInputLayer(string[] inputNodeNames, double alpha, RangeD range)
         {
             var param = new object[2] { alpha, range };
             _layers.Add(new NeuralNetworkLayer(LayerType.Input, inputNodeNames.Length, ActivationType.Linear, null, param));
@@ -56,7 +56,7 @@ namespace Determinet
             _layers.Add(new NeuralNetworkLayer(LayerType.Intermediate, nodes, activationType, null, null));
         }
 
-        public void AddLinearIntermediateLayer(int nodes, double alpha, DoubleRange range)
+        public void AddLinearIntermediateLayer(int nodes, double alpha, RangeD range)
         {
             var param = new object[2] { alpha, range };
             _layers.Add(new NeuralNetworkLayer(LayerType.Intermediate, nodes, ActivationType.Linear, null, param));
@@ -82,7 +82,7 @@ namespace Determinet
             _layers.Add(new NeuralNetworkLayer(LayerType.Output, nodes, activationType, null, null));
         }
 
-        public void AddLinearOutputLayer(int nodes, double alpha, DoubleRange range)
+        public void AddLinearOutputLayer(int nodes, double alpha, RangeD range)
         {
             var param = new object[2] { alpha, range };
             _layers.Add(new NeuralNetworkLayer(LayerType.Output, nodes, ActivationType.Linear, null, param));
@@ -94,7 +94,7 @@ namespace Determinet
             _layers.Add(new NeuralNetworkLayer(LayerType.Output, nodes, ActivationType.Bernoulli, null, param));
         }
 
-        public void AddLinearOutputLayer(string[] outputNodeNames, double alpha, DoubleRange range)
+        public void AddLinearOutputLayer(string[] outputNodeNames, double alpha, RangeD range)
         {
             var param = new object[2] { alpha, range };
             _layers.Add(new NeuralNetworkLayer(LayerType.Output, outputNodeNames.Length, ActivationType.Linear, null, param));

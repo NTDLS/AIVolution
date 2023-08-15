@@ -17,7 +17,7 @@ namespace AIVolution
 
             nnConfig.AddInputLayer(3, ActivationType.Linear);
             nnConfig.AddIntermediateLayer(5, ActivationType.Linear);
-            nnConfig.AddLinearIntermediateLayer(4, 1, new DoubleRange(-1, 1));
+            nnConfig.AddLinearIntermediateLayer(4, 1, new RangeD(-1, 1));
             nnConfig.AddOutputLayer(1, ActivationType.Linear);
 
             var nn = new NeuralNetwork(nnConfig, 0.01f);

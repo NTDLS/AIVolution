@@ -12,7 +12,7 @@ namespace Determinet.ActivationFunctions
         private double alpha;
 
         // function output range
-        private DoubleRange range;
+        private RangeD range;
 
         public double Alpha //Linear slope value.
         {
@@ -20,7 +20,7 @@ namespace Determinet.ActivationFunctions
             set { alpha = value; }
         }
 
-        public DoubleRange Range //Function output range.
+        public RangeD Range //Function output range.
         {
             get { return range; }
             set { range = value; }
@@ -31,12 +31,12 @@ namespace Determinet.ActivationFunctions
             if (param == null)
             {
                 alpha = 1;
-                range = new DoubleRange(-1, +1);
+                range = new RangeD(-1, +1);
             }
             else if (param.Length != 2)
             {
                 Alpha = (double)param[0];
-                Range = (DoubleRange)param[1];
+                Range = (RangeD)param[1];
             }
             else
             {

@@ -3,6 +3,8 @@
     [Serializable]
     public class BernoulliFunction : IActivationMachine
     {
+        private Random _random;
+
         private double alpha; // sigmoid's alpha value
         public double Alpha
         {
@@ -12,6 +14,9 @@
 
         public BernoulliFunction(object[]? param)
         {
+            var seed = Utility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
+            _random = new Random(seed);
+
             if (param == null)
             {
                 alpha = 1;
@@ -34,7 +39,7 @@
         public double Generate(double x)
         {
             double y = Activation(x);
-            return y > Singletons.Generators.Random.NextDouble() ? 1 : 0;
+            return y > _random.NextDouble() ? 1 : 0;
         }
 
         public double Derivative(double x)
