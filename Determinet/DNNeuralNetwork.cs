@@ -219,12 +219,23 @@ namespace Determinet
 
         #region Backpropagation.
 
+        /// <summary>
+        /// AI learning backpropogation by named value pairs.
+        /// </summary>
+        /// <param name="inputs"></param>
+        /// <param name="expected"></param>
         public void BackPropagate(DNNamedParameter inputs, DNNamedParameter expected)
         {
             BackPropagate(inputs.ToArray(), expected.ToArray());
         }
 
-        public void BackPropagate(double[] inputs, double[] expected)//backpropogation;
+        /// <summary>
+        /// AI learning backpropogation by named ordinal.
+        /// </summary>
+        /// <param name="inputs"></param>
+        /// <param name="expected"></param>
+        /// <exception cref="Exception"></exception>
+        public void BackPropagate(double[] inputs, double[] expected)
         {
             if (IsInitalized == false)
             {
@@ -305,7 +316,7 @@ namespace Determinet
         #region Genetic implementation.
 
         /// <summary>
-        /// Used as a simple mutation function for any genetic implementations.
+        /// Simple mutation function for genetic implementations.
         /// </summary>
         public void Mutate(double mutationProbability, double mutationSeverity, int randomSeed = 0)
         {
@@ -452,7 +463,9 @@ namespace Determinet
                 Initialize();
             }
 
-            File.WriteAllText(path, JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter()));
+            var serialized = JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter());
+
+            File.WriteAllText(path, serialized);
         }
 
         #endregion
