@@ -1,7 +1,11 @@
-﻿namespace Determinet.Types
+﻿using Newtonsoft.Json;
+
+namespace Determinet.Types
 {
+    [Serializable]
     public class DNNamedParameter
     {
+        [JsonProperty]
         private readonly Dictionary<string, double> _dictonary = new();
 
         public void Set(string key, double value)

@@ -1,12 +1,17 @@
 ﻿using Determinet.Types;
+using Newtonsoft.Json;
 
 namespace Determinet
 {
     [Serializable]
     public class DNNeuralNetworkLayers
     {
-        public List<DNNeuralNetworkLayer> Collection { get; private set; } = new();
-        public int Count => Collection.Count;
+        [JsonProperty]
+        internal List<DNNeuralNetworkLayer> Collection { get; private set; } = new();
+
+        [JsonProperty]
+        internal int Count => Collection.Count;
+
         public DNNeuralNetworkLayer Get(int i) => Collection[i];
 
         public DNNeuralNetworkLayer this[int index]

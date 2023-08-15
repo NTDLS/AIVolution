@@ -1,27 +1,27 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Newtonsoft.Json;
 
 namespace Determinet.ActivationFunctions
 {
     [Serializable]
     public class DNBernoulliFunction : DNIActivationMachine
     {
-        private Random _random;
+        private readonly Random _random;
 
-        private double alpha; // sigmoid's alpha value
-        public double Alpha
-        {
-            get { return alpha; }
-            set { alpha = value; }
-        }
+        [JsonProperty]
+        internal double Alpha { get; private set; } // sigmoid's alpha value
+
+        [JsonProperty]
+        internal int RandomSeed { get; private set; }
 
         public DNBernoulliFunction(object[]? param)
         {
-            var seed = DNUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
-            _random = new Random(seed);
+            RandomSeed = DNUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
+            _random = new Random(RandomSeed);
 
             if (param == null)
             {
-                alpha = 1;
+                Alpha = 1;
             }
             else if (param.Length != 1)
             {
@@ -35,7 +35,7 @@ namespace Determinet.ActivationFunctions
 
         public double Activation(double x)
         {
-            return (1 / (1 + Math.Exp(-alpha * x)));
+            return (1 / (1 + Math.Exp(-Alpha * x)));
         }
 
         public double Generate(double x)
@@ -48,7 +48,7 @@ namespace Determinet.ActivationFunctions
         {
             double y = Activation(x);
 
-            return (alpha * y * (1 - y));
+            return (Alpha * y * (1 - y));
         }
     }
 }

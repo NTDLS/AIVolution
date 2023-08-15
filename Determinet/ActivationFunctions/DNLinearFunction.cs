@@ -1,5 +1,6 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
 using Determinet.Types;
+using Newtonsoft.Json;
 
 namespace Determinet.ActivationFunctions
 {
@@ -15,12 +16,14 @@ namespace Determinet.ActivationFunctions
         // function output range
         private DNRangeD range;
 
+        [JsonProperty]
         public double Alpha //Linear slope value.
         {
             get { return alpha; }
             set { alpha = value; }
         }
 
+        [JsonProperty]
         public DNRangeD Range //Function output range.
         {
             get { return range; }

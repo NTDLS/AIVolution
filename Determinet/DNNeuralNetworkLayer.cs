@@ -1,6 +1,7 @@
 ﻿using Determinet.ActivationFunctions;
 using Determinet.ActivationFunctions.Interfaces;
 using Determinet.Types;
+using Newtonsoft.Json;
 
 namespace Determinet
 {
@@ -10,14 +11,22 @@ namespace Determinet
         /// <summary>
         /// The number of nodes in this layer.
         /// </summary>
+        [JsonProperty]
         public int NodeCount { get; private set; }
+
+        [JsonProperty]
         public ActivationType ActivationType { get; set; }
+
+        [JsonProperty]
         public object[]? Param { get; private set; }
+
+        [JsonProperty]
         public string[]? Aliases { get; private set; }
 
         /// <summary>
         /// The type of the later (input, intermediate (hidden) or output). 
         /// </summary>
+        [JsonProperty]
         public LayerType LayerType { get; set; }
 
         /// <summary>

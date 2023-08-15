@@ -9,37 +9,51 @@ namespace Determinet
     public class DNNeuralNetwork
     {
         //Controllers:
+        [JsonProperty]
         public bool IsInitalized { get; private set; }
 
         //Fundamental.
+        [JsonProperty]
         public DNNeuralNetworkLayers Layers { get; private set; } = new();
-        public double[][]? Neurons { get; private set; }
-        public double[][]? Biases { get; private set; }
-        public double[][][]? Weights { get; private set; }
+
+        [JsonProperty]
+        private double[][]? Neurons { get; set; }
+
+        [JsonProperty]
+        private double[][]? Biases { get; set; }
+
+        [JsonProperty]
+        private double[][][]? Weights { get; set; }
 
         //Genetic.
+        [JsonProperty]
         public double Fitness { get; set; } = 0;
 
         //Backprop.
+        [JsonProperty]
         public double LearningRate { get; private set; } = 0.01f;
+
+        [JsonProperty]
         public double Cost { get; private set; } = 0; //Not used in calculions, only to identify the performance of the network.
 
         //Other.
         private Random _random = new Random();
-        private int _randomSeed = 0;
+
+        [JsonProperty]
+        private int RandomSeed { get; set; }
 
         public void Reseed(int randomSeed = 0)
         {
             if (randomSeed == 0)
             {
-                _randomSeed = Guid.NewGuid().GetHashCode();
+                RandomSeed = Guid.NewGuid().GetHashCode();
             }
             else
             {
-                _randomSeed = randomSeed;
+                RandomSeed = randomSeed;
             }
 
-            _random = new Random(randomSeed);
+            _random = new Random(RandomSeed);
         }
 
         public DNNeuralNetwork(double learningRate, int randomSeed = 0)
@@ -371,7 +385,7 @@ namespace Determinet
                 throw new Exception("Neurons have not been initialized.");
             }
 
-            var nn = new DNNeuralNetwork(LearningRate, _randomSeed)
+            var nn = new DNNeuralNetwork(LearningRate, RandomSeed)
             {
                 Fitness = Fitness
             };
@@ -422,7 +436,9 @@ namespace Determinet
         /// <param name="path"></param>
         public static DNNeuralNetwork? Load(string path)
         {
-            return JsonConvert.DeserializeObject<DNNeuralNetwork>(File.ReadAllText(path));
+            var serialized = File.ReadAllText(path);
+            var instance = JsonConvert.DeserializeObject<DNNeuralNetwork>(serialized);
+            return instance;
         }
 
         /// <summary>
