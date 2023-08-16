@@ -10,25 +10,33 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class DniLinearFunction : DniIActivationFunction
     {
-        /// <summary>
-        /// Linear slope value.
-        /// </summary>
-        [JsonProperty]
-        public double Alpha { get; set; }
+        // linear slope value
+        private double alpha;
 
-        /// <summary>
-        /// Function output range.
-        /// </summary>
+        // function output range
+        private DniRange range;
+
         [JsonProperty]
-        public DniRange Range { get; set; }
+        public double Alpha //Linear slope value.
+        {
+            get { return alpha; }
+            set { alpha = value; }
+        }
+
+        [JsonProperty]
+        public DniRange Range //Function output range.
+        {
+            get { return range; }
+            set { range = value; }
+        }
 
         public DniLinearFunction(DniNamedFunctionParameters? param)
         {
 
             if (param == null)
             {
-                Alpha = 1;
-                Range = new DniRange(-1, +1);
+                alpha = 1;
+                range = new DniRange(-1, +1);
             }
             else
             {
@@ -39,23 +47,22 @@ namespace Determinet.ActivationFunctions
 
         public double Activation(double x)
         {
-            double y = Alpha * x;
+            double y = alpha * x;
 
-            if (y > Range.Max)
-                return Range.Max;
-            else if (y < Range.Min)
-                return Range.Min;
+            if (y > range.Max)
+                return range.Max;
+            else if (y < range.Min)
+                return range.Min;
             return y;
         }
 
         public double Derivative(double x)
         {
-            double y = Alpha * x;
+            double y = alpha * x;
 
-            if (y <= Range.Min || y >= Range.Max)
+            if (y <= range.Min || y >= range.Max)
                 return 0;
-            return Alpha;
+            return alpha;
         }
     }
 }
-
