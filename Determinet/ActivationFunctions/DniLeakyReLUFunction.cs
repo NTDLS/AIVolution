@@ -1,5 +1,6 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
 using Determinet.Types;
+using Newtonsoft.Json;
 
 namespace Determinet.ActivationFunctions
 {
@@ -12,18 +13,33 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class DniLeakyReLUFunction : DniIActivationFunction
     {
+        /// <summary>
+        /// Positive value that determines the slope of the function for negative input values.
+        /// </summary>
+        [JsonProperty]
+        public double Alpha { get; set; }
+
         public DniLeakyReLUFunction(DniNamedFunctionParameters? param)
         {
+            if (param == null)
+            {
+                Alpha = 0.01;
+            }
+            else
+            {
+                Alpha = param.Get<double>("alpha", 1);
+            }
         }
+
 
         public double Activation(double x)
         {
-            return (0 >= x) ? 0.01f * x : x;
+            return (0 >= x) ? Alpha * x : x;
         }
 
         public double Derivative(double x)
         {
-            return (0 >= x) ? 0.01f : 1;
+            return (0 >= x) ? Alpha : 1;
         }
     }
 }

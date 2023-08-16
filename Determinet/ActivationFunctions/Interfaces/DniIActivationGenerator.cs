@@ -1,6 +1,6 @@
 namespace Determinet.ActivationFunctions.Interfaces
 {
-    public interface DniIActivationMachine : DniIActivationFunction
+    public interface DniIActivationGenerator : DniIActivationFunction
     {
         double Generate(double x);
     }

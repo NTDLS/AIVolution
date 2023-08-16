@@ -5,10 +5,10 @@ using Newtonsoft.Json;
 namespace Determinet.ActivationFunctions
 {
     /// <summary>
-    /// Linear bounded activation function.
+    /// Function that combines a linear segment for certain input range with a Leaky ReLU-like behavior for values outside that range. 
     /// </summary>
     [Serializable]
-    public class DniLinearFunction : DniIActivationFunction
+    public class DniPiecewiseLinearFunction : DniIActivationFunction
     {
         /// <summary>
         /// Linear slope value.
@@ -22,12 +22,12 @@ namespace Determinet.ActivationFunctions
         [JsonProperty]
         public DniRange Range { get; set; }
 
-        public DniLinearFunction(DniNamedFunctionParameters? param)
+        public DniPiecewiseLinearFunction(DniNamedFunctionParameters? param)
         {
 
             if (param == null)
             {
-                Alpha = 1;
+                Alpha = 0.1;
                 Range = new DniRange(-1, +1);
             }
             else
@@ -39,23 +39,22 @@ namespace Determinet.ActivationFunctions
 
         public double Activation(double x)
         {
-            double y = Alpha * x;
-
-            if (y > Range.Max)
-                return Range.Max;
-            else if (y < Range.Min)
-                return Range.Min;
-            return y;
+            if (x <= Range.Min)
+                return Alpha * x;
+            else if (x >= Range.Max)
+                return Alpha * x;
+            else
+                return x;
         }
 
         public double Derivative(double x)
         {
-            double y = Alpha * x;
-
-            if (y <= Range.Min || y >= Range.Max)
-                return 0;
-            return Alpha;
+            if (x <= Range.Min)
+                return Alpha;
+            else if (x >= Range.Max)
+                return Alpha;
+            else
+                return 1;
         }
     }
 }
-

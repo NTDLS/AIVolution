@@ -209,12 +209,26 @@ namespace Determinet
                         value += Weights[i - 1][j][k] * Neurons[i - 1][k];
                     }
 
-                    Neurons[i][j] = Layers[layer].ActivationFunction.Activation(value + Biases[i - 1][j]);
-
-                    var mahcine = Layers[layer].ActivationFunction as DniIActivationMachine;
-                    if (mahcine != null)
+                    /*
+                    var layerFeed = Layers[layer].ActivationFunction as DniIActivationOutputFeed;
+                    if (layerFeed != null)
                     {
-                        Neurons[i][j] = mahcine.Generate(Neurons[i][j]);
+                        //We are going to pass the entire layer as well as the previous layer into this type of activation function.
+                        //Note that biases are not applied, this is because it is assumed that the previous layer is a different type of activation.
+                        Neurons[i] = layerFeed.Activation(Neurons[i - 1]);
+                    }
+                    else
+                    {
+                    */
+                        Neurons[i][j] = Layers[layer].ActivationFunction.Activation(value + Biases[i - 1][j]);
+                    /*
+                    }
+                    */
+
+                    var generator = Layers[layer].ActivationFunction as DniIActivationGenerator;
+                    if (generator != null)
+                    {
+                        Neurons[i][j] = generator.Generate(Neurons[i][j]);
                     }
                 }
             }
@@ -233,6 +247,19 @@ namespace Determinet
         public void BackPropagate(DniNamedInterfaceParameters inputs, DniNamedInterfaceParameters expected)
         {
             BackPropagate(inputs.ToArray(), expected.ToArray());
+        }
+
+
+        public double[] ComputeGradientCrossEntropy(double[] targets, double[] outputs)
+        {
+            double[] gradient = new double[outputs.Length];
+
+            for (int i = 0; i < outputs.Length; i++)
+            {
+                gradient[i] = -targets[i] / outputs[i];  // Gradient of -t*log(y)
+            }
+
+            return gradient;
         }
 
         /// <summary>
@@ -265,7 +292,7 @@ namespace Determinet
             Cost = 0;
             for (int i = 0; i < output.Length; i++)
             {
-                Cost += (double)Math.Pow(output[i] - expected[i], 2);//calculated cost of network
+                Cost += (double)Math.Pow(output[i] - expected[i], 2); //calculated cost of network
             }
             Cost = Cost / 2;
 

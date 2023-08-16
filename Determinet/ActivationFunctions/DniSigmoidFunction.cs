@@ -18,13 +18,13 @@ namespace Determinet.ActivationFunctions
 
         public double Activation(double x)
         {
-            double k = (double)Math.Exp(x);
-            return k / (1.0f + k);
+            return 1.0 / (1.0 + Math.Exp(-x));
         }
 
         public double Derivative(double x)
         {
-            return x * (1 - x);
+            double sigmoidX = Activation(x);
+            return sigmoidX * (1.0 - sigmoidX);
         }
     }
 }

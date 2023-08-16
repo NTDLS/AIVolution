@@ -4,7 +4,7 @@ using Determinet.Types;
 namespace Simulator.Engine
 {
     /// <summary>
-    /// This is a pre-trained bug brain with some basic intelligence on obsticle avoidance.
+    /// This is a pre-trained bug-brain with some basic intelligence on obsticle avoidance.
     /// </summary>
     public static class BugBrain
     {

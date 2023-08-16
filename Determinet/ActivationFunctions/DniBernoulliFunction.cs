@@ -4,8 +4,11 @@ using Newtonsoft.Json;
 
 namespace Determinet.ActivationFunctions
 {
+    /// <summary>
+    /// The Bernoulli activation function is typically used in binary classification problems.
+    /// </summary>
     [Serializable]
-    public class DniBernoulliFunction : DniIActivationMachine
+    public class DniBernoulliFunction : DniIActivationGenerator
     {
         private readonly Random _random;
 
@@ -17,7 +20,6 @@ namespace Determinet.ActivationFunctions
 
         public DniBernoulliFunction(DniNamedFunctionParameters? param)
         {
-
             RandomSeed = DniUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
             _random = new Random(RandomSeed);
 
@@ -36,17 +38,16 @@ namespace Determinet.ActivationFunctions
             return (1 / (1 + Math.Exp(-Alpha * x)));
         }
 
+        public double Derivative(double x)
+        {
+            double y = Activation(x);
+            return (Alpha * y * (1 - y));
+        }
+
         public double Generate(double x)
         {
             double y = Activation(x);
             return y > _random.NextDouble() ? 1 : 0;
-        }
-
-        public double Derivative(double x)
-        {
-            double y = Activation(x);
-
-            return (Alpha * y * (1 - y));
         }
     }
 }
