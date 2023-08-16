@@ -11,11 +11,12 @@
     [Serializable]
     public enum ActivationType
     {
+        None,
         /// <summary>
         /// Default simple passthrough activation function.
         /// </summary>
         Identity,
-        Bernoulli,
+        BinaryChaos,
         Linear,
         /// <summary>
         /// Rectified linear unit activation function.

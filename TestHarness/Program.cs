@@ -14,15 +14,15 @@ namespace AIVolution
         private static void Start()
         {
             var nn = new DniNeuralNetwork(0.01f);
-            nn.Layers.Add(LayerType.Input, ActivationType.Linear, 3);
-            nn.Layers.Add(LayerType.Intermediate, ActivationType.Linear, 5);
+            nn.Layers.AddInput(ActivationType.Linear, 3);
+            nn.Layers.AddIntermediate(ActivationType.Linear, 5);
 
             DniNamedFunctionParameters param = new();
             param.Set("alpha", 1);
             param.Set("range", new DniRange(-1, 1));
 
-            nn.Layers.Add(LayerType.Intermediate, ActivationType.Linear, 4, param);
-            nn.Layers.Add(LayerType.Output, ActivationType.Linear, 1);
+            nn.Layers.AddIntermediate(ActivationType.Linear, 4, param);
+            nn.Layers.AddOutput(1);
 
             //Train the network
             for (int i = 0; i < 10000; i++)

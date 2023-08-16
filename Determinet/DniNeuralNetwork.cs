@@ -2,6 +2,7 @@
 using Determinet.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Newtonsoft.Json.Linq;
 
 namespace Determinet
 {
@@ -76,7 +77,6 @@ namespace Determinet
 
             for (int i = 1; i < Layers.Count; i++)
             {
-                int layer = i - 1;
                 for (int j = 0; j < Layers[i].Neurons.Count; j++)
                 {
                     double value = 0;
@@ -85,15 +85,22 @@ namespace Determinet
                         value += Layers[i].Neurons[j].Weights[k] * Layers[i - 1].Neurons[k].Value;
                     }
 
-                    Layers[i].Neurons[j].Value = Layers[layer].ActivationFunction.Activation(value + Layers[i].Neurons[j].Bias);
+                    var activationFunction = Layers[i - 1].ActivationFunction;
+                    if (activationFunction == null)
+                    {
+                        throw new Exception("Activation is not defined for layer.");
+                    }
 
-                    var mahcine = Layers[layer].ActivationFunction as DniIActivationMachine;
+                    Layers[i].Neurons[j].Value = activationFunction.Activation(value + Layers[i].Neurons[j].Bias);
+
+                    var mahcine = Layers[i - 1].ActivationFunction as DniIActivationMachine;
                     if (mahcine != null)
                     {
-                        Layers[i].Neurons[j].Value = mahcine.Generate(Layers[i].Neurons[j].Value);
+                        Layers[i].Neurons[j].Value = mahcine.Produce(Layers[i].Neurons[j].Value);
                     }
                 }
             }
+
             return Layers[Layers.Count - 1].Neurons.Select(o => o.Value).ToArray();
         }
 

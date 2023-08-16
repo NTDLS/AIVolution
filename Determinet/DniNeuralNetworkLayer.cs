@@ -34,7 +34,7 @@ namespace Determinet
         /// <summary>
         /// The collapse function used for activation.
         /// </summary>
-        internal DniIActivationFunction ActivationFunction { get; set; }
+        internal DniIActivationFunction? ActivationFunction { get; set; }
 
         /// <summary>
         /// Creates a new network layer.
@@ -61,13 +61,14 @@ namespace Determinet
             }
         }
 
-        private DniIActivationFunction CreateActivationType(ActivationType activationType, DniNamedFunctionParameters? param)
+        private DniIActivationFunction? CreateActivationType(ActivationType activationType, DniNamedFunctionParameters? param)
         {
             return activationType switch
             {
+                ActivationType.None => null,
                 ActivationType.Identity => new DniIdentityFunction(param),
                 ActivationType.ReLU => new DniReLUFunction(param),
-                ActivationType.Bernoulli => new DniBernoulliFunction(param),
+                ActivationType.BinaryChaos => new DniBinaryChaosFunction(param),
                 ActivationType.Linear => new DniLinearFunction(param),
                 ActivationType.Sigmoid => new DniSigmoidFunction(param),
                 ActivationType.Tanh => new DniTanhFunction(param),

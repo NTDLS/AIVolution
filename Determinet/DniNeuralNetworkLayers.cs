@@ -31,14 +31,29 @@ namespace Determinet
             Network = network;
         }
 
-        public void Add(LayerType layerType, ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
+        public void AddInput(ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network, layerType, nodesCount, activationType, param, null));
+            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Input, nodesCount, activationType, param, null));
         }
 
-        public void Add(LayerType layerType, ActivationType activationType, string[] nodeAliases, DniNamedFunctionParameters? param = null)
+        public void AddInput(ActivationType activationType, string[] nodeAliases, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network, layerType, nodeAliases.Length, activationType, param, nodeAliases));
+            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Input, nodeAliases.Length, activationType, param, nodeAliases));
+        }
+
+        public void AddIntermediate( ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
+        {
+            Collection.Add(new DniNeuralNetworkLayer(Network,  LayerType.Intermediate, nodesCount, activationType, param, null));
+        }
+
+        public void AddOutput(int nodesCount, DniNamedFunctionParameters? param = null)
+        {
+            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Output, nodesCount, ActivationType.None, param, null));
+        }
+
+        public void AddOutput(string[] nodeAliases, DniNamedFunctionParameters? param = null)
+        {
+            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Output, nodeAliases.Length, ActivationType.None, param, nodeAliases));
         }
 
         public DniNeuralNetworkLayers Clone()

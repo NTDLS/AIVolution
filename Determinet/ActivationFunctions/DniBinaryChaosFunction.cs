@@ -4,8 +4,11 @@ using Newtonsoft.Json;
 
 namespace Determinet.ActivationFunctions
 {
+    /// <summary>
+    /// 
+    /// </summary>
     [Serializable]
-    public class DniBernoulliFunction : DniIActivationMachine
+    public class DniBinaryChaosFunction : DniIActivationMachine
     {
         private readonly Random _random;
 
@@ -13,9 +16,13 @@ namespace Determinet.ActivationFunctions
         internal double Alpha { get; private set; } // sigmoid's alpha value
 
         [JsonProperty]
+        internal DniRange Bounds { get; private set; } = new DniRange(-1, 1);
+
+
+        [JsonProperty]
         internal int RandomSeed { get; private set; }
 
-        public DniBernoulliFunction(DniNamedFunctionParameters? param)
+        public DniBinaryChaosFunction(DniNamedFunctionParameters? param)
         {
 
             RandomSeed = DniUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
@@ -36,16 +43,15 @@ namespace Determinet.ActivationFunctions
             return (1 / (1 + Math.Exp(-Alpha * x)));
         }
 
-        public double Generate(double x)
+        public double Produce(double x)
         {
             double y = Activation(x);
-            return y > _random.NextDouble() ? 1 : 0;
+            return y > DniUtility.NextDouble(Bounds.Min, Bounds.Max) ? 1 : 0;
         }
 
         public double Derivative(double x)
         {
             double y = Activation(x);
-
             return (Alpha * y * (1 - y));
         }
     }

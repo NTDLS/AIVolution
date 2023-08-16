@@ -81,7 +81,6 @@ namespace Determinet
             if (minimum < 0)
             {
                 minimum = Math.Abs(minimum);
-
                 if (FlipCoin())
                 {
                     return (Random.NextDouble() * (maximum - minimum) + minimum) * -1;

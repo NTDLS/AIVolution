@@ -47,7 +47,7 @@ namespace Simulator.Engine
 
                 _brain = new DniNeuralNetwork(0.09f);
 
-                _brain.Layers.Add(LayerType.Input, ActivationType.LeakyReLU, //Vision inputs
+                _brain.Layers.AddInput(ActivationType.LeakyReLU, //Vision inputs
                     new string[] {
                         AIInputs.In0Degrees,
                         AIInputs.In45Degrees,
@@ -56,9 +56,9 @@ namespace Simulator.Engine
                         AIInputs.In315Degrees
                     });
 
-                _brain.Layers.Add(LayerType.Intermediate, ActivationType.Sigmoid, 8);
+                _brain.Layers.AddIntermediate(ActivationType.Sigmoid, 8);
 
-                _brain.Layers.Add(LayerType.Output, ActivationType.Sigmoid, //Decision outputs
+                _brain.Layers.AddOutput( //Decision outputs
                     new string[] {
                         AIOutputs.OutChangeDirection,
                         AIOutputs.OutRotateDirection,
