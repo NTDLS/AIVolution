@@ -8,13 +8,13 @@ namespace Determinet.ActivationFunctions
     /// Linear bounded activation function.
     /// </summary>
     [Serializable]
-    public class DNLinearFunction : DNIActivationFunction
+    public class DniLinearFunction : DniIActivationFunction
     {
         // linear slope value
         private double alpha;
 
         // function output range
-        private DNRangeD range;
+        private DniRange range;
 
         [JsonProperty]
         public double Alpha //Linear slope value.
@@ -24,27 +24,24 @@ namespace Determinet.ActivationFunctions
         }
 
         [JsonProperty]
-        public DNRangeD Range //Function output range.
+        public DniRange Range //Function output range.
         {
             get { return range; }
             set { range = value; }
         }
 
-        public DNLinearFunction(object[]? param)
+        public DniLinearFunction(DniNamedFunctionParameters? param)
         {
+
             if (param == null)
             {
                 alpha = 1;
-                range = new DNRangeD(-1, +1);
-            }
-            else if (param.Length != 2)
-            {
-                Alpha = (double)param[0];
-                Range = (DNRangeD)param[1];
+                range = new DniRange(-1, +1);
             }
             else
             {
-                throw new ArgumentException("Invalid number of parameters supplied for LinearFunction.");
+                Alpha = param.Get<double>("alpha", 1);
+                Range = param.Get<DniRange>("range", new DniRange(-1, +1));
             }
         }
 

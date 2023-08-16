@@ -2,8 +2,12 @@
 
 namespace Determinet.Types
 {
+    /// <summary>
+    /// When the input and/or output nodes are aliased, this class is used to "interface" with the neural network input and output
+    /// by allowing you to supply named values instead of using neuron ordinals.
+    /// </summary>
     [Serializable]
-    public class DNNamedParameter
+    public class DniNamedInterfaceParameters
     {
         [JsonProperty]
         private readonly Dictionary<string, double> _dictonary = new();

@@ -1,10 +1,11 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 using Newtonsoft.Json;
 
 namespace Determinet.ActivationFunctions
 {
     [Serializable]
-    public class DNBernoulliFunction : DNIActivationMachine
+    public class DniBernoulliFunction : DniIActivationMachine
     {
         private readonly Random _random;
 
@@ -14,22 +15,19 @@ namespace Determinet.ActivationFunctions
         [JsonProperty]
         internal int RandomSeed { get; private set; }
 
-        public DNBernoulliFunction(object[]? param)
+        public DniBernoulliFunction(DniNamedFunctionParameters? param)
         {
-            RandomSeed = DNUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
+
+            RandomSeed = DniUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
             _random = new Random(RandomSeed);
 
             if (param == null)
             {
                 Alpha = 1;
             }
-            else if (param.Length != 1)
-            {
-                Alpha = (double)param[0];
-            }
             else
             {
-                throw new ArgumentException("Invalid number of parameters supplied for BernoulliFunction.");
+                Alpha = param.Get<double>("alpha", 1);
             }
         }
 

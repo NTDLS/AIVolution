@@ -54,7 +54,7 @@ namespace Simulator.Engine.Controllers
             {
                 var bestBugs = _core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).ToList();
 
-                var greatestMinds = new List<DNNeuralNetwork>();
+                var greatestMinds = new List<DniNeuralNetwork>();
 
                 foreach (var bestBug in bestBugs)
                 {
@@ -109,7 +109,7 @@ namespace Simulator.Engine.Controllers
             }
         }
 
-        private void ResetMap(List<DNNeuralNetwork>? brains = null)
+        private void ResetMap(List<DniNeuralNetwork>? brains = null)
         {
             Permutations++;
 
@@ -128,7 +128,7 @@ namespace Simulator.Engine.Controllers
 
             for (int i = 0; i < 10; i++)
             {
-                DNNeuralNetwork? brain = null;
+                DniNeuralNetwork? brain = null;
 
                 if (brains != null && brains.Count > 0)
                 {

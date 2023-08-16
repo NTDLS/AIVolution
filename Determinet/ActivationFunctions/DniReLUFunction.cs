@@ -1,4 +1,5 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 
 namespace Determinet.ActivationFunctions
 {
@@ -8,9 +9,9 @@ namespace Determinet.ActivationFunctions
     ///  because a model that uses it is easier to train and often achieves better performance.
     /// </summary>
     [Serializable]
-    public class DNReLUFunction : DNIActivationFunction
+    public class DniReLUFunction : DniIActivationFunction
     {
-        public DNReLUFunction(object[]? param)
+        public DniReLUFunction(DniNamedFunctionParameters? param)
         {
         }
 

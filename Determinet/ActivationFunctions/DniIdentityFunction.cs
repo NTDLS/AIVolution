@@ -1,4 +1,5 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 
 namespace Determinet.ActivationFunctions
 {
@@ -8,9 +9,9 @@ namespace Determinet.ActivationFunctions
     /// function, an identity function simply passes the input through the layer unchanged.
     /// </summary>
     [Serializable]
-    public class DNIdentityFunction : DNIActivationFunction
+    public class DniIdentityFunction : DniIActivationFunction
     {
-        public DNIdentityFunction(object[]? param)
+        public DniIdentityFunction(DniNamedFunctionParameters? param)
         {
         }
 

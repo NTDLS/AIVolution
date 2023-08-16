@@ -1,4 +1,5 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 
 namespace Determinet.ActivationFunctions
 {
@@ -9,9 +10,9 @@ namespace Determinet.ActivationFunctions
     /// efficient and simpler than Leaky ReLU, which makes it more suitable for shallow architectures1.
     /// </summary>
     [Serializable]
-    public class DNLeakyReLUFunction : DNIActivationFunction
+    public class DniLeakyReLUFunction : DniIActivationFunction
     {
-        public DNLeakyReLUFunction(object[]? param)
+        public DniLeakyReLUFunction(DniNamedFunctionParameters? param)
         {
         }
 

@@ -2,7 +2,7 @@
 
 namespace Determinet
 {
-    internal static class DNUtility
+    internal static class DniUtility
     {
         public static int Checksum(string buffer)
         {

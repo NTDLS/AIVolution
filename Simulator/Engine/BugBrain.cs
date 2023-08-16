@@ -26,9 +26,9 @@ namespace Simulator.Engine
             public const string OutChangeSpeedAmount = "OutChangeSpeedAmount";
         }
 
-        private static DNNeuralNetwork? _brain = null;
+        private static DniNeuralNetwork? _brain = null;
 
-        public static DNNeuralNetwork GetBrain()
+        public static DniNeuralNetwork GetBrain()
         {
             if (_brain == null)
             {
@@ -36,16 +36,16 @@ namespace Simulator.Engine
 
                 if (File.Exists(fileName))
                 {
-                    _brain = DNNeuralNetwork.Load(fileName);
+                    _brain = DniNeuralNetwork.Load(fileName);
                     if (_brain != null)
                     {
                         return _brain.Clone();
                     }
                 }
 
-                _brain = new DNNeuralNetwork(0.09f);
+                _brain = new DniNeuralNetwork(0.09f);
 
-                _brain.Layers.AddInputLayer(ActivationType.Sigmoid, //Vision inputs
+                _brain.Layers.Add(LayerType.Input, ActivationType.Sigmoid, //Vision inputs
                     new string[] {
                         AIInputs.In0Degrees,
                         AIInputs.In45Degrees,
@@ -54,11 +54,11 @@ namespace Simulator.Engine
                         AIInputs.In315Degrees
                     });
 
-                _brain.Layers.AddIntermediateLayer(48, ActivationType.Sigmoid);
-                _brain.Layers.AddIntermediateLayer(32, ActivationType.Sigmoid);
-                _brain.Layers.AddIntermediateLayer(16, ActivationType.Sigmoid);
+                //_brain.Layers.AddLayer(LayerType.Intermediate, ActivationType.Sigmoid, 48);
+                //_brain.Layers.AddLayer(LayerType.Intermediate, ActivationType.Sigmoid, 32);
+                _brain.Layers.Add(LayerType.Intermediate, ActivationType.Sigmoid, 16);
 
-                _brain.Layers.AddOutputLayer(ActivationType.Sigmoid, //Decision outputs
+                _brain.Layers.Add(LayerType.Output, ActivationType.Sigmoid, //Decision outputs
                     new string[] {
                         AIOutputs.OutChangeDirection,
                         AIOutputs.OutRotateDirection,
@@ -93,9 +93,9 @@ namespace Simulator.Engine
             return _brain.Clone();
         }
 
-        private static DNNamedParameter TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
+        private static DniNamedInterfaceParameters TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
         {
-            var param = new DNNamedParameter();
+            var param = new DniNamedInterfaceParameters();
             param.Set(AIInputs.In0Degrees, in0Degrees);
             param.Set(AIInputs.In45Degrees, in45Degrees);
             param.Set(AIInputs.In90Degrees, in90Degrees);
@@ -104,9 +104,9 @@ namespace Simulator.Engine
             return param;
         }
 
-        private static DNNamedParameter TrainingDecision(double outChangeDirection, double outRotateDirection, double outRotationAmount, double outChangeSpeed, double outChangeSpeedAmount)
+        private static DniNamedInterfaceParameters TrainingDecision(double outChangeDirection, double outRotateDirection, double outRotationAmount, double outChangeSpeed, double outChangeSpeedAmount)
         {
-            var param = new DNNamedParameter();
+            var param = new DniNamedInterfaceParameters();
             param.Set(AIOutputs.OutChangeDirection, outChangeDirection);
             param.Set(AIOutputs.OutRotateDirection, outRotateDirection);
             param.Set(AIOutputs.OutRotationAmount, outRotationAmount);

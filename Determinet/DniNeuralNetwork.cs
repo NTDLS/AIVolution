@@ -6,15 +6,16 @@ using Newtonsoft.Json.Converters;
 namespace Determinet
 {
     [Serializable]
-    public class DNNeuralNetwork
+    public class DniNeuralNetwork
     {
-        //Controllers:
+        #region Controllers:
         [JsonProperty]
         public bool IsInitalized { get; private set; }
+        #endregion
 
-        //Fundamental.
+        #region Fundamental.
         [JsonProperty]
-        public DNNeuralNetworkLayers Layers { get; private set; } = new();
+        public DniNeuralNetworkLayers Layers { get; private set; } = new();
 
         [JsonProperty]
         private double[][]? Neurons { get; set; }
@@ -24,8 +25,9 @@ namespace Determinet
 
         [JsonProperty]
         private double[][][]? Weights { get; set; }
+        #endregion
 
-        //Genetic.
+        #region Genetic.
         [JsonProperty]
         public double Fitness { get; set; } = 0;
 
@@ -36,11 +38,15 @@ namespace Determinet
         [JsonProperty]
         public double Cost { get; private set; } = 0; //Not used in calculions, only to identify the performance of the network.
 
-        //Other.
-        private Random _random = new Random();
+        [JsonIgnore]
+        #endregion
+
+        #region Other
+        private Random _random = new();
 
         [JsonProperty]
         private int RandomSeed { get; set; }
+        #endregion
 
         public void Reseed(int randomSeed = 0)
         {
@@ -56,7 +62,7 @@ namespace Determinet
             _random = new Random(RandomSeed);
         }
 
-        public DNNeuralNetwork(double learningRate, int randomSeed = 0)
+        public DniNeuralNetwork(double learningRate, int randomSeed = 0)
         {
             Reseed(randomSeed);
             LearningRate = learningRate;
@@ -125,7 +131,7 @@ namespace Determinet
 
         #region Feed forward.
 
-        public DNNamedParameter FeedForward(DNNamedParameter param)
+        public DniNamedInterfaceParameters FeedForward(DniNamedInterfaceParameters param)
         {
             if (IsInitalized == false)
             {
@@ -147,7 +153,7 @@ namespace Determinet
 
             var rawOutputs = FeedForward(inputInputs);
 
-            DNNamedParameter friendlyOutputs = new();
+            DniNamedInterfaceParameters friendlyOutputs = new();
 
             var outputAliases = Layers[Layers.Count - 1].Aliases;
             if (outputAliases == null)
@@ -205,7 +211,7 @@ namespace Determinet
 
                     Neurons[i][j] = Layers[layer].ActivationFunction.Activation(value + Biases[i - 1][j]);
 
-                    var mahcine = Layers[layer].ActivationFunction as DNIActivationMachine;
+                    var mahcine = Layers[layer].ActivationFunction as DniIActivationMachine;
                     if (mahcine != null)
                     {
                         Neurons[i][j] = mahcine.Generate(Neurons[i][j]);
@@ -224,7 +230,7 @@ namespace Determinet
         /// </summary>
         /// <param name="inputs"></param>
         /// <param name="expected"></param>
-        public void BackPropagate(DNNamedParameter inputs, DNNamedParameter expected)
+        public void BackPropagate(DniNamedInterfaceParameters inputs, DniNamedInterfaceParameters expected)
         {
             BackPropagate(inputs.ToArray(), expected.ToArray());
         }
@@ -360,7 +366,7 @@ namespace Determinet
         /// </summary>
         /// <param name="other"></param>
         /// <returns></returns>
-        public int CompareTo(DNNeuralNetwork other)
+        public int CompareTo(DniNeuralNetwork other)
         {
             if (other == null) return 1;
 
@@ -377,7 +383,7 @@ namespace Determinet
         /// </summary>
         /// <param name="nn"></param>
         /// <returns></returns>
-        public DNNeuralNetwork Clone()
+        public DniNeuralNetwork Clone()
         {
             if (IsInitalized == false)
             {
@@ -396,7 +402,7 @@ namespace Determinet
                 throw new Exception("Neurons have not been initialized.");
             }
 
-            var nn = new DNNeuralNetwork(LearningRate, RandomSeed)
+            var nn = new DniNeuralNetwork(LearningRate, RandomSeed)
             {
                 Fitness = Fitness
             };
@@ -445,10 +451,10 @@ namespace Determinet
         /// Loads the biases and weights from within a file into the neural network.
         /// </summary>
         /// <param name="path"></param>
-        public static DNNeuralNetwork? Load(string path)
+        public static DniNeuralNetwork? Load(string path)
         {
             var serialized = File.ReadAllText(path);
-            var instance = JsonConvert.DeserializeObject<DNNeuralNetwork>(serialized);
+            var instance = JsonConvert.DeserializeObject<DniNeuralNetwork>(serialized);
             return instance;
         }
 

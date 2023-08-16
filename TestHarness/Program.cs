@@ -1,5 +1,6 @@
 ﻿using Determinet;
 using Determinet.Types;
+using System;
 
 namespace AIVolution
 {
@@ -13,11 +14,16 @@ namespace AIVolution
 
         private static void Start()
         {
-            var nn = new DNNeuralNetwork(0.01f);
-            nn.Layers.AddInputLayer(3, ActivationType.Linear);
-            nn.Layers.AddIntermediateLayer(5, ActivationType.Linear);
-            nn.Layers.AddLinearIntermediateLayer(4, 1, new DNRangeD(-1, 1));
-            nn.Layers.AddOutputLayer(1, ActivationType.Linear);
+            var nn = new DniNeuralNetwork(0.01f);
+            nn.Layers.Add(LayerType.Input, ActivationType.Linear, 3);
+            nn.Layers.Add(LayerType.Intermediate, ActivationType.Linear, 5);
+
+            DniNamedFunctionParameters param = new();
+            param.Set("alpha", 1);
+            param.Set("range", new DniRange(-1, 1));
+
+            nn.Layers.Add(LayerType.Intermediate, ActivationType.Linear, 4, param);
+            nn.Layers.Add(LayerType.Output, ActivationType.Linear, 1);
 
             //Train the network
             for (int i = 0; i < 10000; i++)
@@ -62,7 +68,7 @@ namespace AIVolution
             // 1 1 1    => 1
         }
 
-        private static double VerboseFeedForward(DNNeuralNetwork net, double[] inputs)
+        private static double VerboseFeedForward(DniNeuralNetwork net, double[] inputs)
         {
             foreach (var val in inputs)
             {

@@ -1,4 +1,5 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 
 namespace Determinet.ActivationFunctions
 {
@@ -8,9 +9,9 @@ namespace Determinet.ActivationFunctions
     /// easier to train and often had better predictive performance.
     /// </summary>
     [Serializable]
-    public class DNTanhFunction : DNIActivationFunction
+    public class DniTanhFunction : DniIActivationFunction
     {
-        public DNTanhFunction(object[]? param)
+        public DniTanhFunction(DniNamedFunctionParameters? param)
         {
         }
 

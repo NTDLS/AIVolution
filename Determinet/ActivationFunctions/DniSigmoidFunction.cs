@@ -1,4 +1,5 @@
 ﻿using Determinet.ActivationFunctions.Interfaces;
+using Determinet.Types;
 
 namespace Determinet.ActivationFunctions
 {
@@ -9,9 +10,9 @@ namespace Determinet.ActivationFunctions
     /// through 0.5 to 1.0. For a long time, through the early 1990s, it was the default activation used on neural networks.
     /// </summary>
     [Serializable]
-    public class DNSigmoidFunction : DNIActivationFunction
+    public class DniSigmoidFunction : DniIActivationFunction
     {
-        public DNSigmoidFunction(object[]? param)
+        public DniSigmoidFunction(DniNamedFunctionParameters? param)
         {
         }
 
