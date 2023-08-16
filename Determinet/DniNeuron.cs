@@ -36,5 +36,29 @@ namespace Determinet
             }
             else Weights = new double[0];
         }
+
+        public DniNeuron Clone()
+        {
+            return new DniNeuron(Layer)
+            {
+                Bias = Bias,
+                Layer = Layer,
+                Value = Value,
+                Weights = Weights.ToArray()
+            };
+        }
+
+        /// <summary>
+        /// Mutation for genetic implementations.
+        /// </summary>
+        public void Mutate(double mutationProbability, double mutationSeverity)
+        {
+            Bias = DniUtility.FlipCoin(mutationProbability) ? Bias += DniUtility.NextDouble(-mutationSeverity, mutationSeverity) : Bias;
+
+            for (int i = 0; i < Weights.Length; i++)
+            {
+                Weights[i] = DniUtility.FlipCoin(mutationProbability) ? Weights[i] += DniUtility.NextDouble(-mutationSeverity, mutationSeverity) : Weights[i];
+            }
+        }
     }
 }

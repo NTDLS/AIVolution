@@ -8,31 +8,19 @@ namespace Determinet
     [Serializable]
     public class DniNeuralNetwork
     {
-        #region Controllers:
-        [JsonProperty]
-        public bool IsInitalized { get; private set; }
-        #endregion
-
-        #region Fundamental.
         [JsonProperty]
         public DniNeuralNetworkLayers Layers { get; private set; }
 
-        #endregion
-
-        #region Genetic.
         [JsonProperty]
         public double Fitness { get; set; } = 0;
 
-        //Backprop.
         [JsonProperty]
-        public double LearningRate { get; private set; } = 0.01f;
+        public double LearningRate { get; private set; } = 0.01;
 
         [JsonProperty]
         public double Cost { get; private set; } = 0; //Not used in calculions, only to identify the performance of the network.
 
-        #endregion
-
-        public DniNeuralNetwork(double learningRate)
+        public DniNeuralNetwork(double learningRate = 0.01)
         {
             LearningRate = learningRate;
             Layers = new DniNeuralNetworkLayers(this);
@@ -189,47 +177,14 @@ namespace Determinet
         #region Genetic implementation.
 
         /// <summary>
-        /// Simple mutation function for genetic implementations.
+        /// Mutation for genetic implementations.
         /// </summary>
-        public void Mutate(double mutationProbability, double mutationSeverity, int randomSeed = 0)
+        public void Mutate(double mutationProbability, double mutationSeverity)
         {
-            /*
-            for (int i = 0; i < Biases.Length; i++)
+            foreach (var layer in Layers.Collection)
             {
-                for (int j = 0; j < Biases[i].Length; j++)
-                {
-                    Biases[i][j] = FlipCoin(mutationProbability) ? Biases[i][j] += NextDouble(-mutationSeverity, mutationSeverity) : Biases[i][j];
-                }
+                layer.Mutate(mutationProbability, mutationSeverity);
             }
-
-            for (int i = 0; i < Weights.Length; i++)
-            {
-                for (int j = 0; j < Weights[i].Length; j++)
-                {
-                    for (int k = 0; k < Weights[i][j].Length; k++)
-                    {
-                        Weights[i][j][k] = FlipCoin(mutationProbability) ? Weights[i][j][k] += NextDouble(-mutationSeverity, mutationSeverity) : Weights[i][j][k];
-                    }
-                }
-            }
-            */
-        }
-
-        /// <summary>
-        /// Comparing For genetic implementations. Used for sorting based on the fitness of the network
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        public int CompareTo(DniNeuralNetwork other)
-        {
-            if (other == null) return 1;
-
-            if (Fitness > other.Fitness)
-                return 1;
-            else if (Fitness < other.Fitness)
-                return -1;
-            else
-                return 0;
         }
 
         /// <summary>
@@ -239,62 +194,13 @@ namespace Determinet
         /// <returns></returns>
         public DniNeuralNetwork Clone()
         {
-            return this;
-            /*
-            if (IsInitalized == false)
+            return new DniNeuralNetwork
             {
-                Initialize();
-            }
-            if (Biases == null)
-            {
-                throw new Exception("Biases have not been initialized.");
-            }
-            if (Weights == null)
-            {
-                throw new Exception("Weights have not been initialized.");
-            }
-
-
-            var nn = new DniNeuralNetwork(LearningRate, RandomSeed)
-            {
-                Fitness = Fitness
+                Fitness = Fitness,
+                Layers = Layers.Clone(),
+                Cost = Cost,
+                LearningRate = LearningRate,
             };
-
-            //Clone layers:
-            nn.Layers = Layers.Clone();
-
-            //Clone biases:
-            nn.Biases = new double[Biases.Length][];
-            for (int i = 0; i < Biases.Length; i++)
-            {
-                nn.Biases[i] = new double[Biases[i].Length];
-                Array.Copy(Biases[i], nn.Biases[i], Biases[i].Length);
-            }
-
-            //Clone weights:
-            nn.Weights = new double[Weights.Length][][];
-            for (int i = 0; i < Weights.Length; i++)
-            {
-                nn.Weights[i] = new double[Weights[i].Length][];
-                for (int j = 0; j < Weights[i].Length; j++)
-                {
-                    nn.Weights[i][j] = new double[Weights[i][j].Length];
-                    Array.Copy(Weights[i][j], nn.Weights[i][j], Weights[i][j].Length);
-                }
-            }
-
-            //Clone neurons:
-            nn.Neurons = new double[Neurons.Length][];
-            for (int i = 0; i < Neurons.Length; i++)
-            {
-                nn.Neurons[i] = new double[Neurons[i].Length];
-                Array.Copy(Neurons[i], nn.Neurons[i], Neurons[i].Length);
-            }
-
-            nn.IsInitalized = true;
-
-            return nn;
-            */
         }
 
         #endregion

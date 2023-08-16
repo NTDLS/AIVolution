@@ -78,7 +78,25 @@ namespace Determinet
 
         public DniNeuralNetworkLayer Clone()
         {
-            return new DniNeuralNetworkLayer(Network, LayerType, Neurons.Count, ActivationType, Param, Aliases);
+            var clone = new DniNeuralNetworkLayer(Network, LayerType, Neurons.Count, ActivationType, Param, Aliases);
+
+            for (int i = 0; i < clone.Neurons.Count; i++)
+            {
+                clone.Neurons[i] = Neurons[i].Clone();
+            }
+
+            return clone;
+        }
+
+        /// <summary>
+        /// Mutation for genetic implementations.
+        /// </summary>
+        public void Mutate(double mutationProbability, double mutationSeverity)
+        {
+            foreach (var neuron in Neurons)
+            {
+                neuron.Mutate(mutationProbability, mutationSeverity);
+            }
         }
     }
 }
