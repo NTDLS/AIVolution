@@ -8,7 +8,10 @@ namespace Determinet
 
     public class DniNeuron
     {
-        private DniNeuralNetworkLayer Layer { get; set; }
+        public DniNeuralNetworkLayer Layer { get; private  set; }
+
+        [JsonProperty]
+        public double Bias { get; set; }
 
         [JsonProperty]
         public double Value { get; set; }
@@ -17,12 +20,16 @@ namespace Determinet
         {
             Layer = layer;
             Value = 0;
+            Bias = DniUtility.GetRandomBiasValue();
+            //var previousLayer = layer.Network.Layers[layer.Network.Layers.Count - 1];
         }
     }
 
     [Serializable]
     public class DniNeuralNetworkLayer
     {
+        public DniNeuralNetwork Network { get; private set; }
+
         /// <summary>
         /// The number of nodes in this layer.
         /// </summary>
@@ -57,8 +64,9 @@ namespace Determinet
         /// <param name="activationType">The type of function that will be used to activate the neurons.</param>
         /// <param name="nodeAliases">The names of the nodes (optional and only used for input and output nodes).</param>
         /// <param name="param">Any optional parameters that should be passed to the activation function.</param>
-        public DniNeuralNetworkLayer(LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
+        public DniNeuralNetworkLayer(DniNeuralNetwork network, LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
         {
+            Network = network;
             ActivationType = activationType;
             Param = param;
             ActivationFunction = CreateActivationType(activationType, param);
@@ -90,7 +98,7 @@ namespace Determinet
 
         public DniNeuralNetworkLayer Clone()
         {
-            return new DniNeuralNetworkLayer(LayerType, Neurons.Count, ActivationType, Param, Aliases);
+            return new DniNeuralNetworkLayer(Network, LayerType, Neurons.Count, ActivationType, Param, Aliases);
         }
     }
 }

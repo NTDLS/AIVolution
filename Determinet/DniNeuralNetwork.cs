@@ -15,10 +15,7 @@ namespace Determinet
 
         #region Fundamental.
         [JsonProperty]
-        public DniNeuralNetworkLayers Layers { get; private set; } = new();
-
-        [JsonProperty]
-        private double[][]? Biases { get; set; }
+        public DniNeuralNetworkLayers Layers { get; private set; }
 
         [JsonProperty]
         private double[][][]? Weights { get; set; }
@@ -37,36 +34,20 @@ namespace Determinet
 
         #endregion
 
-        public DniNeuralNetwork(double learningRate, int randomSeed = 0)
+        public DniNeuralNetwork(double learningRate)
         {
             LearningRate = learningRate;
-        }
+            Layers = new DniNeuralNetworkLayers(this);
+    }
 
         #region Initialization.
 
         private void Initialize()
         {
-            InitializeBiases();
             InitializeWeights();
             IsInitalized = true;
         }
 
-
-        private void InitializeBiases()
-        {
-            /// Initializes random array for the biases being held within the network.
-            var biasList = new List<double[]>();
-            for (int i = 1; i < Layers.Count; i++)
-            {
-                var bias = new double[Layers[i].Neurons.Count];
-                for (int j = 0; j < Layers[i].Neurons.Count; j++)
-                {
-                    bias[j] = DniUtility.GetRandomBiasValue();
-                }
-                biasList.Add(bias);
-            }
-            Biases = biasList.ToArray();
-        }
 
         private void InitializeWeights()
         {
@@ -143,10 +124,6 @@ namespace Determinet
             {
                 Initialize();
             }
-            if (Biases == null)
-            {
-                throw new Exception("Biases have not been initialized.");
-            }
             if (Weights == null)
             {
                 throw new Exception("Weights have not been initialized.");
@@ -168,7 +145,7 @@ namespace Determinet
                         value += Weights[i - 1][j][k] * Layers[i - 1].Neurons[k].Value;
                     }
 
-                    Layers[i].Neurons[j].Value = Layers[layer].ActivationFunction.Activation(value + Biases[i - 1][j]);
+                    Layers[i].Neurons[j].Value = Layers[layer].ActivationFunction.Activation(value + Layers[i].Neurons[j].Bias);
 
                     var mahcine = Layers[layer].ActivationFunction as DniIActivationMachine;
                     if (mahcine != null)
@@ -206,10 +183,6 @@ namespace Determinet
             {
                 Initialize();
             }
-            if (Biases == null)
-            {
-                throw new Exception("Biases have not been initialized.");
-            }
             if (Weights == null)
             {
                 throw new Exception("Weights have not been initialized.");
@@ -242,7 +215,7 @@ namespace Determinet
 
             for (int i = 0; i < Layers[Layers.Count - 1].Neurons.Count; i++) //calculates the w' and b' for the last layer in the network
             {
-                Biases[Layers.Count - 2][i] -= gamma[Layers.Count - 1][i] * LearningRate;
+                Layers[Layers.Count - 2].Neurons[i].Bias -= gamma[Layers.Count - 1][i] * LearningRate;
                 for (int j = 0; j < Layers[Layers.Count - 2].Neurons.Count; j++)
                 {
 
@@ -264,7 +237,7 @@ namespace Determinet
                 }
                 for (int j = 0; j < Layers[i].Neurons.Count; j++) //itterate over outputs of layer
                 {
-                    Biases[i - 1][j] -= gamma[i][j] * LearningRate; //modify biases of network
+                    Layers[i].Neurons[j].Bias -= gamma[i][j] * LearningRate; //modify biases of network
                     for (int k = 0; k < Layers[i - 1].Neurons.Count; k++) //itterate over inputs to layer
                     {
                         Weights[i - 1][j][k] -= gamma[i][j] * Layers[i - 1].Neurons[k].Value * LearningRate; //modify weights of network
