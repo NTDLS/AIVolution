@@ -158,7 +158,6 @@ namespace Determinet
                 Layers[Layers.Count - 2].Neurons[i].Bias -= gamma[Layers.Count - 1][i] * LearningRate;
                 for (int j = 0; j < Layers[Layers.Count - 2].Neurons.Count; j++)
                 {
-
                     Layers[Layers.Count - 1].Neurons[i].Weights[j] -= gamma[Layers.Count - 1][i] * Layers[Layers.Count - 2].Neurons[j].Value * LearningRate; //*learning 
                 }
             }

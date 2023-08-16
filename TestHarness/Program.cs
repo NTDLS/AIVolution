@@ -1,6 +1,5 @@
 ﻿using Determinet;
 using Determinet.Types;
-using System;
 
 namespace AIVolution
 {

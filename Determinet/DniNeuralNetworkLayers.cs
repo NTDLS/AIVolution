@@ -1,7 +1,5 @@
 ﻿using Determinet.Types;
 using Newtonsoft.Json;
-using System;
-using System.Text;
 
 namespace Determinet
 {
@@ -15,8 +13,6 @@ namespace Determinet
 
         [JsonProperty]
         internal int Count => Collection.Count;
-
-        public DniNeuralNetworkLayer Get(int i) => Collection[i];
 
         public DniNeuralNetworkLayer this[int index]
         {

@@ -1,11 +1,4 @@
-﻿using Determinet.ActivationFunctions.Interfaces;
-using Determinet.Types;
-using Newtonsoft.Json;
-using System.Reflection.Emit;
-using System.Threading.Tasks;
-using System;
-
-namespace Determinet.ActivationFunctions
+﻿namespace Determinet.ActivationFunctions
 {
     /*
     /// <summary>
