@@ -5,6 +5,21 @@ using Newtonsoft.Json;
 
 namespace Determinet
 {
+
+    public class DniNeuron
+    {
+        private DniNeuralNetworkLayer Layer { get; set; }
+
+        [JsonProperty]
+        public double Value { get; set; }
+
+        public DniNeuron(DniNeuralNetworkLayer layer)
+        {
+            Layer = layer;
+            Value = 0;
+        }
+    }
+
     [Serializable]
     public class DniNeuralNetworkLayer
     {
@@ -12,7 +27,7 @@ namespace Determinet
         /// The number of nodes in this layer.
         /// </summary>
         [JsonProperty]
-        public int NodeCount { get; private set; }
+        public List<DniNeuron> Neurons { get; set; }
 
         [JsonProperty]
         public ActivationType ActivationType { get; set; }
@@ -42,14 +57,20 @@ namespace Determinet
         /// <param name="activationType">The type of function that will be used to activate the neurons.</param>
         /// <param name="nodeAliases">The names of the nodes (optional and only used for input and output nodes).</param>
         /// <param name="param">Any optional parameters that should be passed to the activation function.</param>
-        public DniNeuralNetworkLayer(LayerType type, int nodeCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
+        public DniNeuralNetworkLayer(LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
         {
             ActivationType = activationType;
             Param = param;
             ActivationFunction = CreateActivationType(activationType, param);
             LayerType = type;
-            NodeCount = nodeCount;
             Aliases = nodeAliases?.ToArray();
+
+            Neurons = new List<DniNeuron>();
+
+            for (int i = 0; i < neuronCount; i++)
+            {
+                Neurons.Add(new DniNeuron(this));
+            }
         }
 
         private DniIActivationFunction CreateActivationType(ActivationType activationType, DniNamedFunctionParameters? param)
@@ -69,7 +90,7 @@ namespace Determinet
 
         public DniNeuralNetworkLayer Clone()
         {
-            return new DniNeuralNetworkLayer(LayerType, NodeCount, ActivationType, Param, Aliases);
+            return new DniNeuralNetworkLayer(LayerType, Neurons.Count, ActivationType, Param, Aliases);
         }
     }
 }

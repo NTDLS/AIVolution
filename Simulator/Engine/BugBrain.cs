@@ -92,7 +92,9 @@ namespace Simulator.Engine
                 //_brain.Save(fileName);
             }
 
-            return _brain.Clone();
+            return _brain;
+
+            //return _brain.Clone();
         }
 
         private static DniNamedInterfaceParameters TrainingScenerio(double in0Degrees, double in45Degrees, double in90Degrees, double in270Degrees, double in315Degrees)
