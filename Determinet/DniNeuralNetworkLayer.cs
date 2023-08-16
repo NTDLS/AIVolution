@@ -5,26 +5,6 @@ using Newtonsoft.Json;
 
 namespace Determinet
 {
-
-    public class DniNeuron
-    {
-        public DniNeuralNetworkLayer Layer { get; private  set; }
-
-        [JsonProperty]
-        public double Bias { get; set; }
-
-        [JsonProperty]
-        public double Value { get; set; }
-
-        public DniNeuron(DniNeuralNetworkLayer layer)
-        {
-            Layer = layer;
-            Value = 0;
-            Bias = DniUtility.GetRandomBiasValue();
-            //var previousLayer = layer.Network.Layers[layer.Network.Layers.Count - 1];
-        }
-    }
-
     [Serializable]
     public class DniNeuralNetworkLayer
     {

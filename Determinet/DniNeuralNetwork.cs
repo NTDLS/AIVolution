@@ -17,8 +17,6 @@ namespace Determinet
         [JsonProperty]
         public DniNeuralNetworkLayers Layers { get; private set; }
 
-        [JsonProperty]
-        private double[][][]? Weights { get; set; }
         #endregion
 
         #region Genetic.
@@ -38,49 +36,12 @@ namespace Determinet
         {
             LearningRate = learningRate;
             Layers = new DniNeuralNetworkLayers(this);
-    }
-
-        #region Initialization.
-
-        private void Initialize()
-        {
-            InitializeWeights();
-            IsInitalized = true;
         }
-
-
-        private void InitializeWeights()
-        {
-            /// Initializes random array for the weights being held in the network.
-            var weightsList = new List<double[][]>();
-            for (int i = 1; i < Layers.Count; i++)
-            {
-                var layerWeightsList = new List<double[]>();
-                int neuronsInPreviousLayer = Layers[i - 1].Neurons.Count;
-                for (int j = 0; j < Layers[i].Neurons.Count; j++)
-                {
-                    var neuronWeights = new double[neuronsInPreviousLayer];
-                    for (int k = 0; k < neuronsInPreviousLayer; k++)
-                    {
-                        neuronWeights[k] = DniUtility.GetRandomWeightValue();
-                    }
-                    layerWeightsList.Add(neuronWeights);
-                }
-                weightsList.Add(layerWeightsList.ToArray());
-            }
-            Weights = weightsList.ToArray();
-        }
-
-        #endregion
 
         #region Feed forward.
 
         public DniNamedInterfaceParameters FeedForward(DniNamedInterfaceParameters param)
         {
-            if (IsInitalized == false)
-            {
-                Initialize();
-            }
 
             var inputAliases = Layers[0].Aliases;
             if (inputAliases == null)
@@ -120,15 +81,6 @@ namespace Determinet
         /// <returns></returns>
         public double[] FeedForward(double[] inputs)
         {
-            if (IsInitalized == false)
-            {
-                Initialize();
-            }
-            if (Weights == null)
-            {
-                throw new Exception("Weights have not been initialized.");
-            }
-
             for (int i = 0; i < inputs.Length; i++)
             {
                 Layers[0].Neurons[i].Value = inputs[i];
@@ -142,7 +94,7 @@ namespace Determinet
                     double value = 0;
                     for (int k = 0; k < Layers[i - 1].Neurons.Count; k++)
                     {
-                        value += Weights[i - 1][j][k] * Layers[i - 1].Neurons[k].Value;
+                        value += Layers[i].Neurons[j].Weights[k] * Layers[i - 1].Neurons[k].Value;
                     }
 
                     Layers[i].Neurons[j].Value = Layers[layer].ActivationFunction.Activation(value + Layers[i].Neurons[j].Bias);
@@ -179,68 +131,55 @@ namespace Determinet
         /// <exception cref="Exception"></exception>
         public void BackPropagate(double[] inputs, double[] expected)
         {
-            if (IsInitalized == false)
-            {
-                Initialize();
-            }
-            if (Weights == null)
-            {
-                throw new Exception("Weights have not been initialized.");
-            }
-
-
-            double[] output = FeedForward(inputs);//runs feed forward to ensure neurons are populated correctly
+            var output = FeedForward(inputs);//runs feed forward to ensure neurons are populated correctly
 
             Cost = 0;
             for (int i = 0; i < output.Length; i++)
             {
-                Cost += (double)Math.Pow(output[i] - expected[i], 2);//calculated cost of network
+                Cost += Math.Pow(output[i] - expected[i], 2); //Calculate cost of network.
             }
-            Cost = Cost / 2;
-
-            double[][] gamma;
+            Cost /= 2;
 
             var gammaList = new List<double[]>();
             for (int i = 0; i < Layers.Count; i++)
             {
                 gammaList.Add(new double[Layers[i].Neurons.Count]);
             }
-            gamma = gammaList.ToArray(); //gamma initialization
+            var gamma = gammaList.ToArray(); //gamma initialization
 
-            int layer = Layers.Count - 2;
             for (int i = 0; i < output.Length; i++)
             {
-                gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * Layers[layer].ActivationFunction.Derivative(output[i]); //Gamma calculation
+                gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * Layers[Layers.Count - 2].ActivationFunction.Derivative(output[i]); //Gamma calculation
             }
 
-            for (int i = 0; i < Layers[Layers.Count - 1].Neurons.Count; i++) //calculates the w' and b' for the last layer in the network
+            //Calculates the "weight" and "bais" for the last layer in the network.
+            for (int i = 0; i < Layers[Layers.Count - 1].Neurons.Count; i++)
             {
                 Layers[Layers.Count - 2].Neurons[i].Bias -= gamma[Layers.Count - 1][i] * LearningRate;
                 for (int j = 0; j < Layers[Layers.Count - 2].Neurons.Count; j++)
                 {
 
-                    Weights[Layers.Count - 2][i][j] -= gamma[Layers.Count - 1][i] * Layers[Layers.Count - 2].Neurons[j].Value * LearningRate; //*learning 
+                    Layers[Layers.Count - 1].Neurons[i].Weights[j] -= gamma[Layers.Count - 1][i] * Layers[Layers.Count - 2].Neurons[j].Value * LearningRate; //*learning 
                 }
             }
 
             for (int i = Layers.Count - 2; i > 0; i--) //runs on all hidden layers
             {
-                layer = i - 1;
                 for (int j = 0; j < Layers[i].Neurons.Count; j++) //outputs
                 {
                     gamma[i][j] = 0;
                     for (int k = 0; k < gamma[i + 1].Length; k++)
                     {
-                        gamma[i][j] += gamma[i + 1][k] * Weights[i][k][j];
+                        gamma[i][j] += gamma[i + 1][k] * Layers[i + 1].Neurons[k].Weights[j];
                     }
-                    gamma[i][j] *= Layers[layer].ActivationFunction.Derivative(Layers[i].Neurons[j].Value); //calculate gamma
+                    gamma[i][j] *= Layers[i - 1].ActivationFunction.Derivative(Layers[i].Neurons[j].Value); //calculate gamma
                 }
                 for (int j = 0; j < Layers[i].Neurons.Count; j++) //itterate over outputs of layer
                 {
                     Layers[i].Neurons[j].Bias -= gamma[i][j] * LearningRate; //modify biases of network
                     for (int k = 0; k < Layers[i - 1].Neurons.Count; k++) //itterate over inputs to layer
                     {
-                        Weights[i - 1][j][k] -= gamma[i][j] * Layers[i - 1].Neurons[k].Value * LearningRate; //modify weights of network
+                        Layers[i].Neurons[j].Weights[k] -= gamma[i][j] * Layers[i - 1].Neurons[k].Value * LearningRate; //modify weights of network
                     }
                 }
             }
@@ -256,21 +195,6 @@ namespace Determinet
         public void Mutate(double mutationProbability, double mutationSeverity, int randomSeed = 0)
         {
             /*
-            if (IsInitalized == false)
-            {
-                Initialize();
-            }
-            if (Biases == null)
-            {
-                throw new Exception("Biases have not been initialized.");
-            }
-            if (Weights == null)
-            {
-                throw new Exception("Weights have not been initialized.");
-            }
-
-            Reseed(randomSeed);
-
             for (int i = 0; i < Biases.Length; i++)
             {
                 for (int j = 0; j < Biases[i].Length; j++)
@@ -395,11 +319,6 @@ namespace Determinet
         /// <param name="path"></param>
         public void Save(string path)
         {
-            if (IsInitalized == false)
-            {
-                Initialize();
-            }
-
             var serialized = JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter());
 
             File.WriteAllText(path, serialized);
