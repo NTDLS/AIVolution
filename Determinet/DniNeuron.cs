@@ -5,7 +5,8 @@ namespace Determinet
     [Serializable]
     public class DniNeuron
     {
-        public DniNeuralNetworkLayer Layer { get; private set; }
+        [JsonIgnore]
+        public DniNeuralNetworkLayer? Layer { get; internal set; }
 
         [JsonProperty]
         public double Bias { get; set; }
@@ -14,7 +15,11 @@ namespace Determinet
         public double Value { get; set; }
 
         [JsonProperty]
-        public double[] Weights { get; set; }
+        public double[] Weights { get; set; } = new double[0];
+
+        public DniNeuron()
+        {
+        }
 
         public DniNeuron(DniNeuralNetworkLayer layer)
         {
@@ -22,9 +27,9 @@ namespace Determinet
             Value = 0;
             Bias = DniUtility.GetRandomBiasValue();
 
-            if (layer.Network.Layers.Count > 0)
+            if (layer.Layers.Count > 0)
             {
-                var previousLayer = layer.Network.Layers[layer.Network.Layers.Count - 1];
+                var previousLayer = layer.Layers[layer.Layers.Count - 1];
 
                 /// Initializes random array for the weights being held in the network.
                 Weights = new double[previousLayer.Neurons.Count];
@@ -39,6 +44,11 @@ namespace Determinet
 
         public DniNeuron Clone()
         {
+            if (Layer == null)
+            {
+                throw new Exception("Layers reference can not be null.");
+            }
+
             return new DniNeuron(Layer)
             {
                 Bias = Bias,

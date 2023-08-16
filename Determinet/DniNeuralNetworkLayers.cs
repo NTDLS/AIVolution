@@ -6,7 +6,8 @@ namespace Determinet
     [Serializable]
     public class DniNeuralNetworkLayers
     {
-        public DniNeuralNetwork Network { get; private set; }
+        [JsonIgnore]
+        public DniNeuralNetwork Network { get; internal set; }
 
         [JsonProperty]
         internal List<DniNeuralNetworkLayer> Collection { get; private set; } = new();
@@ -33,27 +34,27 @@ namespace Determinet
 
         public void AddInput(ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Input, nodesCount, activationType, param, null));
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Input, nodesCount, activationType, param, null));
         }
 
         public void AddInput(ActivationType activationType, string[] nodeAliases, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Input, nodeAliases.Length, activationType, param, nodeAliases));
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Input, nodeAliases.Length, activationType, param, nodeAliases));
         }
 
         public void AddIntermediate( ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network,  LayerType.Intermediate, nodesCount, activationType, param, null));
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers,  LayerType.Intermediate, nodesCount, activationType, param, null));
         }
 
         public void AddOutput(int nodesCount, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Output, nodesCount, ActivationType.None, param, null));
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Output, nodesCount, ActivationType.None, param, null));
         }
 
         public void AddOutput(string[] nodeAliases, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network, LayerType.Output, nodeAliases.Length, ActivationType.None, param, nodeAliases));
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Output, nodeAliases.Length, ActivationType.None, param, nodeAliases));
         }
 
         public DniNeuralNetworkLayers Clone()

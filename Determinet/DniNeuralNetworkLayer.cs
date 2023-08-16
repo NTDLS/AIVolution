@@ -8,7 +8,8 @@ namespace Determinet
     [Serializable]
     public class DniNeuralNetworkLayer
     {
-        public DniNeuralNetwork Network { get; private set; }
+        [JsonIgnore]
+        public DniNeuralNetworkLayers Layers { get; internal set; }
 
         /// <summary>
         /// The number of nodes in this layer.
@@ -44,9 +45,9 @@ namespace Determinet
         /// <param name="activationType">The type of function that will be used to activate the neurons.</param>
         /// <param name="nodeAliases">The names of the nodes (optional and only used for input and output nodes).</param>
         /// <param name="param">Any optional parameters that should be passed to the activation function.</param>
-        public DniNeuralNetworkLayer(DniNeuralNetwork network, LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
+        public DniNeuralNetworkLayer(DniNeuralNetworkLayers layers, LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
         {
-            Network = network;
+            Layers = layers;
             ActivationType = activationType;
             Param = param;
             ActivationFunction = CreateActivationType(activationType, param);
@@ -79,7 +80,7 @@ namespace Determinet
 
         public DniNeuralNetworkLayer Clone()
         {
-            var clone = new DniNeuralNetworkLayer(Network, LayerType, Neurons.Count, ActivationType, Param, Aliases);
+            var clone = new DniNeuralNetworkLayer(Layers, LayerType, Neurons.Count, ActivationType, Param, Aliases);
 
             for (int i = 0; i < clone.Neurons.Count; i++)
             {

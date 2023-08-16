@@ -32,7 +32,6 @@ namespace Simulator.Engine
         {
             if (_brain == null)
             {
-                /*
                 string fileName = ".\\bugbrain.txt";
 
                 if (File.Exists(fileName))
@@ -43,9 +42,11 @@ namespace Simulator.Engine
                         return _brain.Clone();
                     }
                 }
-                */
 
-                _brain = new DniNeuralNetwork(0.09f);
+                _brain = new DniNeuralNetwork()
+                {
+                    LearningRate = 0.01
+                };
 
                 _brain.Layers.AddInput(ActivationType.LeakyReLU, //Vision inputs
                     new string[] {
@@ -87,7 +88,7 @@ namespace Simulator.Engine
                     //No objects dection, speed up and cruise.
                     _brain.BackPropagate(TrainingScenerio(0, 0, 0, 0, 0), TrainingDecision(0.4f, 0.4f, 0.4f, 0.9f, 0.9f));
                 }
-                //_brain.Save(fileName);
+                _brain.Save(fileName);
             }
 
 

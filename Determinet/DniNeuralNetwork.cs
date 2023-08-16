@@ -2,7 +2,6 @@
 using Determinet.Types;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Linq;
 
 namespace Determinet
 {
@@ -16,7 +15,7 @@ namespace Determinet
         public double Fitness { get; set; } = 0;
 
         [JsonProperty]
-        public double LearningRate { get; private set; } = 0.01;
+        public double LearningRate { get; set; } = 0.01;
 
         [JsonProperty]
         public double Cost { get; private set; } = 0; //Not used in calculions, only to identify the performance of the network.
@@ -86,17 +85,21 @@ namespace Determinet
                     }
 
                     var activationFunction = Layers[i - 1].ActivationFunction;
-                    if (activationFunction == null)
+                    if (activationFunction != null)
                     {
-                        throw new Exception("Activation is not defined for layer.");
+                        var activationValue = activationFunction.Activation(value + Layers[i].Neurons[j].Bias);
+
+                        if (double.IsNaN(activationValue))
+                        {
+                        }
+
+                        Layers[i].Neurons[j].Value = activationValue;
                     }
 
-                    Layers[i].Neurons[j].Value = activationFunction.Activation(value + Layers[i].Neurons[j].Bias);
-
-                    var mahcine = Layers[i - 1].ActivationFunction as DniIActivationMachine;
-                    if (mahcine != null)
+                    var producerFunction = activationFunction as DniIActivationMachine;
+                    if (producerFunction != null)
                     {
-                        Layers[i].Neurons[j].Value = mahcine.Produce(Layers[i].Neurons[j].Value);
+                        Layers[i].Neurons[j].Value = producerFunction.Produce(Layers[i].Neurons[j].Value);
                     }
                 }
             }
@@ -142,9 +145,13 @@ namespace Determinet
             }
             var gamma = gammaList.ToArray(); //gamma initialization
 
-            for (int i = 0; i < output.Length; i++)
+            var gamaActivationFunction = Layers[Layers.Count - 2].ActivationFunction;
+            if (gamaActivationFunction != null)
             {
-                gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * Layers[Layers.Count - 2].ActivationFunction.Derivative(output[i]); //Gamma calculation
+                for (int i = 0; i < output.Length; i++)
+                {
+                    gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * gamaActivationFunction.Derivative(output[i]); //Gamma calculation
+                }
             }
 
             //Calculates the "weight" and "bais" for the last layer in the network.
@@ -166,7 +173,12 @@ namespace Determinet
                     {
                         gamma[i][j] += gamma[i + 1][k] * Layers[i + 1].Neurons[k].Weights[j];
                     }
-                    gamma[i][j] *= Layers[i - 1].ActivationFunction.Derivative(Layers[i].Neurons[j].Value); //calculate gamma
+
+                    var activationFunction = Layers[i - 1].ActivationFunction;
+                    if (activationFunction != null)
+                    {
+                        gamma[i][j] *= activationFunction.Derivative(Layers[i].Neurons[j].Value); //calculate gamma
+                    }
                 }
                 for (int j = 0; j < Layers[i].Neurons.Count; j++) //itterate over outputs of layer
                 {
@@ -222,6 +234,19 @@ namespace Determinet
         {
             var serialized = File.ReadAllText(path);
             var instance = JsonConvert.DeserializeObject<DniNeuralNetwork>(serialized);
+            if (instance != null)
+            {
+                instance.Layers.Network = instance;
+                foreach (var layer in instance.Layers.Collection)
+                {
+                    layer.Layers = instance.Layers;
+
+                    foreach (var neuron in layer.Neurons)
+                    {
+                        neuron.Layer = layer;
+                    }
+                }
+            }
             return instance;
         }
 
@@ -232,7 +257,6 @@ namespace Determinet
         public void Save(string path)
         {
             var serialized = JsonConvert.SerializeObject(this, Formatting.Indented, new StringEnumConverter());
-
             File.WriteAllText(path, serialized);
         }
 
