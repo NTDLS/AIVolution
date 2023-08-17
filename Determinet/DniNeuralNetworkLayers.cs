@@ -1,11 +1,10 @@
 ﻿using Determinet.Types;
 using Newtonsoft.Json;
-using System.Collections;
 
 namespace Determinet
 {
     [Serializable]
-    public class DniNeuralNetworkLayers //: IEnumerable<DniNeuralNetworkLayer>
+    public class DniNeuralNetworkLayers
     {
         [JsonIgnore]
         public DniNeuralNetwork Network { get; internal set; }
@@ -15,6 +14,12 @@ namespace Determinet
 
         [JsonProperty]
         internal int Count => Collection.Count;
+
+        [JsonIgnore]
+        internal DniNeuralNetworkLayer Input => Collection.First();
+
+        [JsonIgnore]
+        internal DniNeuralNetworkLayer Output => Collection.Last();
 
         #region IEnumerable.
 
@@ -30,18 +35,6 @@ namespace Determinet
                 return Collection[index];
             }
         }
-
-        /*
-        public IEnumerator<DniNeuralNetworkLayer> GetEnumerator()
-        {
-            return Collection.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-        */
 
         #endregion
 
@@ -87,15 +80,17 @@ namespace Determinet
 
         #region Genetic.
 
-        public DniNeuralNetworkLayers Clone()
+        public DniNeuralNetworkLayers Clone(DniNeuralNetwork clonedNetwork)
         {
-            var clone = new DniNeuralNetworkLayers(Network);
+            var clonedLayers = new DniNeuralNetworkLayers(clonedNetwork);
             foreach (var layer in Collection)
             {
-                clone.Collection.Add(layer.Clone());
+                var clonedLayer = layer.Clone(clonedLayers);
+
+                clonedLayers.Collection.Add(clonedLayer);
             }
 
-            return clone;
+            return clonedLayers;
         }
 
         public void Mutate(double mutationProbability, double mutationSeverity)

@@ -14,6 +14,7 @@ namespace Determinet.Types
 
         public void Set(string key, double value)
         {
+            key = key.ToLower();
             if (_dictonary.ContainsKey(key))
             {
                 _dictonary[key] = value;
@@ -31,6 +32,8 @@ namespace Determinet.Types
         /// <param name="value"></param>
         public void SetIfLess(string key, double value)
         {
+            key = key.ToLower();
+
             if (_dictonary.ContainsKey(key) == false)
             {
                 _dictonary.Add(key, value);
@@ -53,6 +56,8 @@ namespace Determinet.Types
         /// <param name="value"></param>
         public void SetIfGreater(string key, double value)
         {
+            key = key.ToLower();
+
             if (_dictonary.ContainsKey(key) == false)
             {
                 _dictonary.Add(key, value);
@@ -81,6 +86,7 @@ namespace Determinet.Types
 
         public double Get(string key)
         {
+            key = key.ToLower();
             return _dictonary[key];
         }
 
@@ -91,6 +97,7 @@ namespace Determinet.Types
 
         public double Get(string key, double defaultValue)
         {
+            key = key.ToLower();
             if (_dictonary.TryGetValue(key, out double value))
             {
                 return value;

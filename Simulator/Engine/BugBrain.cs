@@ -32,6 +32,7 @@ namespace Simulator.Engine
         {
             if (_brain == null)
             {
+                /*
                 string fileName = ".\\bugbrain.txt";
 
                 if (File.Exists(fileName))
@@ -43,6 +44,7 @@ namespace Simulator.Engine
                         //return _brain;
                     }
                 }
+                */
 
                 if (_brain == null)
                 {

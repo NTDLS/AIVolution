@@ -58,6 +58,7 @@ namespace Determinet.Types
 
         public object Get(string key, object defaultValue)
         {
+            key = key.ToLower();
             if (_dictonary.TryGetValue(key, out object? value))
             {
                 return value;

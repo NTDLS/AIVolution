@@ -23,9 +23,6 @@ namespace Determinet
         [JsonProperty]
         public DniNamedFunctionParameters? Param { get; private set; }
 
-        [JsonProperty]
-        public string[]? Aliases { get; private set; }
-
         /// <summary>
         /// The type of the later (input, intermediate (hidden) or output). 
         /// </summary>
@@ -45,18 +42,52 @@ namespace Determinet
         /// <param name="activationType">The type of function that will be used to activate the neurons.</param>
         /// <param name="nodeAliases">The names of the nodes (optional and only used for input and output nodes).</param>
         /// <param name="param">Any optional parameters that should be passed to the activation function.</param>
-        public DniNeuralNetworkLayer(DniNeuralNetworkLayers layers, LayerType layerType, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
+        public DniNeuralNetworkLayer(DniNeuralNetworkLayers layers, LayerType layerType, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? neuronAliases)
         {
             if (param == null)
             {
                 param = new DniNamedFunctionParameters();
             }
 
+            if (neuronAliases != null && neuronCount != neuronAliases.Length)
+            {
+                throw new Exception("The number of neuron aliases must match the number of specified neurons.");
+            }
+
+            if (layerType == LayerType.Input)
+            {
+                if (layers.Collection.Where(o => o.LayerType == LayerType.Input).Any())
+                {
+                    throw new Exception("Only one input layer can be added to the network.");
+                }
+            }
+            else if (layerType == LayerType.Output)
+            {
+                if (layers.Collection.Where(o => o.LayerType == LayerType.Output).Any())
+                {
+                    throw new Exception("Only one output layer can be added to the network.");
+                }
+            }
+            else if (layerType == LayerType.Intermediate)
+            {
+                if (neuronAliases != null && neuronAliases.Length > 0)
+                {
+                    throw new Exception("Neuron aliases are not supported on intermediate layers.");
+                }
+            }
+
+            if (neuronAliases != null)
+            {
+                if (neuronAliases.GroupBy(o => o).Where(o => o.Count() > 1).Any())
+                {
+                    throw new Exception("Duplicate neuron aliases are not supported.");
+                }
+            }
+
             Layers = layers;
             ActivationType = activationType;
             Param = param;
             LayerType = layerType;
-            Aliases = nodeAliases?.ToArray();
             Function = CreateActivationType(activationType, param);
 
             if (layerType == LayerType.Input)
@@ -85,7 +116,7 @@ namespace Determinet
 
             for (int i = 0; i < neuronCount; i++)
             {
-                Neurons.Add(new DniNeuron(this));
+                Neurons.Add(new DniNeuron(this, neuronAliases == null ? null : neuronAliases[i]));
             }
         }
 
@@ -105,16 +136,16 @@ namespace Determinet
             };
         }
 
-        public DniNeuralNetworkLayer Clone()
+        public DniNeuralNetworkLayer Clone(DniNeuralNetworkLayers clonedLayers)
         {
-            var clone = new DniNeuralNetworkLayer(Layers, LayerType, Neurons.Count, ActivationType, Param, Aliases);
+            var clonedLayer = new DniNeuralNetworkLayer(clonedLayers, LayerType, Neurons.Count, ActivationType, Param, null);
 
-            for (int i = 0; i < clone.Neurons.Count; i++)
+            for (int i = 0; i < clonedLayer.Neurons.Count; i++)
             {
-                clone.Neurons[i] = Neurons[i].Clone();
+                clonedLayer.Neurons[i] = Neurons[i].Clone(clonedLayer);
             }
 
-            return clone;
+            return clonedLayer;
         }
 
         /// <summary>

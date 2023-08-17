@@ -30,17 +30,23 @@ namespace Determinet
 
         public DniNamedInterfaceParameters FeedForward(DniNamedInterfaceParameters param)
         {
-
+            /*
             var inputAliases = Layers[0].Aliases;
             if (inputAliases == null)
             {
-                throw new Exception("Alises are not defined for the input layer.");
+                throw new Exception("Aliases are not defined for the input layer.");
             }
+            */
 
-            double[] inputInputs = new double[inputAliases.Length];
-            for (int i = 0; i < inputAliases.Length; i++)
+            var inputLayer = Layers.Input;
+            double[] inputInputs = new double[inputLayer.Neurons.Count];
+            for (int i = 0; i < inputInputs.Length; i++)
             {
-                var alias = inputAliases[i];
+                var alias = inputLayer.Neurons[i].Alias;
+                if (alias == null)
+                {
+                    throw new Exception("An alias was not specified for one or more input neurons.");
+                }
                 inputInputs[i] = param.Get(alias, 0);
             }
 
@@ -48,15 +54,15 @@ namespace Determinet
 
             DniNamedInterfaceParameters friendlyOutputs = new();
 
-            var outputAliases = Layers[Layers.Count - 1].Aliases;
-            if (outputAliases == null)
+            var outputLayer = Layers.Output;
+            for (int i = 0; i < outputLayer.Neurons.Count; i++)
             {
-                throw new Exception("Alises are not defined for the output layer.");
-            }
-
-            for (int i = 0; i < outputAliases.Length; i++)
-            {
-                friendlyOutputs.Set(outputAliases[i], rawOutputs[i]);
+                var alias = outputLayer.Neurons[i].Alias;
+                if (alias == null)
+                {
+                    throw new Exception("An alias was not specified for one or more output neurons.");
+                }
+                friendlyOutputs.Set(alias, rawOutputs[i]);
             }
 
             return friendlyOutputs;
@@ -285,13 +291,16 @@ namespace Determinet
         /// <returns></returns>
         public DniNeuralNetwork Clone()
         {
-            return new DniNeuralNetwork
+            var clonedNetwork = new DniNeuralNetwork
             {
                 Fitness = Fitness,
-                Layers = Layers.Clone(),
                 Cost = Cost,
                 LearningRate = LearningRate,
             };
+
+            clonedNetwork.Layers = Layers.Clone(clonedNetwork);
+
+            return clonedNetwork;
         }
 
         #endregion
