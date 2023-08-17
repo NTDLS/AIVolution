@@ -1,0 +1,3 @@
+[submodule "Determinet"]
+	path = Determinet
+	url = git@github.com:NTDLS/Determinet.git
