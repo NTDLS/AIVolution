@@ -11,7 +11,7 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class DniTanhFunction : DniIActivationFunction
     {
-        public DniTanhFunction(DniNamedFunctionParameters? param)
+        public DniTanhFunction(DniNamedFunctionParameters param)
         {
         }
 

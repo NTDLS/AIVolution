@@ -1,10 +1,11 @@
 ﻿using Determinet.Types;
 using Newtonsoft.Json;
+using System.Collections;
 
 namespace Determinet
 {
     [Serializable]
-    public class DniNeuralNetworkLayers
+    public class DniNeuralNetworkLayers : IEnumerable<DniNeuralNetworkLayer>
     {
         [JsonIgnore]
         public DniNeuralNetwork Network { get; internal set; }
@@ -15,6 +16,9 @@ namespace Determinet
         [JsonProperty]
         internal int Count => Collection.Count;
 
+        #region IEnumerable.
+
+        [JsonIgnore]
         public DniNeuralNetworkLayer this[int index]
         {
             get
@@ -26,6 +30,18 @@ namespace Determinet
                 return Collection[index];
             }
         }
+
+        public IEnumerator<DniNeuralNetworkLayer> GetEnumerator()
+        {
+            return Collection.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
 
         public DniNeuralNetworkLayers(DniNeuralNetwork network)
         {
@@ -42,9 +58,9 @@ namespace Determinet
             Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Input, nodeAliases.Length, activationType, param, nodeAliases));
         }
 
-        public void AddIntermediate( ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
+        public void AddIntermediate(ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
         {
-            Collection.Add(new DniNeuralNetworkLayer(Network.Layers,  LayerType.Intermediate, nodesCount, activationType, param, null));
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Intermediate, nodesCount, activationType, param, null));
         }
 
         public void AddOutput(int nodesCount, DniNamedFunctionParameters? param = null)
@@ -57,6 +73,18 @@ namespace Determinet
             Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Output, nodeAliases.Length, ActivationType.None, param, nodeAliases));
         }
 
+        public void AddOutput(ActivationType activationType, int nodesCount, DniNamedFunctionParameters? param = null)
+        {
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Output, nodesCount, activationType, param, null));
+        }
+
+        public void AddOutput(ActivationType activationType, string[] nodeAliases, DniNamedFunctionParameters? param = null)
+        {
+            Collection.Add(new DniNeuralNetworkLayer(Network.Layers, LayerType.Output, nodeAliases.Length, activationType, param, nodeAliases));
+        }
+
+        #region Genetic.
+
         public DniNeuralNetworkLayers Clone()
         {
             var clone = new DniNeuralNetworkLayers(Network);
@@ -67,5 +95,15 @@ namespace Determinet
 
             return clone;
         }
+
+        public void Mutate(double mutationProbability, double mutationSeverity)
+        {
+            foreach (var layer in Collection)
+            {
+                layer.Mutate(mutationProbability, mutationSeverity);
+            }
+        }
+
+        #endregion
     }
 }

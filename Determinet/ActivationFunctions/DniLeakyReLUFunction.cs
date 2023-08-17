@@ -12,7 +12,7 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class DniLeakyReLUFunction : DniIActivationFunction
     {
-        public DniLeakyReLUFunction(DniNamedFunctionParameters? param)
+        public DniLeakyReLUFunction(DniNamedFunctionParameters param)
         {
         }
 

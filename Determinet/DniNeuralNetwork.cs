@@ -84,27 +84,59 @@ namespace Determinet
                         value += Layers[i].Neurons[j].Weights[k] * Layers[i - 1].Neurons[k].Value;
                     }
 
-                    var activationFunction = Layers[i - 1].ActivationFunction;
-                    if (activationFunction != null)
+                    var function = Layers[i - 1].Function;
+                    if (function != null)
                     {
-                        var activationValue = activationFunction.Activation(value + Layers[i].Neurons[j].Bias);
-
-                        if (double.IsNaN(activationValue))
+                        if (function is DniIActivationFunction)
                         {
+                            var proc = function as DniIActivationFunction;
+                            if (proc != null)
+                            {
+                                Layers[i].Neurons[j].Value = proc.Activation(value + Layers[i].Neurons[j].Bias);
+                            }
                         }
-
-                        Layers[i].Neurons[j].Value = activationValue;
-                    }
-
-                    var producerFunction = activationFunction as DniIActivationMachine;
-                    if (producerFunction != null)
-                    {
-                        Layers[i].Neurons[j].Value = producerFunction.Produce(Layers[i].Neurons[j].Value);
+                        else if (function is DniIActivationProducer)
+                        {
+                            var proc = function as DniIActivationProducer;
+                            if (proc != null)
+                            {
+                                Layers[i].Neurons[j].Value = proc.Activation(value + Layers[i].Neurons[j].Bias);
+                                Layers[i].Neurons[j].Value = proc.Produce(Layers[i].Neurons[j].Value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("The function is not compatible with input or intermediate layers.");
+                        }
                     }
                 }
             }
 
-            return Layers[Layers.Count - 1].Neurons.Select(o => o.Value).ToArray();
+            //Highly optional output layer activation.
+            var outputLayer = Layers[Layers.Count - 1];
+            if (outputLayer.Function != null)
+            {
+                for (int neuronIndex = 0; neuronIndex < outputLayer.Neurons.Count; neuronIndex++)
+                {
+                    if (outputLayer.Function != null)
+                    {
+                        if (outputLayer.Function is DniIOutputFunction)
+                        {
+                            var proc = outputLayer.Function as DniIOutputFunction;
+                            if (proc != null)
+                            {
+                                outputLayer.Neurons[neuronIndex].Value = proc.Compute(outputLayer.Neurons[neuronIndex].Value);
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("The function is not compatible with output layers.");
+                        }
+                    }
+                }
+            }
+
+            return outputLayer.Neurons.Select(o => o.Value).ToArray();
         }
 
         #endregion
@@ -145,12 +177,34 @@ namespace Determinet
             }
             var gamma = gammaList.ToArray(); //gamma initialization
 
-            var gamaActivationFunction = Layers[Layers.Count - 2].ActivationFunction;
+            var gamaActivationFunction = Layers[Layers.Count - 2].Function;
             if (gamaActivationFunction != null)
             {
-                for (int i = 0; i < output.Length; i++)
+                if (gamaActivationFunction is DniIActivationFunction)
                 {
-                    gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * gamaActivationFunction.Derivative(output[i]); //Gamma calculation
+                    var proc = gamaActivationFunction as DniIActivationFunction;
+                    if (proc != null)
+                    {
+                        for (int i = 0; i < output.Length; i++)
+                        {
+                            gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * proc.Derivative(output[i]); //Gamma calculation
+                        }
+                    }
+                }
+                else if (gamaActivationFunction is DniIActivationProducer)
+                {
+                    var proc = gamaActivationFunction as DniIActivationProducer;
+                    if (proc != null)
+                    {
+                        for (int i = 0; i < output.Length; i++)
+                        {
+                            gamma[Layers.Count - 1][i] = (output[i] - expected[i]) * proc.Derivative(output[i]); //Gamma calculation
+                        }
+                    }
+                }
+                else
+                {
+                    throw new Exception("The function is not compatible with gama calculations.");
                 }
             }
 
@@ -164,9 +218,9 @@ namespace Determinet
                 }
             }
 
-            for (int i = Layers.Count - 2; i > 0; i--) //runs on all hidden layers
+            for (int i = Layers.Count - 2; i > 0; i--) //runs on all hidden layers.
             {
-                for (int j = 0; j < Layers[i].Neurons.Count; j++) //outputs
+                for (int j = 0; j < Layers[i].Neurons.Count; j++) //outputs.
                 {
                     gamma[i][j] = 0;
                     for (int k = 0; k < gamma[i + 1].Length; k++)
@@ -174,11 +228,32 @@ namespace Determinet
                         gamma[i][j] += gamma[i + 1][k] * Layers[i + 1].Neurons[k].Weights[j];
                     }
 
-                    var activationFunction = Layers[i - 1].ActivationFunction;
+
+                    var activationFunction = Layers[i - 1].Function;
                     if (activationFunction != null)
                     {
-                        gamma[i][j] *= activationFunction.Derivative(Layers[i].Neurons[j].Value); //calculate gamma
+                        if (activationFunction is DniIActivationFunction)
+                        {
+                            var proc = activationFunction as DniIActivationFunction;
+                            if (proc != null)
+                            {
+                                gamma[i][j] *= proc.Derivative(Layers[i].Neurons[j].Value); //calculate gamma.
+                            }
+                        }
+                        else if (gamaActivationFunction is DniIActivationProducer)
+                        {
+                            var proc = gamaActivationFunction as DniIActivationProducer;
+                            if (proc != null)
+                            {
+                                gamma[i][j] *= proc.Derivative(Layers[i].Neurons[j].Value); //calculate gamma.
+                            }
+                        }
+                        else
+                        {
+                            throw new Exception("The function is not compatible with gama calculations.");
+                        }
                     }
+
                 }
                 for (int j = 0; j < Layers[i].Neurons.Count; j++) //itterate over outputs of layer
                 {
@@ -200,10 +275,7 @@ namespace Determinet
         /// </summary>
         public void Mutate(double mutationProbability, double mutationSeverity)
         {
-            foreach (var layer in Layers.Collection)
-            {
-                layer.Mutate(mutationProbability, mutationSeverity);
-            }
+            Layers.Mutate(mutationProbability, mutationSeverity);
         }
 
         /// <summary>
@@ -237,7 +309,7 @@ namespace Determinet
             if (instance != null)
             {
                 instance.Layers.Network = instance;
-                foreach (var layer in instance.Layers.Collection)
+                foreach (var layer in instance.Layers)
                 {
                     layer.Layers = instance.Layers;
 

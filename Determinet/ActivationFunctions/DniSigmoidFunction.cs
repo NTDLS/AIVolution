@@ -12,7 +12,7 @@ namespace Determinet.ActivationFunctions
     [Serializable]
     public class DniSigmoidFunction : DniIActivationFunction
     {
-        public DniSigmoidFunction(DniNamedFunctionParameters? param)
+        public DniSigmoidFunction(DniNamedFunctionParameters param)
         {
         }
 

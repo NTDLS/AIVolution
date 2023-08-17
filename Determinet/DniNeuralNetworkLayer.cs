@@ -35,7 +35,7 @@ namespace Determinet
         /// <summary>
         /// The collapse function used for activation.
         /// </summary>
-        internal DniIActivationFunction? ActivationFunction { get; set; }
+        internal DniIFunction? Function { get; set; }
 
         /// <summary>
         /// Creates a new network layer.
@@ -47,10 +47,15 @@ namespace Determinet
         /// <param name="param">Any optional parameters that should be passed to the activation function.</param>
         public DniNeuralNetworkLayer(DniNeuralNetworkLayers layers, LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
         {
+            if (param == null)
+            {
+                param = new DniNamedFunctionParameters();
+            }
+
             Layers = layers;
             ActivationType = activationType;
             Param = param;
-            ActivationFunction = CreateActivationType(activationType, param);
+            Function = CreateActivationType(activationType, param);
             LayerType = type;
             Aliases = nodeAliases?.ToArray();
 
@@ -62,7 +67,7 @@ namespace Determinet
             }
         }
 
-        private DniIActivationFunction? CreateActivationType(ActivationType activationType, DniNamedFunctionParameters? param)
+        private DniIFunction? CreateActivationType(ActivationType activationType, DniNamedFunctionParameters param)
         {
             return activationType switch
             {

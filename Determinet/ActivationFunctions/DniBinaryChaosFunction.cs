@@ -8,7 +8,7 @@ namespace Determinet.ActivationFunctions
     /// 
     /// </summary>
     [Serializable]
-    public class DniBinaryChaosFunction : DniIActivationMachine
+    public class DniBinaryChaosFunction : DniIOutputFunction
     {
         private readonly Random _random;
 
@@ -18,24 +18,14 @@ namespace Determinet.ActivationFunctions
         [JsonProperty]
         internal DniRange Bounds { get; private set; } = new DniRange(-1, 1);
 
-
         [JsonProperty]
         internal int RandomSeed { get; private set; }
 
-        public DniBinaryChaosFunction(DniNamedFunctionParameters? param)
+        public DniBinaryChaosFunction(DniNamedFunctionParameters param)
         {
-
-            RandomSeed = DniUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}");
+            Alpha = param.Get<double>("alpha", 1);
+            RandomSeed = param.Get<int>("RandomSeed", DniUtility.Checksum($"{Guid.NewGuid()}:{DateTime.Now}"));
             _random = new Random(RandomSeed);
-
-            if (param == null)
-            {
-                Alpha = 1;
-            }
-            else
-            {
-                Alpha = param.Get<double>("alpha", 1);
-            }
         }
 
         public double Activation(double x)
@@ -43,16 +33,29 @@ namespace Determinet.ActivationFunctions
             return (1 / (1 + Math.Exp(-Alpha * x)));
         }
 
-        public double Produce(double x)
+        public double Compute(double x)
         {
             double y = Activation(x);
-            return y > DniUtility.NextDouble(Bounds.Min, Bounds.Max) ? 1 : 0;
+            return y > NextDouble(Bounds.Min, Bounds.Max) ? 1 : 0;
         }
 
         public double Derivative(double x)
         {
             double y = Activation(x);
             return (Alpha * y * (1 - y));
+        }
+
+        public double NextDouble(double minimum, double maximum)
+        {
+            if (minimum < 0)
+            {
+                minimum = Math.Abs(minimum);
+                if (_random.Next(0, 100) >= 50)
+                {
+                    return (_random.NextDouble() * (maximum - minimum) + minimum) * -1;
+                }
+            }
+            return _random.NextDouble() * (maximum - minimum) + minimum;
         }
     }
 }

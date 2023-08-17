@@ -1,6 +1,6 @@
 namespace Determinet.ActivationFunctions.Interfaces
 {
-    public interface DniIActivationOutputFeed : DniIActivationFunction
+    public interface DniIActivationOutputFeed : DniIFunction
     {
         double[] Activation(double[] previousLayer);
     }

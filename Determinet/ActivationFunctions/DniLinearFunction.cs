@@ -30,19 +30,10 @@ namespace Determinet.ActivationFunctions
             set { range = value; }
         }
 
-        public DniLinearFunction(DniNamedFunctionParameters? param)
+        public DniLinearFunction(DniNamedFunctionParameters param)
         {
-
-            if (param == null)
-            {
-                alpha = 1;
-                range = new DniRange(-1, +1);
-            }
-            else
-            {
-                Alpha = param.Get<double>("alpha", 1);
-                Range = param.Get<DniRange>("range", new DniRange(-1, +1));
-            }
+            Alpha = param.Get<double>("Alpha", 1);
+            Range = param.Get<DniRange>("Range", new DniRange(-1, +1));
         }
 
         public double Activation(double x)
