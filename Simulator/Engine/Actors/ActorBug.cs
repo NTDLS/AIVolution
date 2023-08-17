@@ -49,7 +49,7 @@ namespace Simulator.Engine.Actors
 
             if (brain == null)
             {
-                Brain = BugBrain.GetBrain();
+                Brain = BugBrain.GetBrain(core.InitialBrainFile);
             }
             else
             {
@@ -120,7 +120,7 @@ namespace Simulator.Engine.Actors
             if (IsOnScreen == false)
             {
                 //Kill this bug:
-                Visable = false;
+                Visible = false;
             }
 
             var intersections = Intersections();

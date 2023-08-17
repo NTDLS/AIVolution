@@ -39,9 +39,9 @@ namespace Simulator.Engine.Controllers
                       + $" Min: {_core.Display.FrameCounter.FrameRateMin:0.0},"
                       + $" Max: {_core.Display.FrameCounter.FrameRateMax:0.0}\r\n";
 
-                debugText.Text += "\r\nBugs Alive: " + _core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).Count();
+                debugText.Text += "\r\nBugs Alive: " + _core.Actors.Collection.Where(o => o is ActorBug && o.Visible == true).Count();
 
-                var bugsAlive = _core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).ToList();
+                var bugsAlive = _core.Actors.Collection.Where(o => o is ActorBug && o.Visible == true).ToList();
 
                 if (bugsAlive.Count > 0)
                 {
@@ -50,9 +50,9 @@ namespace Simulator.Engine.Controllers
                 debugText.Text += "\r\nPermutations: " + Permutations;
             }
 
-            if (_core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).Count() <= 2)
+            if (_core.Actors.Collection.Where(o => o is ActorBug && o.Visible == true).Count() <= 2)
             {
-                var bestBugs = _core.Actors.Collection.Where(o => o is ActorBug && o.Visable == true).ToList();
+                var bestBugs = _core.Actors.Collection.Where(o => o is ActorBug && o.Visible == true).ToList();
 
                 var greatestMinds = new List<DniNeuralNetwork>();
 
@@ -95,7 +95,7 @@ namespace Simulator.Engine.Controllers
             {
                 var rock = new ActorRock(_core);
                 rock.X = i += rock.Size.Width;
-                rock.Y = 0;
+                rock.Y = 20;
                 _core.Actors.Add(rock);
             }
 
@@ -119,14 +119,18 @@ namespace Simulator.Engine.Controllers
 
             for (int i = 0; i < 10; i++)
             {
-                _core.Actors.Add(new ActorLava(_core));
+                _core.Actors.Add(new ActorRock(_core));
             }
 
-            _core.Actors.Add(new ActorInteractive(_core, "Player"));
+            _core.Actors.Add(new ActorInteractive(_core, "Player")
+            {
+                 X = 300,
+                 Y = 300
+            });
 
             int brainIndex = 0;
 
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 25; i++)
             {
                 DniNeuralNetwork? brain = null;
 
@@ -150,7 +154,7 @@ namespace Simulator.Engine.Controllers
 
                 _core.Actors.Add(new ActorBug(_core, brain));
 
-                _core.Actors.Add(new ActorTextBlock(_core, "Consolas", Brushes.Aqua, 10, new PointD(25, 10), true, "Debug Text Block"));
+                _core.Actors.Add(new ActorTextBlock(_core, "Consolas", Brushes.Aqua, 10, new PointD(25, 40), true, "Debug Text Block"));
             }
         }
     }

@@ -28,15 +28,13 @@ namespace Simulator.Engine
 
         private static DniNeuralNetwork? _brain = null;
 
-        public static DniNeuralNetwork GetBrain()
+        public static DniNeuralNetwork GetBrain(string initialBrainFile)
         {
             if (_brain == null)
             {
-                string fileName = ".\\bugbrain.txt";
-
-                if (File.Exists(fileName))
+                if (string.IsNullOrEmpty(initialBrainFile) == false && File.Exists(initialBrainFile))
                 {
-                    _brain = DniNeuralNetwork.Load(fileName);
+                    _brain = DniNeuralNetwork.Load(initialBrainFile);
                     if (_brain != null)
                     {
                         return _brain;

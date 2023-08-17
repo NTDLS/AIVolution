@@ -10,6 +10,7 @@ namespace Simulator.Engine
         private static dynamic DynamicCast(dynamic source, Type dest) => Convert.ChangeType(source, dest);
         private readonly Dictionary<string, Bitmap> _bitmapCache = new();
 
+        public string InitialBrainFile { get; set; } = string.Empty;
         public bool IsRendering { get; private set; } = false;
         public object DrawingSemaphore { get; private set; } = new object();
         public EngineActors Actors { get; private set; }
@@ -28,10 +29,17 @@ namespace Simulator.Engine
             Display = new EngineDisplay(this, drawingSurface, visibleSize);
         }
 
+        public void Start(string initialBrainFile)
+        {
+            InitialBrainFile = initialBrainFile;
+            Thread.Start();
+        }
+
         public void Start()
         {
             Thread.Start();
         }
+
 
         public void TogglePause()
         {

@@ -53,17 +53,22 @@ namespace Simulator.Engine.Actors
             {
                 _text = value;
 
-                //If we have previously drawn text, then we need to invalidate the entire region which it occupied.
-                if (_prevRegion != null)
+                try
                 {
+
+                    //If we have previously drawn text, then we need to invalidate the entire region which it occupied.
+                    if (_prevRegion != null)
+                    {
+                        Core.Display.DrawingSurface.Invalidate((Rectangle)_prevRegion);
+                    }
+
+                    //Now that we have used _prevRegion to invaldate the previous region, set it to the new region coords.
+                    //And invalidate them for the new text.
+                    var stringSize = _genericDC.MeasureString(_text, _font);
+                    _prevRegion = new Rectangle((int)X, (int)Y, (int)stringSize.Width, (int)stringSize.Height);
                     Core.Display.DrawingSurface.Invalidate((Rectangle)_prevRegion);
                 }
-
-                //Now that we have used _prevRegion to invaldate the previous region, set it to the new region coords.
-                //And invalidate them for the new text.
-                var stringSize = _genericDC.MeasureString(_text, _font);
-                _prevRegion = new Rectangle((int)X, (int)Y, (int)stringSize.Width, (int)stringSize.Height);
-                Core.Display.DrawingSurface.Invalidate((Rectangle)_prevRegion);
+                catch { }
             }
         }
 
@@ -81,7 +86,7 @@ namespace Simulator.Engine.Actors
 
         public new void Render(Graphics dc)
         {
-            if (Visable)
+            if (Visible)
             {
                 dc.DrawString(_text, _font, _color, (float)X, (float)Y);
 

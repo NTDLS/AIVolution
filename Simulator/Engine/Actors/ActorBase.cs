@@ -1,4 +1,5 @@
 ﻿using Simulator.Engine.Types;
+using System.Windows.Forms;
 
 namespace Simulator.Engine.Actors
 {
@@ -89,19 +90,34 @@ namespace Simulator.Engine.Actors
             }
         }
 
+
+        /// <summary>
+        /// The absolute location of the actors bounds.
+        /// </summary>
         public RectangleF Bounds
         {
             get
             {
-                return new RectangleF((float)_location.X, (float)_location.Y, Size.Width, Size.Height);
+                return new RectangleF(
+                    (float)(_location.X) - (Size.Width / 2),
+                    (float)(_location.Y - (Size.Height / 2)),
+                    (float)(Size.Width),
+                    (float)(Size.Height));
             }
         }
 
+        /// <summary>
+        /// The absolute location of the actors bounds (as an interger).
+        /// </summary>
         public Rectangle BoundsI
         {
             get
             {
-                return new Rectangle((int)_location.X, (int)_location.Y, Size.Width, Size.Height);
+                return new Rectangle(
+                    (int)(_location.X) - (int)(Size.Width / 2.0),
+                    (int)(_location.Y - (int)(Size.Height / 2.0)),
+                    (int)(Size.Width),
+                    (int)(Size.Height));
             }
         }
 
@@ -117,11 +133,11 @@ namespace Simulator.Engine.Actors
         public void Delete()
         {
             _isDeleted = true;
-            Visable = false;
+            Visible = false;
         }
 
         private bool _isVisible = true;
-        public bool Visable
+        public bool Visible
         {
             get
             {
@@ -254,11 +270,21 @@ namespace Simulator.Engine.Actors
 
         public bool Intersects(ActorBase otherObject)
         {
-            if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
+            if (Visible && otherObject.Visible && !IsDeleted && !otherObject.IsDeleted)
             {
                 return Bounds.IntersectsWith(otherObject.Bounds);
             }
             return false;
+        }
+
+        public bool Intersects(Point<double> location, Point<double> size)
+        {
+            var alteredHitBox = new RectangleF(
+                (float)(location.X),
+                (float)(location.Y),
+                (float)(size.X), (float)(size.Y));
+
+            return Bounds.IntersectsWith(alteredHitBox);
         }
 
         /// <summary>
@@ -269,7 +295,7 @@ namespace Simulator.Engine.Actors
         /// <returns></returns>
         public bool Intersects(ActorBase otherObject, PointD sizeAdjust)
         {
-            if (Visable && otherObject.Visable && !IsDeleted && !otherObject.IsDeleted)
+            if (Visible && otherObject.Visible && !IsDeleted && !otherObject.IsDeleted)
             {
                 var alteredHitBox = new RectangleF(
                     otherObject.Bounds.X - (float)(sizeAdjust.X / 2),
@@ -288,7 +314,7 @@ namespace Simulator.Engine.Actors
 
             foreach (var intersection in Core.Actors.Collection)
             {
-                if (intersection != this && intersection.Visable && intersection is not ActorTextBlock)
+                if (intersection != this && intersection.Visible && intersection is not ActorTextBlock)
                 {
                     if (Intersects(intersection))
                     {
