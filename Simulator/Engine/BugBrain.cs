@@ -32,19 +32,16 @@ namespace Simulator.Engine
         {
             if (_brain == null)
             {
-                /*
                 string fileName = ".\\bugbrain.txt";
 
                 if (File.Exists(fileName))
                 {
                     _brain = DniNeuralNetwork.Load(fileName);
-
                     if (_brain != null)
                     {
-                        //return _brain;
+                        return _brain;
                     }
                 }
-                */
 
                 if (_brain == null)
                 {
