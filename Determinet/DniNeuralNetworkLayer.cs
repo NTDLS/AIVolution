@@ -45,7 +45,7 @@ namespace Determinet
         /// <param name="activationType">The type of function that will be used to activate the neurons.</param>
         /// <param name="nodeAliases">The names of the nodes (optional and only used for input and output nodes).</param>
         /// <param name="param">Any optional parameters that should be passed to the activation function.</param>
-        public DniNeuralNetworkLayer(DniNeuralNetworkLayers layers, LayerType type, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
+        public DniNeuralNetworkLayer(DniNeuralNetworkLayers layers, LayerType layerType, int neuronCount, ActivationType activationType, DniNamedFunctionParameters? param, string[]? nodeAliases)
         {
             if (param == null)
             {
@@ -55,9 +55,31 @@ namespace Determinet
             Layers = layers;
             ActivationType = activationType;
             Param = param;
-            Function = CreateActivationType(activationType, param);
-            LayerType = type;
+            LayerType = layerType;
             Aliases = nodeAliases?.ToArray();
+            Function = CreateActivationType(activationType, param);
+
+            if (layerType == LayerType.Input)
+            {
+                if (Function != null && Function is DniIOutputFunction)
+                {
+                    throw new Exception("Invalid function type specified for input layer.");
+                }
+            }
+            else if (layerType == LayerType.Intermediate)
+            {
+                if (Function != null && Function is DniIOutputFunction)
+                {
+                    throw new Exception("Invalid function type specified for intermediate layer.");
+                }
+            }
+            else if (layerType == LayerType.Output)
+            {
+                if (Function != null && Function is not DniIOutputFunction)
+                {
+                    throw new Exception("Invalid function type specified for output layer.");
+                }
+            }
 
             Neurons = new List<DniNeuron>();
 

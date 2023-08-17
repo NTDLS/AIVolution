@@ -309,7 +309,7 @@ namespace Determinet
             if (instance != null)
             {
                 instance.Layers.Network = instance;
-                foreach (var layer in instance.Layers)
+                foreach (var layer in instance.Layers.Collection)
                 {
                     layer.Layers = instance.Layers;
 

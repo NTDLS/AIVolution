@@ -32,23 +32,25 @@ namespace Simulator.Engine
         {
             if (_brain == null)
             {
-                /*
                 string fileName = ".\\bugbrain.txt";
 
                 if (File.Exists(fileName))
                 {
                     _brain = DniNeuralNetwork.Load(fileName);
+
                     if (_brain != null)
                     {
-                        return _brain.Clone();
+                        //return _brain;
                     }
                 }
-                */
 
-                _brain = new DniNeuralNetwork()
+                if (_brain == null)
                 {
-                    LearningRate = 0.01
-                };
+                    _brain = new DniNeuralNetwork()
+                    {
+                        LearningRate = 0.01
+                    };
+                }
 
                 //Vision inputs.
                 _brain.Layers.AddInput(ActivationType.LeakyReLU,
@@ -96,7 +98,6 @@ namespace Simulator.Engine
 
                 //_brain.Save(fileName);
             }
-
 
             return _brain.Clone();
         }

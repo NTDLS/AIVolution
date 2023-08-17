@@ -5,7 +5,7 @@ using System.Collections;
 namespace Determinet
 {
     [Serializable]
-    public class DniNeuralNetworkLayers : IEnumerable<DniNeuralNetworkLayer>
+    public class DniNeuralNetworkLayers //: IEnumerable<DniNeuralNetworkLayer>
     {
         [JsonIgnore]
         public DniNeuralNetwork Network { get; internal set; }
@@ -31,6 +31,7 @@ namespace Determinet
             }
         }
 
+        /*
         public IEnumerator<DniNeuralNetworkLayer> GetEnumerator()
         {
             return Collection.GetEnumerator();
@@ -40,6 +41,7 @@ namespace Determinet
         {
             return GetEnumerator();
         }
+        */
 
         #endregion
 
