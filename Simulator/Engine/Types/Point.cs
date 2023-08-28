@@ -1,7 +1,4 @@
-﻿using System;
-using System.Drawing;
-
-namespace Simulator.Engine.Types
+﻿namespace Simulator.Engine.Types
 {
     public class Point<T> where T : notnull
     {
@@ -68,7 +65,7 @@ namespace Simulator.Engine.Types
 
         public override bool Equals(object? o)
         {
-            if(o == null) return false;
+            if (o == null) return false;
             return (Math.Round((dynamic)((Point<T>)o).X, 4) == this.X && Math.Round((dynamic)((Point<T>)o).Y, 4) == this.Y);
         }
 

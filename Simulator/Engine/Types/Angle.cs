@@ -1,6 +1,6 @@
 ﻿namespace Simulator.Engine.Types
 {
-    public class Angle<T> where T: notnull
+    public class Angle<T> where T : notnull
     {
         #region Static Utilities.
 

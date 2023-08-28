@@ -124,8 +124,8 @@ namespace Simulator.Engine.Controllers
 
             _core.Actors.Add(new ActorInteractive(_core, "Player")
             {
-                 X = 300,
-                 Y = 300
+                X = 300,
+                Y = 300
             });
 
             int brainIndex = 0;
